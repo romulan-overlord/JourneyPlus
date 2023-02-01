@@ -20,16 +20,14 @@ const entrySchema = {
 const Entry = mongoose.model("entry", entrySchema);
 
 const userSchema = new mongoose.Schema({
-  username: {
-    type: String,
-    required: [true],
-  },
+  firstName: String,
+  lastName: String,
   password: {
     type: String,
     required: [true],
   },
-  name: String,
-  emailID: String,
+  username: String,
+  email: String,
   entries: [entrySchema],
 });
 
@@ -47,7 +45,12 @@ app.post("/submit-entry", (req, res) => {
 
 app.post("/signUp", (req, res) => {
   console.log(req.body);
-  res.send({ res: "UwU" });
+  const newUser = new Users({
+    ...req.body,
+    entries: [],
+  });
+  newUser.save();
+  res.send({ message: "success" });
 });
 
 app.listen(8000, () => {

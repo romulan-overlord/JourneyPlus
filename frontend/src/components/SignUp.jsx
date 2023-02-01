@@ -1,14 +1,10 @@
 import * as React from "react";
-import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -39,9 +35,9 @@ export default function SignUp(props) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const requestData = {
-      fname: data.get("firstName"),
-      lname: data.get("lastName"),
-      uid: data.get("username"),
+      firstName: data.get("firstName"),
+      lastName: data.get("lastName"),
+      username: data.get("username"),
       email: data.get("email"),
       password: data.get("password"),
     };
@@ -54,6 +50,7 @@ export default function SignUp(props) {
     })
       .then((response) => response.json())
       .then((data) => {
+        props.switch();
         console.log("Success:", data);
       })
       .catch((error) => {
@@ -73,7 +70,7 @@ export default function SignUp(props) {
             alignItems: "center",
           }}
         >
-          <img src={logo}></img>
+          <img src={logo} alt="logo.png"></img>
 
           <Typography component="h1" variant="h5">
             Sign up
