@@ -9,7 +9,7 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
-mongoose.set('strictQuery', false);
+mongoose.set("strictQuery", false);
 mongoose.connect("mongodb://localhost:27017/ProjectDB");
 
 const entrySchema = {
@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema({
   },
   name: String,
   emailID: String,
-  entries: [entrySchema]
+  entries: [entrySchema],
 });
 
 const Users = mongoose.model("user", userSchema);
@@ -43,6 +43,11 @@ app.post("/submit-entry", (req, res) => {
   console.log("post received");
   console.log(req.body);
   res.send({ mesage: "Whyat happens now?" });
+});
+
+app.post("/signUp", (req, res) => {
+  console.log(req.body);
+  res.send({ res: "UwU" });
 });
 
 app.listen(8000, () => {

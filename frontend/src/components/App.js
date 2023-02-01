@@ -1,23 +1,33 @@
 import React, { useState, useEffect } from "react";
 import TextInput from "./TextInput";
-import ResponsiveAppBar from "./Header";
+import Header from "./Header";
+import SignUp from "./SignUp";
+import SignIn from "./SignIn";
 
 function App() {
-  const [message, setMessage] = useState("");
+  const [isLoggedIn, setLoggedIn] = useState(false);
+  const [isSignedUp, setIsSignedUp] = useState(true);
 
-  useEffect(() => {
-    fetch("http://localhost:8000/message")
-      .then((res) => res.json())
-      .then((data) => setMessage(data.message));
-  }, []);
+  function invertIsSignedUp(event) {
+    setIsSignedUp((prev) => {
+      return !prev;
+    });
+  }
 
   return (
     <div className="App">
-      <ResponsiveAppBar />
-      <p>{message}</p>
-      <TextInput />
+      <Header />
+      {isLoggedIn ? <TextInput /> : isSignedUp ? <SignIn switch={invertIsSignedUp} /> : <SignUp switch={invertIsSignedUp} />}
     </div>
   );
 }
 
 export default App;
+
+// const [message, setMessage] = useState("");
+
+// useEffect(() => {
+//   fetch("http://localhost:8000/message")
+//     .then((res) => res.json())
+//     .then((data) => setMessage(data.message));
+// }, []);
