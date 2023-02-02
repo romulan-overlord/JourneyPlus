@@ -40,6 +40,18 @@ app.get("/message", (req, res) => {
 app.post("/submit-entry", (req, res) => {
   console.log("post received");
   console.log(req.body);
+  const newEntry = new Entry(req.body);
+  const user = Users.findOne(
+    { username: "romulan" },
+    function (err, results) {
+      if (!err) {
+        if (results) {
+          results.entries.push(newEntry);
+          results.save();
+        }
+      }
+    }
+  );
   res.send({ mesage: "Whyat happens now?" });
 });
 

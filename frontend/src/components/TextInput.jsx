@@ -20,10 +20,11 @@ function TextInput() {
 
   function handleTextChange(event) {
     const newData = event.target.value;
+    const varName = event.target.name;
     setEntryData((prev) => {
       return {
         ...prev,
-        content: newData,
+        [varName]: newData,
       };
     });
   }
@@ -51,6 +52,17 @@ function TextInput() {
       <form className="entry-area" onSubmit={handleSubmit}>
         <TextField
           className="text-area"
+          name="title"
+          id="outlined-textarea"
+          onChange={handleTextChange}
+          value={entryData.title}
+          margin="normal"
+          placeholder="Your title..."
+          minRows={1}
+        />
+        <TextField
+          className="text-area"
+          name="content"
           id="outlined-textarea"
           onChange={handleTextChange}
           value={entryData.content}
