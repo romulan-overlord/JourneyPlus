@@ -1,8 +1,7 @@
-/* html{
+html{
     height: 100vh;
-    width: 100vw;
 }
-*/
+
 
 body {
   margin: 0;
@@ -25,19 +24,8 @@ color: #f7b4a7;
   top: 50%;
   transform: translate(0, -50%);
   padding: 10px;
-}
-
-.entry-area {
-  width: 80%;
-  margin: auto;
-}
-
-.text-area {
-  width: 100%;
-}
-
-.landing-page-title{
-  margin-top: 100px;
+  height: 100vh;
+  background-color: #2b4b82;
 }
 
 .col-md-6{
@@ -64,4 +52,68 @@ color: #f7b4a7;
 
 .margin-between-input{
   margin-bottom: 7px;
+}
+
+.width-100{
+  width: 100%;
+}
+
+.height-100{
+  height: 100%;
+}
+
+/* Navbar */
+
+.navbar-container{
+  border-bottom: 1.5px solid white;
+}
+
+.navbar-brand{
+  font-size: 2rem;
+}
+
+
+/* Create New Entry */
+
+.text-input-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.scroll-view {
+  flex-grow: 1;
+}
+
+.title-done-button-row{
+  width: 100%;
+  margin: 0;
+}
+
+.entry-title-container{
+  border-bottom: 1.5px solid white;
+  color: white;
+  /* margin-top: 30px; */
+}
+
+.entry-title{
+  width: 80%;
+  height: 100%;
+  border: none;
+  background: none;
+  font-size: large;
+  outline: none;
+  color: white;
+}
+
+.done-button{
+  color: white;
+}
+
+.entry-content{
+  width: 100%;
+  background: transparent;
+  outline: none;
+  border: none;
+  color: white;
 }
