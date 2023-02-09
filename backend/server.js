@@ -19,7 +19,7 @@ const entrySchema = {
 
 const Entry = mongoose.model("entry", entrySchema);
 
-const userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({ 
   firstName: String,
   lastName: String,
   password: {

@@ -5,7 +5,7 @@ import SignUp from "./SignUp";
 import SignIn from "./SignIn";
 
 function App() {
-  const [isLoggedIn, setLoggedIn] = useState(false);
+  const [isLoggedIn, setLoggedIn] = useState(true);
   const [isSignedUp, setIsSignedUp] = useState(true);
 
   function invertIsSignedUp(event) {
@@ -15,7 +15,7 @@ function App() {
   }
 
   return (
-    <div className="App">
+    <div className="App height-100">
       <Header />
       {isLoggedIn ? <TextInput /> : isSignedUp ? <SignIn switch={invertIsSignedUp} /> : <SignUp switch={invertIsSignedUp} />}
     </div>
