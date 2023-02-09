@@ -3,8 +3,28 @@
     width: 100vw;
 }
 */
+
 body {
   margin: 0;
+  background-color: #2b4b82;
+  font-family: 'DM Sans', sans-serif;
+}
+
+h1{
+color: #f7b4a7;
+} 
+
+.big-heading{
+  font-family: 'DM Sans', sans-serif;
+  font-size: 3.5rem;
+  line-height: 1.5;
+}
+
+.center{
+  position: absolute;
+  top: 50%;
+  transform: translate(0, -50%);
+  padding: 10px;
 }
 
 .entry-area {
@@ -22,4 +42,26 @@ body {
 
 .col-md-6{
   padding: 0;
+}
+
+/* Sign up */
+
+.signup-column {
+  padding: 3% 2%;
+}
+
+.signup-text {
+  background: none;
+}
+
+.set-colour{
+  background-color: #6784b6;
+}
+
+.set-signup-button-colour{
+  background-color: #5ce1e6;
+}
+
+.margin-between-input{
+  margin-bottom: 7px;
 }
