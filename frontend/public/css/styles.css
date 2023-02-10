@@ -2,21 +2,10 @@ html{
     height: 100vh;
 }
 
-
 body {
   margin: 0;
   background-color: #2b4b82;
   font-family: 'DM Sans', sans-serif;
-}
-
-h1{
-color: #f7b4a7;
-} 
-
-.big-heading{
-  font-family: 'DM Sans', sans-serif;
-  font-size: 3.5rem;
-  line-height: 1.5;
 }
 
 .center{
@@ -33,13 +22,28 @@ color: #f7b4a7;
 }
 
 /* Sign up */
+.big-heading{
+  font-family: 'DM Sans', sans-serif;
+  font-size: 3.5rem;
+  line-height: 1.5;
+  color: #f7b4a7;
+}
+
+.sub-text{
+  color: #94ddde;
+}
+.center-div{
+  margin-top: 8%;
+}
 
 .signup-column {
   padding: 3% 2%;
 }
 
 .signup-text {
+  padding-top: 10px;
   background: none;
+  color: white;
 }
 
 .set-colour{
@@ -52,6 +56,18 @@ color: #f7b4a7;
 
 .margin-between-input{
   margin-bottom: 7px;
+}
+
+.first-name-button{
+  padding-left: 0;
+} 
+
+.last-name-button{
+  padding-right: 0;
+}
+
+.card, .button-text{
+  border-radius: 2em;
 }
 
 .width-100{

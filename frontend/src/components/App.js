@@ -5,7 +5,7 @@ import SignUp from "./SignUp";
 import SignIn from "./SignIn";
 
 function App() {
-  const [isLoggedIn, setLoggedIn] = useState(true);
+  const [isLoggedIn, setLoggedIn] = useState(false);
   const [isSignedUp, setIsSignedUp] = useState(true);
 
   function invertIsSignedUp(event) {
