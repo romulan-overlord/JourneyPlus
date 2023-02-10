@@ -163,8 +163,8 @@ import * as React from "react";
 
 function Header() {
   return (
-    <nav className="navbar navbar-expand-md navbar-dark">
-      <div className="container-fluid navbar-container mx-5">
+    <nav className="navbar navbar-expand-md navbar-dark" id="header">
+      <div className="container-fluid navbar-container mx-lg-5 py-lg-3 mx-md-3 py-md-2 py-2 mx-2">
         <a className="navbar-brand" href="">
           Journey
         </a>

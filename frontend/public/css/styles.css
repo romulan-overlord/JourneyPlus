@@ -1,12 +1,16 @@
 html{
     height: 100vh;
+    padding: 0;
+    margin: 0;
 }
 
 
 body {
   margin: 0;
+  padding: 0;
   background-color: #2b4b82;
   font-family: 'DM Sans', sans-serif;
+  overflow: hidden;
 }
 
 h1{
@@ -30,6 +34,27 @@ color: #f7b4a7;
 
 .col-md-6{
   padding: 0;
+}
+
+/* scroll bar styling */
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: none;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgba(177, 174, 174, 0.4);
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(177, 174, 174, 0.7);
 }
 
 /* Sign up */
@@ -116,4 +141,13 @@ color: #f7b4a7;
   outline: none;
   border: none;
   color: white;
+  resize: none;
+}
+
+.no-media-container{
+  text-align: center;
+}
+
+.no-media{
+  display: inline-block;
 }

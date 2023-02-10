@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import IconButton from "@mui/material/IconButton";
 import DoneIcon from "@mui/icons-material/Done";
-import { white } from '@mui/material/colors';
+import { white } from "@mui/material/colors";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 const theme = createTheme({
@@ -9,7 +9,7 @@ const theme = createTheme({
     submit: {
       main: "#fff",
       contrastText: "#fff",
-      white: '#fff'
+      white: "#fff",
     },
   },
 });
@@ -50,12 +50,18 @@ function TextInput() {
   }
 
   return (
-    <div className="container-fluid width-100 text-input-container">
+    <div
+      className="container-fluid width-100 text-input-container"
+      id="textInput"
+    >
       <div className="row mx-5">
         {/* this column contains title + done button + content */}
         <div className="col-md-8 px-0">
           {/* container for title and done button */}
-          <div className="container-fluid width-100 px-0 entry-title-container">
+          <div
+            className="container-fluid width-100 px-0 entry-title-container"
+            id="title-div"
+          >
             <div className="row title-done-button-row">
               <div className="col-sm-11 px-0">
                 <input
@@ -66,21 +72,38 @@ function TextInput() {
               </div>
               <div className="container-fluid col-sm-1 mx-auto">
                 <ThemeProvider theme={theme}>
-                <IconButton className="mx-auto">
-                  <DoneIcon fontSize="large" sx={{color:'white'}} />
-                </IconButton>
+                  <IconButton className="mx-auto">
+                    <DoneIcon fontSize="large" sx={{ color: "white" }} />
+                  </IconButton>
                 </ThemeProvider>
-                
               </div>
             </div>
           </div>
           {/* container for content */}
-          <div className="container-fluid px-0 entry-content-container">
-            <textarea className="entry-content" placeholder="Write your thoughts away..." rows={20}></textarea>
+          <div
+            className="container-fluid px-0 entry-content-container"
+            id="content-div"
+          >
+            <textarea
+              className="entry-content height-100"
+              placeholder="Write your thoughts away..."
+            ></textarea>
           </div>
         </div>
         {/* column for media attachments */}
-        <div className="col-md-4 px-0"></div>
+        <div className="col-md-4 px-0">
+          <table className="height-100 width-100">
+            <tbody>
+              <tr>
+                <td className="no-media-container">
+                  <p className="align-middle no-media">
+                    You haven't added any media yet
+                  </p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
