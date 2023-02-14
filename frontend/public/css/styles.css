@@ -58,7 +58,7 @@ body {
   color: #94ddde;
 }
 .center-div{
-  margin-top: 8%;
+  margin-top: 7%;
 }
 
 .signup-column {
@@ -93,6 +93,14 @@ body {
 
 .card, .button-text{
   border-radius: 2em;
+}
+.align-card{
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.account-text{
+  padding-top: 2%;
 }
 
 .width-100{
