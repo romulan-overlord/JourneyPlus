@@ -160,10 +160,29 @@ body {
   resize: none;
 }
 
+.table-class{
+  table-layout: fixed;
+}
+
 .no-media-container{
   text-align: center;
 }
 
 .no-media{
   display: inline-block;
+  width: 80%;
+}
+
+/* Footer */
+
+.footer{
+  width: 100%;
+  height: 25px;
+  position: fixed;
+  bottom: 0;
+  background-color: #17263f;
+}
+
+.date-p{
+  color: white;
 }
