@@ -159,9 +159,7 @@ app.post("/login", (req, res)=>{
           });
         } else(!foundUser)
           console.log("User not found");
-          res.send({
-            success: false,
-          });
+          
       }
     });
   // passport.authenticate("local", (err, user, info) => {

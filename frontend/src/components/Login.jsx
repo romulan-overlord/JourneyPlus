@@ -22,7 +22,7 @@ function Login(props) {
       .then((response) => response.json())
       .then((data) => {
         if(data.success === true){
-          props.switch();
+          props.invertLoggedIn();
         console.log("Success:", data);
         }
         

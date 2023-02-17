@@ -3,7 +3,6 @@ import $ from "jquery";
 import EntryInput from "./EntryInput/EntryInput";
 import Header from "./Header";
 import SignUp from "./SignUp";
-import SignIn from "./SignIn";
 import Login from "./Login";
 
 function App() {
@@ -52,7 +51,7 @@ function App() {
       {isLoggedIn ? (
         <EntryInput />
       ) : isSignedUp ? (
-        <SignIn invertLoggedIn={invertLoggedIn} switch={invertIsSignedUp} />
+        <Login invertLoggedIn={invertLoggedIn} switch={invertIsSignedUp} />
       ) : (
         <SignUp switch={invertIsSignedUp} />
       )}
