@@ -3,19 +3,16 @@ import { textAlign } from "@mui/system";
 import * as React from "react";
 import Link from "@mui/material/Link";
 
-function SignUp(props) {
-  function handleSubmitSignUp(event) {
+function Login(props) {
+  function handleSubmitLogin(event) {
     event.preventDefault();
     //console.log("in handler");
     const data = new FormData(event.currentTarget);
     const requestData = {
-      firstName: data.get("firstName"),
-      lastName: data.get("lastName"),
       username: data.get("username"),
-      email: data.get("email"),
       password: data.get("password"),
     };
-    fetch("http://localhost:8000/signUp", {
+    fetch("http://localhost:8000/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -26,11 +23,9 @@ function SignUp(props) {
       .then((data) => {
         if(data.success === true){
           props.switch();
-          console.log("Success:", data);
-        }else{
-          // display error message, depending on wat express returned
-          console.log("failure:", data);
+        console.log("Success:", data);
         }
+        
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -54,60 +49,18 @@ function SignUp(props) {
             <div className="container-fluid px-0 landing-page-title">
               <div className="card set-colour">
                 <div className="mx-auto signup-text">
-                  <h3 className="card-title signup-text">Sign Up</h3>
+                  <h3 className="card-title signup-text">Login</h3>
                 </div>
                 <div className="card-body">
-                  <form onSubmit={handleSubmitSignUp} method="POST">
-                    <div className="container text-center">
-                      <div className="row">
-                        <div className="col first-name-button width-50">
-                          <div className="input-group flex-nowrap margin-between-input">
-                            <input
-                              type="text"
-                              name="firstName"
-                              className="form-control "
-                              placeholder="First Name"
-                              aria-label="First Name"
-                              aria-describedby="addon-wrapping"
-                              required
-                            ></input>
-                          </div>
-                        </div>
-                        <div className="col last-name-button width-50">
-                          <div className="input-group flex-nowrap margin-between-input">
-                            <input
-                              type="text"
-                              name="lastName"
-                              className="form-control "
-                              placeholder="Last Name"
-                              aria-label="Last Name"
-                              aria-describedby="addon-wrapping"
-                              required
-                            ></input>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                  <form onSubmit={handleSubmitLogin} method="POST">
                     <div className="row">
                       <div className="input-text input-group flex-nowrap margin-between-input">
                         <input
                           type="text"
                           name="username"
-                          className="form-control "
+                          className="form-control"
                           placeholder="Username"
                           aria-label="Username"
-                          aria-describedby="addon-wrapping"
-                          required
-                        ></input>
-                      </div>
-
-                      <div className="input-group flex-nowrap margin-between-input">
-                        <input
-                          type="text"
-                          name="email"
-                          className="form-control"
-                          placeholder="Email"
-                          aria-label="Email"
                           aria-describedby="addon-wrapping"
                           required
                         ></input>
@@ -130,16 +83,16 @@ function SignUp(props) {
                         className="button-text btn btn-block btn-outline-dark set-signup-button-colour"
                         type="submit"
                       >
-                        Sign Up
+                        Login
                       </button>
                     </div>
                   </form>
 
                   <div className="text-center">
                     <p className="account-text">
-                      Already have an account?{" "}
+                      Don't have an account?{" "}
                       <Link onClick={props.switch} href="#" variant="body2">
-                        {"Login"}
+                        {"Sign Up"}
                       </Link>
                     </p>
                   </div>
@@ -153,4 +106,4 @@ function SignUp(props) {
   );
 }
 
-export default SignUp;
+export default Login;
