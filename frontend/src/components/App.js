@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import $ from "jquery";
 import EntryInput from "./EntryInput/EntryInput";
 import Header from "./Header";
-import Footer from "./Footer"
 import SignUp from "./SignUp";
 import SignIn from "./SignIn";
 import Login from "./Login";
@@ -16,11 +16,47 @@ function App() {
     });
   }
 
+  function invertLoggedIn(event) {
+    setLoggedIn((prev) => {
+      return !prev;
+    });
+  }
+
+  function setDimensions() {
+    let windowHeight = window.innerHeight;
+    let headerHeight = $("#header").outerHeight();
+    let footerHeight = $("#footer").outerHeight();
+    let titleHeight = $("#title-div").outerHeight();
+    $("#textInput").outerHeight(windowHeight - headerHeight - footerHeight);
+    let inputHeight = $("#textInput").outerHeight();
+    $("#content-div").outerHeight(inputHeight - titleHeight);
+
+    console.log("native script running");
+    console.log(
+      "window: " +
+        windowHeight +
+        " header: " +
+        headerHeight +
+        " input area: " +
+        $("#textInput").outerHeight() +
+        " title: " +
+        titleHeight +
+        " content: " +
+        $("#content-div").outerHeight()
+    );
+  }
+
   return (
     <div className="App height-100">
       <Header />
-      {isLoggedIn ? <EntryInput /> : isSignedUp ? <Login switch={invertIsSignedUp} /> : <SignUp switch={invertIsSignedUp} />}
-      <Footer />
+      {isLoggedIn ? (
+        <EntryInput />
+      ) : isSignedUp ? (
+        <SignIn invertLoggedIn={invertLoggedIn} switch={invertIsSignedUp} />
+      ) : (
+        <SignUp switch={invertIsSignedUp} />
+      )}
+      {setDimensions()}
     </div>
   );
 }

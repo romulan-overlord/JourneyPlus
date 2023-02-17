@@ -6,7 +6,7 @@ import { Icon } from "@mui/material";
 
 export default function Footer() {
   return (
-    <div className="footer px-5">
+    <div className="footer px-5" id="footer">
       <span className="date-p">13th February, 2023</span>
       <span className="date-p mx-2">|</span>
       <span className="date-p me-1">
@@ -15,7 +15,9 @@ export default function Footer() {
       <span className="date-p">Cloudy</span>
       <span className="date-p mx-2">|</span>
       <span className="date-p">
+        <label htmlFor="files">
         <AttachFileOutlinedIcon fontSize="small"></AttachFileOutlinedIcon>
+        </label>
       </span>
     </div>
   );
