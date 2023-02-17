@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState , useEffect} from "react";
 import IconButton from "@mui/material/IconButton";
 import DoneIcon from "@mui/icons-material/Done";
-
+import $ from "jquery";
 import MediaTray from "./MediaTray";
 import Footer from "../Footer";
 
@@ -13,6 +13,8 @@ function EntryInput(props) {
   });
 
   const [isMedia, setMedia] = useState(false);
+
+  useEffect(setDimensions);
 
   function handleTextChange(event) {
     const newData = event.target.value;
@@ -86,6 +88,34 @@ function EntryInput(props) {
         console.log("Error: ", error);
       };
     }
+  }
+
+  function setDimensions() {
+    let windowHeight = window.innerHeight;
+    let headerHeight = $("#header").outerHeight();
+    let footerHeight = $("#footer").outerHeight();
+    let titleHeight = $("#title-div").outerHeight();
+    $("#textInput").outerHeight(windowHeight - headerHeight - footerHeight);
+    let inputHeight = $("#textInput").outerHeight();
+    $("#content-div").outerHeight(inputHeight - titleHeight);
+    $("#media-div").outerHeight(windowHeight - headerHeight - footerHeight)
+    const mediaHeight = $("#media-div").outerHeight();
+
+    console.log("native script running in EntryInput via UseEffect!!!");
+    console.log(
+      "window: " +
+        windowHeight +
+        " header: " +
+        headerHeight +
+        " input area: " +
+        $("#textInput").outerHeight() +
+        " title: " +
+        titleHeight +
+        " content: " +
+        $("#content-div").outerHeight() +
+        " media: " +
+        mediaHeight
+    );
   }
 
   return (
@@ -165,6 +195,7 @@ function EntryInput(props) {
         </form>
       </div>
       <Footer />
+      {setDimensions()}
     </div>
   );
 }
