@@ -20,7 +20,7 @@ function App() {
       return !prev;
     });
   }
-
+ 
   function setDimensions() {
     let windowHeight = window.innerHeight;
     let headerHeight = $("#header").outerHeight();

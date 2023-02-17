@@ -6,7 +6,6 @@ import Link from "@mui/material/Link";
 function Login(props) {
   function handleSubmitLogin(event) {
     event.preventDefault();
-    //console.log("in handler");
     const data = new FormData(event.currentTarget);
     const requestData = {
       username: data.get("username"),

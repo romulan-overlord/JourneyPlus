@@ -1,12 +1,14 @@
 import { teal } from "@mui/material/colors";
 import { textAlign } from "@mui/system";
-import * as React from "react";
+import React, {useState} from "react";
 import Link from "@mui/material/Link";
 
 function SignUp(props) {
+
+  const [isUID, setUid] = useState(false);
+  // const [flag, setUid] = useState({});
   function handleSubmitSignUp(event) {
     event.preventDefault();
-    //console.log("in handler");
     const data = new FormData(event.currentTarget);
     const requestData = {
       firstName: data.get("firstName"),
@@ -24,9 +26,9 @@ function SignUp(props) {
     })
       .then((response) => response.json())
       .then((data) => {
-        if(data.success === true){
-          props.switch();
-          console.log("Success:", data);
+        if(data.success === "901"){ 
+          // props.switch();
+          // console.log("Success:", data);
         }else{
           // display error message, depending on wat express returned
           console.log("failure:", data);
@@ -99,6 +101,7 @@ function SignUp(props) {
                           aria-describedby="addon-wrapping"
                           required
                         ></input>
+                        {/* {!isUID ? <p>Invalid Username</p> : null} */}
                       </div>
 
                       <div className="input-group flex-nowrap margin-between-input">
