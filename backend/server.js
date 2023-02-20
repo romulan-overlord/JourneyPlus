@@ -90,30 +90,54 @@ app.post("/submit-entry", (req, res) => {
 });
 
 app.post("/signUp", (req, res) => {
-  Users.findOne({ 
-    firstName: req.body.firstName,
-    lastName: req.body.lastName, 
+  Users.findOne({  
     username: req.body.username, 
     email: req.body.email }, async (err, doc) => {
       if (err) 
         throw err;
       if (doc) 
-        res.send({success: false});
-      else if (!doc) {
-        const hashedPassword = await bcrypt.hash(req.body.password, 10);
-
-        const newUser = new Users({
-          firstName: req.body.firstName,
-          lastName: req.body.lastName,
-          username: req.body.username,
-          email: req.body.email,
-          password: hashedPassword,
-        });
-        await newUser.save();
-        console.log("User Created");
         res.send({
-          success: true
+          success: "900"
         });
+        // console.log("Already exists");
+      else if (!doc) {
+        Users.findOne({username: req.body.username}, async(err, doc) => {
+          if(err)
+            throw err;
+          if(doc)
+            res.send({
+              success: "901"
+            });
+            // console.log("Username already taken");
+          else if(!doc){
+            Users.findOne({email: req.body.email}, async(err, doc) => {
+              if(err)
+                throw err;
+              if(doc)
+                res.send({
+                  success: "902"
+                });
+                // console.log("Email already taken");
+              else if(!doc){
+                const hashedPassword = await bcrypt.hash(req.body.password, 10);
+
+                const newUser = new Users({
+                  firstName: req.body.firstName,
+                  lastName: req.body.lastName,
+                  username: req.body.username,
+                  email: req.body.email,
+                  password: hashedPassword,
+                });
+                await newUser.save();
+                console.log("User Created");
+                res.send({
+                  success: "999"
+                });
+              }
+            })
+          }
+
+        })
       }
     });
 });
@@ -156,10 +180,14 @@ app.post("/login", (req, res)=>{
                 success: true
               });
             }
+            else{
+              console.log("User not found");
+            }
           });
-        } else(!foundUser)
-          console.log("User not found");
-          
+        }
+        else if(!foundUser){
+          console.log("Username incorrect");
+        }
       }
     });
   // passport.authenticate("local", (err, user, info) => {
