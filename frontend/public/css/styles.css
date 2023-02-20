@@ -200,6 +200,16 @@ body {
   overflow: auto;
 }
 
+.lead{
+  margin: 0;
+  color: white;
+}
+
+.audio-player{
+  width: 100%;
+  color: rgba(165, 134, 134, 0.4);
+}
+
 /* Footer */
 
 .footer{

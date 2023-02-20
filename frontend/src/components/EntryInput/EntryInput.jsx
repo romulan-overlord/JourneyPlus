@@ -49,13 +49,11 @@ function EntryInput(props) {
 
   function getFiles(event) {
     const files = event.target.files;
-    console.log(files);
     var reader = new FileReader();
     for (let i = 0; i < files.length; i++) {
       reader.readAsDataURL(event.target.files[i]);
       const type = event.target.files[i].type;
       const fileType = type.split("/")[0];
-      console.log(fileType);
       reader.onload = function () {
         console.log("help pls: " + fileType);
         setEntryData((prev) => {
@@ -70,12 +68,9 @@ function EntryInput(props) {
           } else {
             temp = [reader.result];
           }
-          console.log("encoded data:" + temp);
-          console.log("key value: " + fileType);
-          console.log("object: " + { [fileType]: temp });
           newMedia = {
             ...newMedia,
-            [fileType]: temp,
+            [fileType]:[...new Set(temp)],
           };
           setMedia(true);
           return {
@@ -100,22 +95,6 @@ function EntryInput(props) {
     $("#content-div").outerHeight(inputHeight - titleHeight);
     $("#media-div").outerHeight(windowHeight - headerHeight - footerHeight)
     const mediaHeight = $("#media-div").outerHeight();
-
-    console.log("native script running in EntryInput via UseEffect!!!");
-    console.log(
-      "window: " +
-        windowHeight +
-        " header: " +
-        headerHeight +
-        " input area: " +
-        $("#textInput").outerHeight() +
-        " title: " +
-        titleHeight +
-        " content: " +
-        $("#content-div").outerHeight() +
-        " media: " +
-        mediaHeight
-    );
   }
 
   return (

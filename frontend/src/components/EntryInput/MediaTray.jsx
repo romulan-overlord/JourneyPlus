@@ -1,41 +1,30 @@
 import React from "react";
-import $ from "jquery";
 import Carousel from "./Carousel";
+import List from "./List";
+
+var _ = require("lodash");
 
 function MediaTray(props) {
   const compartments = Object.keys(props.mediaData);
   const compartmentData = Object.values(props.mediaData);
 
-  function getHeight() {
-    console.log("native script running in MediaTray");
-    let windowHeight = window.innerHeight;
-    let headerHeight = $("#header").outerHeight();
-    let footerHeight = $("#footer").outerHeight();
-    const mediaHeight = windowHeight - headerHeight - footerHeight;
-    
-      $("#media-div").outerHeight() -
-      windowHeight -
-      headerHeight -
-      footerHeight;
-    console.log(
-      "window: " +
-        windowHeight +
-        " header: " +
-        headerHeight +
-        " input area: " +
-        $("#textInput").outerHeight()
-    );
-    return mediaHeight;
-  }
-
   return (
-    <div
-      className="container-fluid px-3 media-tray-container"
-      id="media-div"
-      // height={getHeight()}
-    >
+    <div className="container-fluid px-3 media-tray-container" id="media-div">
       {compartments.map((fileType, index) => {
-        return <Carousel type={fileType} data={compartmentData[index]} />;
+        if(fileType === "audio"){
+          return(
+            <div>
+            <p className="lead">{_.capitalize(fileType)}s</p>
+            <List type={fileType} data={compartmentData[index]} />
+          </div>
+          )
+        }
+        return (
+          <div>
+            <p className="lead">{_.capitalize(fileType)}s</p>
+            <Carousel type={fileType} data={compartmentData[index]} />
+          </div>
+        );
       })}
     </div>
   );
