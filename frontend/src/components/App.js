@@ -20,33 +20,6 @@ function App() {
       return !prev;
     });
   }
-<<<<<<< HEAD
-=======
- 
-  function setDimensions() {
-    let windowHeight = window.innerHeight;
-    let headerHeight = $("#header").outerHeight();
-    let footerHeight = $("#footer").outerHeight();
-    let titleHeight = $("#title-div").outerHeight();
-    $("#textInput").outerHeight(windowHeight - headerHeight - footerHeight);
-    let inputHeight = $("#textInput").outerHeight();
-    $("#content-div").outerHeight(inputHeight - titleHeight);
-
-    console.log("native script running");
-    console.log(
-      "window: " +
-        windowHeight +
-        " header: " +
-        headerHeight +
-        " input area: " +
-        $("#textInput").outerHeight() +
-        " title: " +
-        titleHeight +
-        " content: " +
-        $("#content-div").outerHeight()
-    );
-  }
->>>>>>> 267f1c3cf08f79e578bedef1fe28e2b834940d79
 
   return (
     <div className="App height-100">
