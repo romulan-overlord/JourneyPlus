@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState , useEffect} from "react";
 import IconButton from "@mui/material/IconButton";
 import DoneIcon from "@mui/icons-material/Done";
-
+import $ from "jquery";
 import MediaTray from "./MediaTray";
 import Footer from "../Footer";
 
@@ -13,6 +13,8 @@ function EntryInput(props) {
   });
 
   const [isMedia, setMedia] = useState(false);
+
+  useEffect(setDimensions);
 
   function handleTextChange(event) {
     const newData = event.target.value;
@@ -47,13 +49,11 @@ function EntryInput(props) {
 
   function getFiles(event) {
     const files = event.target.files;
-    console.log(files);
     var reader = new FileReader();
     for (let i = 0; i < files.length; i++) {
       reader.readAsDataURL(event.target.files[i]);
       const type = event.target.files[i].type;
       const fileType = type.split("/")[0];
-      console.log(fileType);
       reader.onload = function () {
         console.log("help pls: " + fileType);
         setEntryData((prev) => {
@@ -68,12 +68,9 @@ function EntryInput(props) {
           } else {
             temp = [reader.result];
           }
-          console.log("encoded data:" + temp);
-          console.log("key value: " + fileType);
-          console.log("object: " + { [fileType]: temp });
           newMedia = {
             ...newMedia,
-            [fileType]: temp,
+            [fileType]:[...new Set(temp)],
           };
           setMedia(true);
           return {
@@ -86,6 +83,18 @@ function EntryInput(props) {
         console.log("Error: ", error);
       };
     }
+  }
+
+  function setDimensions() {
+    let windowHeight = window.innerHeight;
+    let headerHeight = $("#header").outerHeight();
+    let footerHeight = $("#footer").outerHeight();
+    let titleHeight = $("#title-div").outerHeight();
+    $("#textInput").outerHeight(windowHeight - headerHeight - footerHeight);
+    let inputHeight = $("#textInput").outerHeight();
+    $("#content-div").outerHeight(inputHeight - titleHeight);
+    $("#media-div").outerHeight(windowHeight - headerHeight - footerHeight)
+    const mediaHeight = $("#media-div").outerHeight();
   }
 
   return (
@@ -165,6 +174,7 @@ function EntryInput(props) {
         </form>
       </div>
       <Footer />
+      {setDimensions()}
     </div>
   );
 }

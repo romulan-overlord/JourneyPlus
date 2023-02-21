@@ -1,8 +1,6 @@
 import * as React from "react";
 import CloudOutlinedIcon from "@mui/icons-material/CloudOutlined";
 import AttachFileOutlinedIcon from "@mui/icons-material/AttachFileOutlined";
-import IconButton from "@mui/material/IconButton";
-import { Icon } from "@mui/material";
 
 export default function Footer() {
   return (

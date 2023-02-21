@@ -1,26 +1,33 @@
 import React from "react";
-import $ from "jquery";
 import Carousel from "./Carousel";
+import List from "./List";
 
-function MediaTray(props){
+var _ = require("lodash");
+
+function MediaTray(props) {
   const compartments = Object.keys(props.mediaData);
   const compartmentData = Object.values(props.mediaData);
 
-  function getHeight(){
-    let windowHeight = window.innerHeight;
-    let headerHeight = $("#header").outerHeight();
-    let footerHeight = $("#footer").outerHeight();
-    const mediaHeight = $("#media-div").outerHeight(windowHeight - headerHeight - footerHeight);
-    return mediaHeight;
-  }
-
-  return(
-    <div className="container-fluid px-3 media-tray-container" id="media-div" height={getHeight()}>
-      {compartments.map( (fileType, index) => {
-        return <Carousel type={fileType} data={compartmentData[index]} />
+  return (
+    <div className="container-fluid px-3 media-tray-container" id="media-div">
+      {compartments.map((fileType, index) => {
+        if(fileType === "audio"){
+          return(
+            <div>
+            <p className="lead">{_.capitalize(fileType)}s</p>
+            <List type={fileType} data={compartmentData[index]} />
+          </div>
+          )
+        }
+        return (
+          <div>
+            <p className="lead">{_.capitalize(fileType)}s</p>
+            <Carousel type={fileType} data={compartmentData[index]} />
+          </div>
+        );
       })}
     </div>
-  )
+  );
 }
 
 export default MediaTray;
