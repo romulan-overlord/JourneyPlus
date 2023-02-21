@@ -1,4 +1,4 @@
-import React, { useState , useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import IconButton from "@mui/material/IconButton";
 import DoneIcon from "@mui/icons-material/Done";
 import $ from "jquery";
@@ -9,7 +9,11 @@ function EntryInput(props) {
   const [entryData, setEntryData] = useState({
     title: "",
     content: "",
-    media: [],
+    media: {
+      image: [],
+      video: [],
+      audio: [],
+    },
   });
 
   const [isMedia, setMedia] = useState(false);
@@ -70,7 +74,7 @@ function EntryInput(props) {
           }
           newMedia = {
             ...newMedia,
-            [fileType]:[...new Set(temp)],
+            [fileType]: [...new Set(temp)],
           };
           setMedia(true);
           return {
@@ -85,6 +89,33 @@ function EntryInput(props) {
     }
   }
 
+  function removeMedia(type, src) {
+    let newMedia = entryData.media;
+    // console.log(newMedia);
+    const keyList = Object.keys(newMedia);
+    const valueList = Object.values(newMedia);
+    // console.log(keyList);
+    // console.log(valueList);
+    // console.log(type);
+    let arr = [];
+    arr = valueList[keyList.indexOf(type)];
+    // console.log(arr);
+    // console.log("before: " + arr);
+    const index = arr.indexOf(src);
+    arr.splice(index, 1);
+    // console.log("after: " + arr);
+    newMedia = {
+      ...newMedia,
+      [type]: arr,
+    };
+    setEntryData((prev) => {
+      return {
+        ...prev,
+        newMedia,
+      };
+    });
+  }
+
   function setDimensions() {
     let windowHeight = window.innerHeight;
     let headerHeight = $("#header").outerHeight();
@@ -93,8 +124,7 @@ function EntryInput(props) {
     $("#textInput").outerHeight(windowHeight - headerHeight - footerHeight);
     let inputHeight = $("#textInput").outerHeight();
     $("#content-div").outerHeight(inputHeight - titleHeight);
-    $("#media-div").outerHeight(windowHeight - headerHeight - footerHeight)
-    const mediaHeight = $("#media-div").outerHeight();
+    $("#media-div").outerHeight(windowHeight - headerHeight - footerHeight);
   }
 
   return (
@@ -159,7 +189,10 @@ function EntryInput(props) {
                   </tbody>
                 </table>
               ) : (
-                <MediaTray mediaData={entryData.media} />
+                <MediaTray
+                  mediaData={entryData.media}
+                  removeMedia={removeMedia}
+                />
               )}
               <input
                 onChange={getFiles}

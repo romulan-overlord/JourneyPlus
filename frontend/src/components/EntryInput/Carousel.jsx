@@ -1,6 +1,13 @@
 import * as React from "react";
+import $ from "jquery";
 
 function Carousel(props) {
+
+  React.useEffect(()=>{
+    console.log("just rendered: " + props.type);
+    $('#m0').addClass('active');
+  })
+
   const id_name = "#" + props.type;
   return (
     <div id={props.type} className="carousel slide">
@@ -12,6 +19,7 @@ function Carousel(props) {
               data-bs-target={id_name}
               data-bs-slide-to={index}
               className="active"
+              key={index}
             ></button>
           );
         })}
@@ -20,7 +28,7 @@ function Carousel(props) {
         {props.data.map((file, index) => {
           if (index === 0) {
             return (
-              <div className="carousel-item active">
+              <div className="carousel-item active" key={index} id={'m' + index}>
                 {props.type === "image" ? (
                   <img src={file} className="d-block w-100" alt="..." />
                 ) :  props.type === "video" ? (
@@ -35,7 +43,7 @@ function Carousel(props) {
             );
           }
           return (
-            <div className="carousel-item">
+            <div className="carousel-item" key={index} id={'m' + index}>
               {props.type === "image" ? (
                 <img src={file} className="d-block w-100" alt="..." />
               ) : props.type === "video" ? (
