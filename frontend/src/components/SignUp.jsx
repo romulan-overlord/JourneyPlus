@@ -5,7 +5,21 @@ import Link from "@mui/material/Link";
 
 function SignUp(props) {
 
-  const [isUID, setUid] = useState(false);
+  const [isUID, setUid] = useState(true);
+  const [isEmail, setEmail] =useState(true);
+
+  function invertUid() {
+    setUid((prev) => {
+      return !prev;
+    });
+  }
+
+  function invertEmail(){
+    setEmail((prev) => {
+      return !prev;
+    });
+  }
+
   // const [flag, setUid] = useState({});
   function handleSubmitSignUp(event) {
     event.preventDefault();
@@ -26,12 +40,15 @@ function SignUp(props) {
     })
       .then((response) => response.json())
       .then((data) => {
-        if(data.success === "901"){ 
-          // props.switch();
-          // console.log("Success:", data);
-        }else{
-          // display error message, depending on wat express returned
-          console.log("failure:", data);
+        if(data.success === "900"){
+          invertUid();
+          invertEmail();
+        }else if(data.success === "901"){ 
+          invertUid();
+        }else if(data.success === "902"){
+          invertEmail();
+        }else if(data.success === "999"){
+          props.invertIsSignedUp();
         }
       })
       .catch((error) => {
@@ -91,30 +108,62 @@ function SignUp(props) {
                       </div>
                     </div>
                     <div className="row">
-                      <div className="input-text input-group flex-nowrap margin-between-input">
-                        <input
-                          type="text"
-                          name="username"
-                          className="form-control "
-                          placeholder="Username"
-                          aria-label="Username"
-                          aria-describedby="addon-wrapping"
-                          required
-                        ></input>
-                        {/* {!isUID ? <p>Invalid Username</p> : null} */}
-                      </div>
+                      {isUID ? (
+                        <div className="input-text input-group flex-nowrap margin-between-input">
+                          <input
+                            type="text"
+                            name="username"
+                            className="form-control "
+                            placeholder="Username"
+                            aria-label="Username"
+                            aria-describedby="addon-wrapping"
+                            required
+                          ></input>
+                        </div>
+                      ) : (
+                        <div className="margin-between-input">
+                          <input
+                            onChange={invertUid}
+                            type="text"
+                            name="username"
+                            className="form-control is-invalid"
+                            aria-describedby="validationServer03Feedback"
+                            required
+                          ></input>
 
-                      <div className="input-group flex-nowrap margin-between-input">
-                        <input
-                          type="text"
-                          name="email"
-                          className="form-control"
-                          placeholder="Email"
-                          aria-label="Email"
-                          aria-describedby="addon-wrapping"
-                          required
-                        ></input>
-                      </div>
+                          <div className="invalid-feedback">
+                            Username already exists.
+                          </div>
+                        </div>
+                      )}
+                      {isEmail ? (
+                        <div className="input-group flex-nowrap margin-between-input">
+                          <input
+                            type="text"
+                            name="email"
+                            className="form-control"
+                            placeholder="Email"
+                            aria-label="Email"
+                            aria-describedby="addon-wrapping"
+                            required
+                          ></input>
+                        </div>
+                      ) : (
+                        <div className="margin-between-input">
+                          <input
+                            onChange={invertEmail}
+                            type="text"
+                            name="email"
+                            className="form-control is-invalid"
+                            aria-describedby="validationServer03Feedback"
+                            required
+                          ></input>
+
+                          <div class="invalid-feedback">
+                            Email already taken.
+                          </div>
+                        </div>
+                      )}
 
                       <div className="input-group flex-nowrap set-colour outline-dark margin-between-input">
                         <input
