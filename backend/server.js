@@ -90,35 +90,32 @@ app.post("/submit-entry", (req, res) => {
 });
 
 app.post("/signUp", (req, res) => {
-  Users.findOne({  
-    username: req.body.username, 
-    email: req.body.email }, async (err, doc) => {
-      if (err) 
-        throw err;
-      if (doc) 
+  Users.findOne({username: req.body.username, email: req.body.email}, async(err, doc) => {
+    if(err)
+      throw err;
+      if(doc){
         res.send({
           success: "900"
         });
-        // console.log("Already exists");
-      else if (!doc) {
-        Users.findOne({username: req.body.username}, async(err, doc) => {
-          if(err)
-            throw err;
-          if(doc)
+      }
+      else if(!doc){
+        Users.findOne({ username: req.body.username }, async (err, doc) => {
+          if (err) throw err;
+          if (doc) {
             res.send({
-              success: "901"
+              success: "901",
             });
-            // console.log("Username already taken");
-          else if(!doc){
-            Users.findOne({email: req.body.email}, async(err, doc) => {
-              if(err)
-                throw err;
-              if(doc)
+          }
+          // console.log("Username already taken");
+          else if (!doc) {
+            Users.findOne({ email: req.body.email }, async (err, doc) => {
+              if (err) throw err;
+              if (doc)
                 res.send({
-                  success: "902"
+                  success: "902",
                 });
-                // console.log("Email already taken");
-              else if(!doc){
+              // console.log("Email already taken");
+              else if (!doc) {
                 const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
                 const newUser = new Users({
@@ -131,16 +128,15 @@ app.post("/signUp", (req, res) => {
                 await newUser.save();
                 console.log("User Created");
                 res.send({
-                  success: "999"
+                  success: "999",
                 });
               }
-            })
+            });
           }
-
-        })
+        });
       }
-    });
-});
+  })   
+})
   // console.log(req.body);
   // Users.register({
   //   firstName: req.body.firstName, 
@@ -175,18 +171,22 @@ app.post("/login", (req, res)=>{
         if(foundUser){
           bcrypt.compare(req.body.password, foundUser.password, function(err, result){
             if(result === true){
-              console.log("Found User");
               res.send({
-                success: true
+                success: "802",
+                user: foundUser
               });
             }
             else{
-              console.log("User not found");
+              res.send({
+                success: "801"
+              });
             }
           });
         }
         else if(!foundUser){
-          console.log("Username incorrect");
+          res.send({
+            success: "800"
+          });
         }
       }
     });

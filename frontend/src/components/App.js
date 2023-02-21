@@ -53,7 +53,7 @@ function App() {
       ) : isSignedUp ? (
         <Login invertLoggedIn={invertLoggedIn} switch={invertIsSignedUp} />
       ) : (
-        <SignUp switch={invertIsSignedUp} />
+        <SignUp invertIsSignedUp={invertIsSignedUp} switch={invertIsSignedUp} />
       )}
       {setDimensions()}
     </div>

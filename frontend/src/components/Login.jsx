@@ -1,9 +1,25 @@
 import { teal } from "@mui/material/colors";
 import { textAlign } from "@mui/system";
-import * as React from "react";
+import React, {useState} from "react";
 import Link from "@mui/material/Link";
 
 function Login(props) {
+
+  const[IslogUid, setLogUid] = useState(true);
+  const[IsPwd, setPwd] = useState(true);
+
+  function invertLogUid(){
+    setLogUid((prev) =>{
+      return !prev;
+    });
+  }
+
+  function invertPwd(){
+    setPwd((prev) => {
+      return !prev;
+    });
+  }
+
   function handleSubmitLogin(event) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -20,9 +36,14 @@ function Login(props) {
     })
       .then((response) => response.json())
       .then((data) => {
-        if(data.success === true){
+        if(data.success === "800"){
+          invertLogUid();
+          invertPwd();
+        }else if(data.success === "801"){
+          invertPwd();
+        }else if(data.success === "802"){
+          console.log(data.user);
           props.invertLoggedIn();
-        console.log("Success:", data);
         }
         
       })
@@ -53,29 +74,63 @@ function Login(props) {
                 <div className="card-body">
                   <form onSubmit={handleSubmitLogin} method="POST">
                     <div className="row">
-                      <div className="input-text input-group flex-nowrap margin-between-input">
-                        <input
-                          type="text"
-                          name="username"
-                          className="form-control"
-                          placeholder="Username"
-                          aria-label="Username"
-                          aria-describedby="addon-wrapping"
-                          required
-                        ></input>
-                      </div>
+                      {IslogUid ? (
+                        <div className="input-text input-group flex-nowrap margin-between-input">
+                          <input
+                            type="text"
+                            name="username"
+                            className="form-control"
+                            placeholder="Username"
+                            aria-label="Username"
+                            aria-describedby="addon-wrapping"
+                            required
+                          ></input>
+                        </div>
+                      ) : (
+                        <div className="margin-between-input">
+                          <input
+                            onChange={invertLogUid}
+                            type="text"
+                            name="username"
+                            className="form-control is-invalid"
+                            aria-describedby="validationServer03Feedback"
+                            required
+                          ></input>
 
-                      <div className="input-group flex-nowrap set-colour outline-dark margin-between-input">
-                        <input
-                          type="password"
-                          name="password"
-                          className="form-control"
-                          placeholder="Password"
-                          aria-label="Password"
-                          aria-describedby="addon-wrapping"
-                          required
-                        ></input>
-                      </div>
+                          <div className="invalid-feedback">
+                            Invalid Username
+                          </div>
+                        </div>
+                      )}
+
+                      {IsPwd ? (
+                        <div className="input-group flex-nowrap set-colour outline-dark margin-between-input">
+                          <input
+                            type="password"
+                            name="password"
+                            className="form-control"
+                            placeholder="Password"
+                            aria-label="Password"
+                            aria-describedby="addon-wrapping"
+                            required
+                          ></input>
+                        </div>
+                      ) : (
+                        <div className="margin-between-input">
+                          <input
+                            onChange={invertPwd}
+                            type="password"
+                            name="password"
+                            className="form-control is-invalid"
+                            aria-describedby="validationServer03Feedback"
+                            required
+                          ></input>
+
+                          <div className="invalid-feedback">
+                            Invalid Password
+                          </div>
+                        </div>
+                      )}
                     </div>
                     <div className="text-center">
                       <button
