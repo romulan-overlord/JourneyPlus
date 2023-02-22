@@ -89,21 +89,13 @@ function EntryInput(props) {
     }
   }
 
-  function removeMedia(type, src) {
+  function removeMedia(type, id) {
     let newMedia = entryData.media;
-    // console.log(newMedia);
     const keyList = Object.keys(newMedia);
     const valueList = Object.values(newMedia);
-    // console.log(keyList);
-    // console.log(valueList);
-    // console.log(type);
     let arr = [];
     arr = valueList[keyList.indexOf(type)];
-    // console.log(arr);
-    // console.log("before: " + arr);
-    const index = arr.indexOf(src);
-    arr.splice(index, 1);
-    // console.log("after: " + arr);
+    arr.splice(id, 1);
     newMedia = {
       ...newMedia,
       [type]: arr,
@@ -111,7 +103,7 @@ function EntryInput(props) {
     setEntryData((prev) => {
       return {
         ...prev,
-        newMedia,
+        media: newMedia,
       };
     });
   }

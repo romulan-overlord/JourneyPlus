@@ -2,13 +2,11 @@ import * as React from "react";
 import $ from "jquery";
 
 function Carousel(props) {
-
-  React.useEffect(()=>{
-    console.log("just rendered: " + props.type);
-    $('#m0').addClass('active');
-  })
-
   const id_name = "#" + props.type;
+  React.useEffect(() => {
+    console.log("just rendered: " + props.type);
+    
+  });
   return (
     <div id={props.type} className="carousel slide">
       <div className="carousel-indicators">
@@ -28,32 +26,44 @@ function Carousel(props) {
         {props.data.map((file, index) => {
           if (index === 0) {
             return (
-              <div className="carousel-item active" key={index} id={'m' + index}>
+              <div
+                className="carousel-item active"
+                key={index}
+                id={"m" + index}
+              >
                 {props.type === "image" ? (
-                  <img src={file} className="d-block w-100" alt="..." />
-                ) :  props.type === "video" ? (
+                  <img
+                    src={file}
+                    className="d-block w-100"
+                    alt="..."
+                    id={"m" + index}
+                  />
+                ) : (
                   <video className="width-100" autoPlay loop muted>
-                    <source src={file} type="video/mp4"></source>
+                    <source
+                      src={file}
+                      type="video/mp4"
+                      id={"m" + index}
+                    ></source>
                   </video>
-                ) : <audio controls>
-                    <source src={file} type="audio/mpeg"></source>
-                    <source src="horse.ogg" type="audio/ogg"></source>
-                  </audio>}
+                )}
               </div>
             );
           }
           return (
-            <div className="carousel-item" key={index} id={'m' + index}>
+            <div className="carousel-item" key={index} id={"m" + index}>
               {props.type === "image" ? (
-                <img src={file} className="d-block w-100" alt="..." />
-              ) : props.type === "video" ? (
+                <img
+                  src={file}
+                  className="d-block w-100"
+                  alt="..."
+                  id={"m" + index}
+                />
+              ) : (
                 <video className="width-100" autoPlay loop muted>
-                  <source src={file} type="video/mp4"></source>
+                  <source src={file} type="video/mp4" id={"m" + index}></source>
                 </video>
-              ) : <audio controls>
-                  <source src={file} type="audio/mpeg"></source>
-                  <source src="horse.ogg" type="audio/ogg"></source>
-                </audio>}
+              )}
             </div>
           );
         })}
