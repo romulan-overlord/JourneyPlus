@@ -7,10 +7,10 @@ function List(props) {
     <div>
       {props.data.map((file, index) => {
         return (
-          <div key={index} className="row" id={index}>
+          <div key={index} className="row">
             <div className="col-lg-10">
-            <audio controls className="audio-player">
-              <source src={file} type="audio/mpeg"></source>
+            <audio controls className="audio-player" id={'m' + index}>
+              <source src={file} type="audio/mpeg" ></source>
             </audio>
             </div>
             <div className="col-lg-1">

@@ -1,6 +1,5 @@
-import { teal } from "@mui/material/colors";
-import { textAlign } from "@mui/system";
 import React, {useState} from "react";
+import uniqid from 'uniqid';
 import Link from "@mui/material/Link";
 
 function Login(props) {
@@ -26,6 +25,7 @@ function Login(props) {
     const requestData = {
       username: data.get("username"),
       password: data.get("password"),
+      cookieID: uniqid()
     };
     fetch("http://localhost:8000/login", {
       method: "POST",
@@ -42,10 +42,9 @@ function Login(props) {
         }else if(data.success === "801"){
           invertPwd();
         }else if(data.success === "802"){
-          console.log(data.user);
+          props.updateCurrentUser(data.user);
           props.invertLoggedIn();
         }
-        
       })
       .catch((error) => {
         console.error("Error:", error);

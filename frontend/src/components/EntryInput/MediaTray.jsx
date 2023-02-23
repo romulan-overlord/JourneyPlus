@@ -15,21 +15,27 @@ function MediaTray(props) {
   function deleteMedia(carouselType) {
     const typeID = "#" + carouselType;
     let temp = "";
+    console.log(typeID + " .active");
     if (carouselType === "image") {
-      temp = $(typeID + " .active img").attr("src");
+      temp = $(typeID + " .active img").attr("id");
+      console.log("message from the stars: " + temp);
     } else if (carouselType === "video") {
-      temp = $(typeID + " .active source").attr("src");
+      temp = $(typeID + " .active source").attr("id");
     }
-    props.removeMedia(carouselType, temp);
+    var myCarousel = $(typeID);
+    var carousel = new bootstrap.Carousel(myCarousel);
+    carousel.next();
+    props.removeMedia(carouselType, temp.slice(1));
   }
 
   function deleteAudio(carouselType, index) {
     const typeID = "#" + index;
     let temp = "";
     if (carouselType === "audio") {
-      temp = $(typeID + " .audio-player  source").attr("src");
+      temp = $(typeID + " .audio-player").attr("id");
     }
-    props.removeMedia(carouselType, temp);
+    console.log("audio index: " + index + " " + carouselType);
+    props.removeMedia(carouselType, index);
   }
 
   return (
