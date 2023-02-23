@@ -40,14 +40,14 @@ function SignUp(props) {
     })
       .then((response) => response.json())
       .then((data) => {
-        if(data.success === "900"){
+        if (data.success === "900") {
           invertUid();
           invertEmail();
-        }else if(data.success === "901"){ 
+        } else if (data.success === "901") {
           invertUid();
-        }else if(data.success === "902"){
+        } else if (data.success === "902") {
           invertEmail();
-        }else if(data.success === "999"){
+        } else if (data.success === "999") {
           props.invertIsSignedUp();
         }
       })
@@ -174,7 +174,7 @@ function SignUp(props) {
                           aria-label="Password"
                           aria-describedby="addon-wrapping"
                           required
-                        ></input>
+                         ></input>
                       </div>
                     </div>
                     <div className="text-center">

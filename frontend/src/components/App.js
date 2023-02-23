@@ -4,9 +4,10 @@ import EntryInput from "./EntryInput/EntryInput";
 import Header from "./Header";
 import SignUp from "./SignUp";
 import Login from "./Login";
+import Footer from "./Footer";
 
 function App() {
-  const [isLoggedIn, setLoggedIn] = useState(true);
+  const [isLoggedIn, setLoggedIn] = useState(false);
   const [isSignedUp, setIsSignedUp] = useState(false);
 
   function invertIsSignedUp(event) {

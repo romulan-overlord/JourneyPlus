@@ -85,7 +85,7 @@ body {
 
 .set-signup-button-colour{
   /* background-color: #5ce1e6; */
-  background-color: #D1FFF3;
+  background-color:#f7b4a7;
 }
 
 .margin-between-input{
@@ -133,6 +133,29 @@ body {
   font-size: 2rem;
 }
 
+.center-element{
+  margin-left:auto;
+  margin-right:auto;
+  display:block;
+}
+
+.table_data{
+  padding-right: 50px;
+}
+
+.btn-default
+{
+background-color: #f7b4a7;
+color:#FFF;
+border-color: #2F3E48;
+}
+
+.btn-default:hover, .btn-default:focus, .btn-default:active, .btn-default.active, .open .dropdown-toggle.btn-default {
+background-color: #2F3E48;
+color:#FFF; 
+border-color: #31347B;
+ 
+}
 
 /* Create New Entry */
 
