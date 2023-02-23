@@ -1,6 +1,20 @@
-import * as React from "react";
+import React, {useState} from "react";
+import {Avatar} from "@mui/material";
+import PersonIcon from "@mui/icons-material/Person";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import {Button} from "@mui/material";
+import MapsUgcIcon from "@mui/icons-material/MapsUgc";
+import Tooltip from "@mui/material/Tooltip";
 
 function Header(props) {
+  const [num, setNum] = useState("");
+
+  const handleChange = (event) => {
+    setNum(event.target.value);
+  };
   return (
     <nav className="navbar navbar-expand-md navbar-dark" id="header">
       <div className="container-fluid navbar-container mx-lg-5 py-lg-3 mx-md-3 py-md-2 py-2 mx-2">
@@ -17,14 +31,50 @@ function Header(props) {
         </button>
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
-            <li className="nav-item">
-              <a className="nav-link" href="#" onClick={props.logOut}>
-                Log Out
-              </a>
-            </li>
-            {/* <li className="nav-item">
-              <a className="nav-link disabled">Disabled</a>
-            </li> */}
+            <table className="width-100">
+              <tr>
+                <td className="table_data">
+                    <button type="button" className="btn btn-default btn-lg">
+                      Compose
+                    </button>
+                    {/* <Button
+                      variant="contained"
+                      startIcon={<MapsUgcIcon />}
+                    >
+                      Compose
+                    </Button> */}
+                </td>
+                <td className="table_data">
+                  <a className="nav-link" href="#">
+                    <FormControl sx={{ m: 1, minWidth: 120 }}>
+                      <InputLabel id="demo-simple-select-helper-label">
+                        Post
+                      </InputLabel>
+                      <Select
+                        labelId="demo-simple-select-helper-label"
+                        id="demo-simple-select-helper"
+                        label="Post"
+                        value={num}
+                        onChange={handleChange}
+                      >
+                        {/* <MenuItem value="">
+                        <em>None</em>
+                      </MenuItem> */}
+                        <MenuItem value={1}>Private</MenuItem>
+                        <MenuItem value={2}>Public</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </a>
+                </td>
+                <td>
+                  <a className="nav-link" href="#">
+                    <Avatar>
+                      <PersonIcon />
+                    </Avatar>
+                  </a>
+                </td>
+              </tr>
+            </table>
           </ul>
         </div>
       </div>
