@@ -1,6 +1,6 @@
 import * as React from "react";
 
-function Header() {
+function Header(props) {
   return (
     <nav className="navbar navbar-expand-md navbar-dark" id="header">
       <div className="container-fluid navbar-container mx-lg-5 py-lg-3 mx-md-3 py-md-2 py-2 mx-2">
@@ -18,8 +18,8 @@ function Header() {
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
             <li className="nav-item">
-              <a className="nav-link" href="#">
-                About Us
+              <a className="nav-link" href="#" onClick={props.logOut}>
+                Log Out
               </a>
             </li>
             {/* <li className="nav-item">

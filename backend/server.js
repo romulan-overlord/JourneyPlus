@@ -10,7 +10,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "*",
     credentials: true,
   })
 );
@@ -23,12 +23,12 @@ app.use(express.json());
 mongoose.set("strictQuery", false);
 mongoose.connect("mongodb://localhost:27017/ProjectDB");
 
-const cookieSchema = {
-  username: String,
-  cookieID: String,
-};
+// const cookieSchema = {
+//   username: String,
+//   cookieID: String,
+// };
 
-const CookieMap = mongoose.model("cookieMap", cookieSchema);
+// const CookieMap = mongoose.model("cookieMap", cookieSchema);
 
 const entrySchema = {
   title: String,
@@ -52,6 +52,10 @@ const userSchema = new mongoose.Schema({
 
 const Users = mongoose.model("user", userSchema);
 
+app.get("/message", (req, res) => {
+  res.send("hello fren");
+});
+
 app.post("/submit-entry", (req, res) => {
   console.log("post received");
   console.log(req.body);
@@ -68,6 +72,7 @@ app.post("/submit-entry", (req, res) => {
 });
 
 app.post("/signUp", (req, res) => {
+
   Users.findOne(
     { username: req.body.username, email: req.body.email },
     async (err, doc) => {
@@ -119,6 +124,7 @@ app.post("/signUp", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
+  console.log(req.body);
   Users.findOne(
     {
       username: req.body.username,
@@ -132,10 +138,8 @@ app.post("/login", (req, res) => {
             foundUser.password,
             function (err, result) {
               if (result === true) {
-                Users.updateOne(
-                  { username: req.body.username },
-                  { cookieID: res.body.cookieID }
-                );
+                foundUser.cookieID = req.body.cookieID;
+                foundUser.save();
                 res.send({
                   success: "802",
                   user: foundUser,
@@ -147,6 +151,32 @@ app.post("/login", (req, res) => {
               }
             }
           );
+        } else if (!foundUser) {
+          res.send({
+            success: "800",
+          });
+        }
+      }
+    }
+  );
+});
+
+app.post("/auto-login", (req, res) => {
+  // console.log(req.body);
+  Users.findOne(
+    {
+      username: req.body.username,
+    },
+    async (err, foundUser) => {
+      if (err) throw err;
+      else {
+        if (foundUser) {
+          if (foundUser.cookieID === req.body.cookieID) {
+            res.send({
+              success: "802",
+              user: foundUser,
+            });
+          }
         } else if (!foundUser) {
           res.send({
             success: "800",
