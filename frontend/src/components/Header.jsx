@@ -68,7 +68,7 @@ function Header(props) {
                 </td>
                 <td>
                   <a className="nav-link" href="#">
-                    <Avatar>
+                    <Avatar onClick={props.logOut}>
                       <PersonIcon />
                     </Avatar>
                   </a>

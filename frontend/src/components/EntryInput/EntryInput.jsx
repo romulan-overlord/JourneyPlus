@@ -17,8 +17,17 @@ function EntryInput(props) {
   });
 
   const [isMedia, setMedia] = useState(false);
+  const [ready, setReady] = useState(true);
 
   useEffect(setDimensions);
+
+  function changeReady() {
+    console.log("switching ready: " + ready);
+    setReady((prev) => {
+      return !prev;
+    });
+    console.log("switched ready: " + ready);
+  }
 
   function handleTextChange(event) {
     const newData = event.target.value;
@@ -40,8 +49,10 @@ function EntryInput(props) {
       headers: {
         "Content-Type": "application/json",
       },
-      mode: 'cors',
-      body: JSON.stringify(entryData),
+      body: JSON.stringify({
+        user: props.currentUser.username,
+        entry: entryData
+      }),
     })
       .then((response) => response.json())
       .then((data) => {
@@ -67,12 +78,8 @@ function EntryInput(props) {
           const valueList = Object.values(newMedia);
           const index = keyList.indexOf(fileType);
           let temp = null;
-          if (index != -1) {
-            temp = valueList[index];
-            temp.push(reader.result);
-          } else {
-            temp = [reader.result];
-          }
+          temp = valueList[index];
+          temp.push(reader.result);
           newMedia = {
             ...newMedia,
             [fileType]: [...new Set(temp)],
@@ -91,6 +98,7 @@ function EntryInput(props) {
   }
 
   function removeMedia(type, id) {
+    console.log("removing: " + id);
     let newMedia = entryData.media;
     const keyList = Object.keys(newMedia);
     const valueList = Object.values(newMedia);
@@ -107,6 +115,7 @@ function EntryInput(props) {
         media: newMedia,
       };
     });
+    // setInterval(3000,changeReady());
   }
 
   function setDimensions() {
@@ -185,6 +194,8 @@ function EntryInput(props) {
                 <MediaTray
                   mediaData={entryData.media}
                   removeMedia={removeMedia}
+                  ready={ready}
+                  changeReady={changeReady}
                 />
               )}
               <input

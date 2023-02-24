@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import $ from "jquery";
 
 import Carousel from "./Carousel";
@@ -9,10 +9,18 @@ import DeleteIcon from "@mui/icons-material/Delete";
 var _ = require("lodash");
 
 function MediaTray(props) {
+  const [delSwitcher, setDelSwitcher] = useState(true);
   const compartments = Object.keys(props.mediaData);
   const compartmentData = Object.values(props.mediaData);
 
+  useEffect(() => {
+    if(!props.ready){
+      props.changeReady();
+    }
+  });
+
   function deleteMedia(carouselType) {
+    props.changeReady();
     const typeID = "#" + carouselType;
     let temp = "";
     console.log(typeID + " .active");
@@ -22,9 +30,6 @@ function MediaTray(props) {
     } else if (carouselType === "video") {
       temp = $(typeID + " .active source").attr("id");
     }
-    var myCarousel = $(typeID);
-    var carousel = new bootstrap.Carousel(myCarousel);
-    carousel.next();
     props.removeMedia(carouselType, temp.slice(1));
   }
 
@@ -72,11 +77,15 @@ function MediaTray(props) {
                 </IconButton>
               </div>
             </div>
-            <Carousel
-              type={fileType}
-              data={compartmentData[index]}
-              key={index}
-            />
+            { props.ready ? (
+              <Carousel
+                type={fileType}
+                data={compartmentData[index]}
+                key={index}
+              />
+            ) : (
+              null
+            )}
           </div>
         );
       })}

@@ -1,11 +1,9 @@
 import * as React from "react";
-import $ from "jquery";
 
 function Carousel(props) {
   const id_name = "#" + props.type;
   React.useEffect(() => {
     console.log("just rendered: " + props.type);
-    
   });
   return (
     <div id={props.type} className="carousel slide">
@@ -61,7 +59,11 @@ function Carousel(props) {
                 />
               ) : (
                 <video className="width-100" autoPlay loop muted>
-                  <source src={file} type="video/mp4" id={"m" + index}></source>
+                  <source
+                    src={file}
+                    type="video/mp4"
+                    id={"m" + index}
+                  ></source>
                 </video>
               )}
             </div>

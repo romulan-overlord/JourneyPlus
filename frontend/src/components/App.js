@@ -33,7 +33,6 @@ function App() {
 
   function updateCurrentUser(user) {
     setCurrentUser(() => {
-      console.log("in setter");
       return { ...user };
     });
     setCookies("userIsSaved", true);
@@ -54,10 +53,6 @@ function App() {
   // checking for cookies
   if (checkCookies === true && cookies.userIsSaved === "true") {
     setCheckCookies(false);
-    console.log("checking cookies");
-    console.log(cookies.userIsSaved);
-    console.log(cookies.username);
-    console.log(cookies.cookieID);
     const requestData = {
       username: cookies.username,
       cookieID: cookies.cookieID,
@@ -72,11 +67,9 @@ function App() {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
         if (data.success === "802") {
           updateCurrentUser(data.user);
           invertLoggedIn();
-          console.log('it works!!!!!');
         }
       })
       .catch((error) => {
@@ -88,7 +81,7 @@ function App() {
     <div className="App height-100">
       <Header logOut={logOut} />
       {isLoggedIn ? (
-        <EntryInput />
+        <EntryInput currentUser={currentUser} />
       ) : isSignedUp ? (
         <Login
           invertLoggedIn={invertLoggedIn}

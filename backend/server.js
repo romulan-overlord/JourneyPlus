@@ -23,17 +23,18 @@ app.use(express.json());
 mongoose.set("strictQuery", false);
 mongoose.connect("mongodb://localhost:27017/ProjectDB");
 
-// const cookieSchema = {
-//   username: String,
-//   cookieID: String,
-// };
+const mediaObjSchema = {
+  image: [String],
+  video: [String],
+  audio: [String]
+}
 
-// const CookieMap = mongoose.model("cookieMap", cookieSchema);
+const MediaObj = mongoose.model("mediaObj", mediaObjSchema);
 
 const entrySchema = {
   title: String,
   content: String,
-  media: [String],
+  media: mediaObjSchema
 };
 
 const Entry = mongoose.model("entry", entrySchema);
@@ -59,8 +60,8 @@ app.get("/message", (req, res) => {
 app.post("/submit-entry", (req, res) => {
   console.log("post received");
   console.log(req.body);
-  const newEntry = new Entry(req.body);
-  const user = Users.findOne({ username: "vig" }, function (err, results) {
+  const newEntry = new Entry(req.body.entry);
+  const user = Users.findOne({ username: req.body.user }, function (err, results) {
     if (!err) {
       if (results) {
         results.entries.push(newEntry);
@@ -68,7 +69,7 @@ app.post("/submit-entry", (req, res) => {
       }
     }
   });
-  res.send({ mesage: "What happens now?" });
+  res.send({ mesage: "success" });
 });
 
 app.post("/signUp", (req, res) => {
