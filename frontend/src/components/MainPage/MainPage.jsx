@@ -1,113 +1,32 @@
-import React, {useState} from "react";
+import React, { useState, useEffect } from "react";
 import Card from "./Card";
-function MainPage(props){
-    return (
-      <div className="container">
-        <div className="row">
-          <Card />
-          {/* {props.entries.map((entry) => {
-            return (
-              <div class="card-padding col-lg-4 col-md-6">
-                <div class="card border-success mb-3">
-                  <div class="card-body text-success">
-                    <h5 class="card-title">{entry.title}</h5>
-                    <p class="card-text">
-                      {entry.content.substring(0,150)}
-                    </p>
-                    <button
-                      class="btn btn-lg btn-block btn-outline-dark align-card-button"
-                      type="button"
-                    >
-                      Read More...
-                    </button>
-                  </div>
-                </div>
-              </div>
-            );
-          })} */}
-          <div className="card-padding col-lg-4 col-md-6">
-            <div class="card border-success mb-3">
-              <div class="card-header">
-                <h3>Header</h3>
-              </div>
-              <div class="card-body text-success">
-                <h5 class="card-title">Success card title</h5>
-                <p class="card-text">
-                  Some quick example text to build on the card title and make up
-                  the bulk of the card's content.
-                </p>
-                <button
-                  class="btn btn-lg btn-block btn-outline-dark align-card-button"
-                  type="button"
-                >
-                  Read More...
-                </button>
-              </div>
-            </div>
-          </div>
-          <div className="card-padding col-lg-4 col-md-6">
-            <div class="card border-success mb-3">
-              <div class="card-header">
-                <h3>Header</h3>
-              </div>
-              <div class="card-body text-success">
-                <h5 class="card-title">Success card title</h5>
-                <p class="card-text">
-                  Some quick example text to build on the card title and make up
-                  the bulk of the card's content.
-                </p>
-                <button
-                  class="btn btn-lg btn-block btn-outline-dark align-card-button"
-                  type="button"
-                >
-                  Read More...
-                </button>
-              </div>
-            </div>
-          </div>
-          <div className="card-padding col-lg-4 col-md-6">
-            <div class="card border-success mb-3">
-              <div class="card-header">
-                <h3>Header</h3>
-              </div>
-              <div class="card-body text-success">
-                <h5 class="card-title">Success card title</h5>
-                <p class="card-text">
-                  Some quick example text to build on the card title and make up
-                  the bulk of the card's content.
-                </p>
-                <button
-                  class="btn btn-lg btn-block btn-outline-dark align-card-button"
-                  type="button"
-                >
-                  Read More...
-                </button>
-              </div>
-            </div>
-          </div>
-          <div className="card-padding col-lg-4 col-md-6">
-            <div class="card border-success mb-3">
-              <div class="card-header">
-                <h3>Header</h3>
-              </div>
-              <div class="card-body text-success">
-                <h5 class="card-title">Success card title</h5>
-                <p class="card-text">
-                  Some quick example text to build on the card title and make up
-                  the bulk of the card's content.
-                </p>
-                <button
-                  class="btn btn-lg btn-block btn-outline-dark align-card-button"
-                  type="button"
-                >
-                  Read More...
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+
+function MainPage(props) {
+  const [userReady, setUserReady] = useState(false);
+
+  useEffect(() => {
+    setUserReady(true);
+  });
+
+  useEffect(() => {
+    let windowHeight = 1080;
+    let windowWidth = 1920;
+      let cardHeight = $("#card").outerHeight();
+      let cardWidth = $("#card").outerWidth();
+      $("#row").outerHeight(
+        (windowHeight / windowWidth) * cardWidth
+      );
+      console.log("Before resize: " + cardHeight);
+  });
+  return (
+      <div className="container-fluid px-5 row entry-display-container" id="entryRow">
+        {userReady
+          ? props.currentUser.entries.map((entry, index) => {
+              return <Card entry={entry} index={index} />;
+            })
+          : null}
       </div>
-    );   
+  );
 }
 
 export default MainPage;
