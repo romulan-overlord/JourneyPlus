@@ -8,7 +8,7 @@ import Login from "./Login";
 import MainPage from "./MainPage";
 
 function App() {
-  const [isLoggedIn, setLoggedIn] = useState(true);
+  const [isLoggedIn, setLoggedIn] = useState(false);
   const [isSignedUp, setIsSignedUp] = useState(false);
   const [currentUser, setCurrentUser] = useState();
   const [checkCookies, setCheckCookies] = useState(true)
@@ -81,7 +81,7 @@ function App() {
     <div className="App height-100">
       <Header logOut={logOut} />
       {isLoggedIn ? (
-        <EntryInput currentUser={currentUser} />
+        <MainPage currentUser={currentUser} />
       ) : isSignedUp ? (
         <Login
           invertLoggedIn={invertLoggedIn}
