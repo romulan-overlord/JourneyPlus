@@ -5,10 +5,10 @@ import EntryInput from "./EntryInput/EntryInput";
 import Header from "./Header";
 import SignUp from "./SignUp";
 import Login from "./Login";
-import MainPage from "./MainPage";
+import MainPage from "./MainPage/MainPage";
 
 function App() {
-  const [isLoggedIn, setLoggedIn] = useState(true);
+  const [isLoggedIn, setLoggedIn] = useState(false);
   const [isSignedUp, setIsSignedUp] = useState(false);
   const [currentUser, setCurrentUser] = useState();
   const [checkCookies, setCheckCookies] = useState(true)
@@ -32,12 +32,18 @@ function App() {
   }
 
   function updateCurrentUser(user) {
-    setCurrentUser(() => {
+    let doResolve = false;
+    return new Promise( (resolve, reject) => {  
+      setCookies("userIsSaved", true);
+      setCookies("username", user.username);
+      setCookies("cookieID", user.cookieID);
+      setCurrentUser(() => {
+        doResolve=true;
       return { ...user };
-    });
-    setCookies("userIsSaved", true);
-    setCookies("username", user.username);
-    setCookies("cookieID", user.cookieID);
+      });
+      if(doResolve === true)
+        resolve();
+    })
   }
 
   function logOut(){
@@ -81,7 +87,7 @@ function App() {
     <div className="App height-100">
       <Header logOut={logOut} />
       {isLoggedIn ? (
-        <EntryInput currentUser={currentUser} />
+        currentUser.entries.length > 0 ? (<MainPage currentUser={currentUser} />) : null
       ) : isSignedUp ? (
         <Login
           invertLoggedIn={invertLoggedIn}
