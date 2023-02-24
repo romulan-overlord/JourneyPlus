@@ -132,7 +132,7 @@ app.post("/login", (req, res) => {
               if (result === true) {
                 Users.updateOne(
                   { username: req.body.username },
-                  { cookieID: res.body.cookieID }
+                  { cookieID: req.body.cookieID }
                 );
                 res.send({
                   success: "802",
