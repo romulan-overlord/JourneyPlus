@@ -5,7 +5,7 @@ import EntryInput from "./EntryInput/EntryInput";
 import Header from "./Header";
 import SignUp from "./SignUp";
 import Login from "./Login";
-import MainPage from "./MainPage";
+import MainPage from "./MainPage/MainPage";
 
 function App() {
   const [isLoggedIn, setLoggedIn] = useState(false);
@@ -32,12 +32,18 @@ function App() {
   }
 
   function updateCurrentUser(user) {
-    setCurrentUser(() => {
+    let doResolve = false;
+    return new Promise( (resolve, reject) => {  
+      setCookies("userIsSaved", true);
+      setCookies("username", user.username);
+      setCookies("cookieID", user.cookieID);
+      setCurrentUser(() => {
+        doResolve=true;
       return { ...user };
-    });
-    setCookies("userIsSaved", true);
-    setCookies("username", user.username);
-    setCookies("cookieID", user.cookieID);
+      });
+      if(doResolve === true)
+        resolve();
+    })
   }
 
   function logOut(){

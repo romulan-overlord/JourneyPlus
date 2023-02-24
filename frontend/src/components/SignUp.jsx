@@ -72,7 +72,7 @@ function SignUp(props) {
         <div className="col-md-6">
           <div className="align-card signup-column col-lg-10 px-md-6">
             <div className="container-fluid px-0 landing-page-title">
-              <div className="card set-colour">
+              <div className="card set-colour card-border-radius">
                 <div className="mx-auto signup-text">
                   <h3 className="card-title signup-text">Sign Up</h3>
                 </div>

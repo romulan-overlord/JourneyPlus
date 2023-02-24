@@ -100,7 +100,7 @@ body {
   padding-right: 0;
 }
 
-.card, .button-text{
+.card-border-radius, .button-text{
   border-radius: 2em;
 }
 .align-card{
@@ -159,8 +159,36 @@ border-color: #31347B;
 
 /* Main Page Cards */
 .card-padding {
-  padding: 100px;
+  padding: 1% 1%;
 }
+
+.card-red{
+  background: linear-gradient(-45deg, #ffec61, #f321d7);
+  box-shadow: 0 10px 15px rgba(0,0,0,0.3);
+  transition: .5s;
+
+}
+
+.card-red:hover{
+  transition: 1;
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(0,0,0,.09), 0 4px 8px rgba(0,0,0,.05);
+}
+
+.main-page-card-title{
+  font-family: 'Montserrat';
+  /* text-align: center; */
+}
+
+.main-page-card-text{
+  font-size: 1.25rem;
+  font-family: 'Montserrat', serif;
+}
+
+.align-card-button{
+  text-align: center;
+}
+
 
 /* Create New Entry */
 
