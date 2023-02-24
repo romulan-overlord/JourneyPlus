@@ -9,7 +9,7 @@ import {Button} from "@mui/material";
 import MapsUgcIcon from "@mui/icons-material/MapsUgc";
 import Tooltip from "@mui/material/Tooltip";
 
-function Header() {
+function Header(props) {
   const [num, setNum] = useState("");
 
   const handleChange = (event) => {

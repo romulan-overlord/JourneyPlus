@@ -40,6 +40,7 @@ function EntryInput(props) {
       headers: {
         "Content-Type": "application/json",
       },
+      mode: 'cors',
       body: JSON.stringify(entryData),
     })
       .then((response) => response.json())

@@ -32,6 +32,7 @@ function Login(props) {
       headers: {
         "Content-Type": "application/json",
       },
+      mode: 'cors',
       body: JSON.stringify(requestData),
     })
       .then((response) => response.json())

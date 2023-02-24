@@ -10,7 +10,8 @@ import MainPage from "./MainPage";
 function App() {
   const [isLoggedIn, setLoggedIn] = useState(true);
   const [isSignedUp, setIsSignedUp] = useState(false);
-  const [currentUser, setCurrentUser] = useState({ test: false });
+  const [currentUser, setCurrentUser] = useState();
+  const [checkCookies, setCheckCookies] = useState(true)
 
   const [cookies, setCookies] = useCookies([
     "userIsSaved",
@@ -37,33 +38,44 @@ function App() {
     });
     setCookies("userIsSaved", true);
     setCookies("username", user.username);
-    setCookies("password", user.password);
+    setCookies("cookieID", user.cookieID);
   }
 
-  console.log("wat is happen?" + typeof(cookies.userIsSaved));
+  function logOut(){
+    setCurrentUser({});
+    setCookies("userIsSaved", false);
+    setCookies("username", "");
+    setCookies("cookieID", "");
+    setCookies("password", "");
+    invertLoggedIn();
+  }
+
+
   // checking for cookies
-  if (cookies.userIsSaved === "true") {
+  if (checkCookies === true && cookies.userIsSaved === "true") {
+    setCheckCookies(false);
     console.log("checking cookies");
     console.log(cookies.userIsSaved);
     console.log(cookies.username);
-    console.log(cookies.password);
+    console.log(cookies.cookieID);
     const requestData = {
       username: cookies.username,
-      password: cookies.password,
+      cookieID: cookies.cookieID,
     };
-    fetch("http://localhost:8000/login", {
+    fetch("http://localhost:8000/auto-login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
+      mode: 'cors',
       body: JSON.stringify(requestData),
     })
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
         if (data.success === "802") {
-          // console.log(data);
-          // props.updateCurrentUser(data.user);
+          updateCurrentUser(data.user);
+          invertLoggedIn();
           console.log('it works!!!!!');
         }
       })
@@ -74,7 +86,7 @@ function App() {
 
   return (
     <div className="App height-100">
-      <Header />
+      <Header logOut={logOut} />
       {isLoggedIn ? (
         <MainPage />
       ) : isSignedUp ? (
