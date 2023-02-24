@@ -157,6 +157,11 @@ border-color: #31347B;
  
 }
 
+/* Main Page Cards */
+.card-padding {
+  padding: 100px;
+}
+
 /* Create New Entry */
 
 .text-input-container {

@@ -34,10 +34,10 @@ function Header(props) {
             <table className="width-100">
               <tr>
                 <td className="table_data">
-                    <button type="button" className="btn btn-default btn-lg">
-                      Compose
-                    </button>
-                    {/* <Button
+                  <button type="button" className="btn btn-default">
+                    Compose
+                  </button>
+                  {/* <Button
                       variant="contained"
                       startIcon={<MapsUgcIcon />}
                     >
@@ -46,7 +46,7 @@ function Header(props) {
                 </td>
                 <td className="table_data">
                   <a className="nav-link" href="#">
-                    <FormControl sx={{ m: 1, minWidth: 120 }}>
+                    <FormControl size="small" sx={{ m: 1, minWidth: 120 }}>
                       <InputLabel id="demo-simple-select-helper-label">
                         Post
                       </InputLabel>
@@ -57,9 +57,6 @@ function Header(props) {
                         value={num}
                         onChange={handleChange}
                       >
-                        {/* <MenuItem value="">
-                        <em>None</em>
-                      </MenuItem> */}
                         <MenuItem value={1}>Private</MenuItem>
                         <MenuItem value={2}>Public</MenuItem>
                       </Select>

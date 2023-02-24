@@ -5,10 +5,10 @@ import EntryInput from "./EntryInput/EntryInput";
 import Header from "./Header";
 import SignUp from "./SignUp";
 import Login from "./Login";
-import Footer from "./Footer";
+import MainPage from "./MainPage";
 
 function App() {
-  const [isLoggedIn, setLoggedIn] = useState(false);
+  const [isLoggedIn, setLoggedIn] = useState(true);
   const [isSignedUp, setIsSignedUp] = useState(false);
   const [currentUser, setCurrentUser] = useState();
   const [checkCookies, setCheckCookies] = useState(true)
