@@ -34,7 +34,7 @@ function Header(props) {
             <table className="width-100">
               <tr>
                 <td className="table_data">
-                  <button type="button" className="btn btn-default">
+                  <button type="button" className="btn btn-default" onClick={props.invertcompose}>
                     Compose
                   </button>
                   {/* <Button

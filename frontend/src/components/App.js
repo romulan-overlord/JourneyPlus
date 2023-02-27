@@ -11,7 +11,8 @@ function App() {
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [isSignedUp, setIsSignedUp] = useState(false);
   const [currentUser, setCurrentUser] = useState();
-  const [checkCookies, setCheckCookies] = useState(true)
+  const [checkCookies, setCheckCookies] = useState(true);
+  const [compose, setCompose] = useState(true);
 
   const [cookies, setCookies] = useCookies([
     "userIsSaved",
@@ -25,6 +26,12 @@ function App() {
     });
   }
 
+  function invertCompose() {
+    setCompose((prev) => {
+      return !prev;
+    });
+  }
+
   function invertLoggedIn(event) {
     setLoggedIn((prev) => {
       return !prev;
@@ -33,20 +40,19 @@ function App() {
 
   function updateCurrentUser(user) {
     let doResolve = false;
-    return new Promise( (resolve, reject) => {  
+    return new Promise((resolve, reject) => {
       setCookies("userIsSaved", true);
       setCookies("username", user.username);
       setCookies("cookieID", user.cookieID);
       setCurrentUser(() => {
-        doResolve=true;
-      return { ...user };
+        doResolve = true;
+        return { ...user };
       });
-      if(doResolve === true)
-        resolve();
-    })
+      if (doResolve === true) resolve();
+    });
   }
 
-  function logOut(){
+  function logOut() {
     setCurrentUser({});
     setCookies("userIsSaved", false);
     setCookies("username", "");
@@ -54,7 +60,6 @@ function App() {
     setCookies("password", "");
     invertLoggedIn();
   }
-
 
   // checking for cookies
   if (checkCookies === true && cookies.userIsSaved === "true") {
@@ -68,7 +73,7 @@ function App() {
       headers: {
         "Content-Type": "application/json",
       },
-      mode: 'cors',
+      mode: "cors",
       body: JSON.stringify(requestData),
     })
       .then((response) => response.json())
@@ -85,8 +90,8 @@ function App() {
 
   return (
     <div className="App height-100">
-      <Header logOut={logOut} />
-      {isLoggedIn ? (
+      <Header  invertCompose={invertCompose} logOut={logOut} />
+      {isLoggedIn ? (compose ? <EntryInput currentUser={currentUser} /> :
         <MainPage currentUser={currentUser} />
       ) : isSignedUp ? (
         <Login

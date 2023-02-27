@@ -14,19 +14,19 @@ function EntryInput(props) {
       video: [],
       audio: [],
     },
+    backgroundAudio: "",
   });
 
-  const [isMedia, setMedia] = useState(false);
-  const [ready, setReady] = useState(true);
+  const [isMedia, setMedia] = useState(false);        //tracks if entry has media attachments (conditional rendering of MediaTray)
+  const [ready, setReady] = useState(true);           //tracks whether mediaTray is ready to be rendered or not
+  
 
   useEffect(setDimensions);
 
   function changeReady() {
-    console.log("switching ready: " + ready);
     setReady((prev) => {
       return !prev;
     });
-    console.log("switched ready: " + ready);
   }
 
   function handleTextChange(event) {
@@ -36,6 +36,17 @@ function EntryInput(props) {
       return {
         ...prev,
         [varName]: newData,
+      };
+    });
+  }
+
+  function addBkgAudio(src) {
+    console.log(src);
+    const temp = src;
+    setEntryData((prev) => {
+      return {
+        ...prev,
+        backgroundAudio: temp,
       };
     });
   }
@@ -51,7 +62,7 @@ function EntryInput(props) {
       },
       body: JSON.stringify({
         user: props.currentUser.username,
-        entry: entryData
+        entry: entryData,
       }),
     })
       .then((response) => response.json())
@@ -115,7 +126,6 @@ function EntryInput(props) {
         media: newMedia,
       };
     });
-    // setInterval(3000,changeReady());
   }
 
   function setDimensions() {
@@ -210,7 +220,7 @@ function EntryInput(props) {
           </div>
         </form>
       </div>
-      <Footer />
+      <Footer addBkgAudio={addBkgAudio} />
       {setDimensions()}
     </div>
   );

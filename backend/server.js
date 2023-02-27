@@ -34,7 +34,8 @@ const MediaObj = mongoose.model("mediaObj", mediaObjSchema);
 const entrySchema = {
   title: String,
   content: String,
-  media: mediaObjSchema
+  media: mediaObjSchema,
+  backgroundAudio: String
 };
 
 const Entry = mongoose.model("entry", entrySchema);
