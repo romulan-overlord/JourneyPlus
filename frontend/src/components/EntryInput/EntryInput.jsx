@@ -15,6 +15,7 @@ function EntryInput(props) {
       audio: [],
     },
     backgroundAudio: "",
+    backgroundImage: ""
   });
 
   const [isMedia, setMedia] = useState(false);        //tracks if entry has media attachments (conditional rendering of MediaTray)
@@ -41,12 +42,20 @@ function EntryInput(props) {
   }
 
   function addBkgAudio(src) {
-    console.log(src);
     const temp = src;
     setEntryData((prev) => {
       return {
         ...prev,
         backgroundAudio: temp,
+      };
+    });
+  }
+
+  function addBkgImage(index){
+    setEntryData((prev) => {
+      return {
+        ...prev,
+        backgroundImage: index,
       };
     });
   }
@@ -130,19 +139,19 @@ function EntryInput(props) {
 
   function setDimensions() {
     let windowHeight = window.innerHeight;
-    let headerHeight = $("#header").outerHeight();
+    // let headerHeight = $("#header").outerHeight();
     let footerHeight = $("#footer").outerHeight();
     let titleHeight = $("#title-div").outerHeight();
-    $("#textInput").outerHeight(windowHeight - headerHeight - footerHeight);
+    $("#textInput").outerHeight(windowHeight - footerHeight);
     let inputHeight = $("#textInput").outerHeight();
     $("#content-div").outerHeight(inputHeight - titleHeight);
-    $("#media-div").outerHeight(windowHeight - headerHeight - footerHeight);
+    $("#media-div").outerHeight(windowHeight - footerHeight);
   }
 
   return (
     <div>
       <div
-        className="container-fluid width-100 text-input-container"
+        className="container-fluid width-100 text-input-container pt-4"
         id="textInput"
       >
         <form onSubmit={handleSubmit}>
@@ -193,7 +202,7 @@ function EntryInput(props) {
                   <tbody>
                     <tr>
                       <td className="no-media-container">
-                        <p className="align-middle no-media">
+                        <p className="align-middle no-media date-p">
                           You haven't added any media yet
                         </p>
                       </td>
@@ -220,7 +229,7 @@ function EntryInput(props) {
           </div>
         </form>
       </div>
-      <Footer addBkgAudio={addBkgAudio} />
+      <Footer addBkgAudio={addBkgAudio} addBkgImage={addBkgImage}/>
       {setDimensions()}
     </div>
   );

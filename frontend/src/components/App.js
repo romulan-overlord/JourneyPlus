@@ -12,7 +12,7 @@ function App() {
   const [isSignedUp, setIsSignedUp] = useState(false);
   const [currentUser, setCurrentUser] = useState();
   const [checkCookies, setCheckCookies] = useState(true);
-  const [compose, setCompose] = useState(true);
+  const [compose, setCompose] = useState(false);
 
   const [cookies, setCookies] = useCookies([
     "userIsSaved",
@@ -90,7 +90,7 @@ function App() {
 
   return (
     <div className="App height-100">
-      <Header  invertCompose={invertCompose} logOut={logOut} />
+      {!compose ? <Header  invertCompose={invertCompose} logOut={logOut} /> : null}
       {isLoggedIn ? (compose ? <EntryInput currentUser={currentUser} /> :
         <MainPage currentUser={currentUser} />
       ) : isSignedUp ? (

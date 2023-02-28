@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const sizeof = require('object-sizeof');
 
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
@@ -35,7 +36,8 @@ const entrySchema = {
   title: String,
   content: String,
   media: mediaObjSchema,
-  backgroundAudio: String
+  backgroundAudio: String,
+  backgroundImage: String
 };
 
 const Entry = mongoose.model("entry", entrySchema);
@@ -60,7 +62,7 @@ app.get("/message", (req, res) => {
 
 app.post("/submit-entry", (req, res) => {
   console.log("post received");
-  console.log(req.body);
+  console.log("size of post: " + sizeof(req.body));
   const newEntry = new Entry(req.body.entry);
   const user = Users.findOne({ username: req.body.user }, function (err, results) {
     if (!err) {

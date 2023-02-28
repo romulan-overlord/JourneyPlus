@@ -8,6 +8,11 @@ body {
   margin: 0;
   padding: 0;
   background-color: #2b4b82;
+  /* background-image: url("./../images/bkg1.jpg"); */
+  background-size: cover; /* or "contain" depending on what you want */
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   font-family: "DM Sans", sans-serif;
 }
 
@@ -291,8 +296,27 @@ body {
   background-color: #17263f;
 }
 
+.my-dropdown{
+  display: inline;
+}
+
+.bkg-btn{
+  padding: 0;
+  border: none;
+}
+
+.my-dropdown-menu{
+  height: 300px;
+  overflow: auto;
+}
+
 .date-p {
   color: white;
+}
+
+.return-button{
+  display: inline-block;
+  margin-left: auto;
 }
 
 /* Full Viewer */
