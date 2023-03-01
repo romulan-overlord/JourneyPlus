@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const sizeof = require('object-sizeof');
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt"); //Used to hash passwords
 const saltRounds = 10;  //Hashes the password 10 times which further enhances the security
@@ -29,12 +30,14 @@ const mediaObjSchema = {
   audio: [String]
 }
 
-const MediaObj = mongoose.model("mediaObj", mediaObjSchema);
+// const MediaObj = mongoose.model("mediaObj", mediaObjSchema);
 
 const entrySchema = {
   title: String,
   content: String,
-  media: mediaObjSchema
+  media: mediaObjSchema,
+  backgroundAudio: String,
+  backgroundImage: String
 };
 
 const Entry = mongoose.model("entry", entrySchema);
@@ -59,7 +62,7 @@ app.get("/message", (req, res) => {
 
 app.post("/submit-entry", (req, res) => {
   console.log("post received");
-  console.log(req.body);
+  console.log("size of post: " + sizeof(req.body));
   const newEntry = new Entry(req.body.entry);
   const user = Users.findOne({ username: req.body.user }, function (err, results) {
     if (!err) {

@@ -19,6 +19,7 @@
     "express-session": "^1.17.3",
     "mongoose": "^6.9.0",
     "nodemailer": "^6.9.1",
+    "object-sizeof": "^2.6.1",
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^7.1.2"

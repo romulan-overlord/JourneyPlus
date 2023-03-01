@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
+import { expressIP } from "../settings";
 
 import EntryInput from "./EntryInput/EntryInput";
 import Header from "./Header";
@@ -12,6 +13,7 @@ function App() {
   const [isSignedUp, setIsSignedUp] = useState(false);
   const [currentUser, setCurrentUser] = useState();
   const [checkCookies, setCheckCookies] = useState(true);
+  const [compose, setCompose] = useState(false);;
 
   // const [lat, setLat] = useState([]);
   // const [long, setLong] = useState([]);
@@ -30,6 +32,15 @@ function App() {
     });
   }
 
+  function invertCompose() {
+    setCompose((prev) => {
+      return !prev;
+    });
+    $("body").css("background-image", "none");
+    $("#footer").css("background-color", "#17263f");
+    $("#footer").css("border-top", "none");
+  }
+
   function invertLoggedIn(event) {
     setLoggedIn((prev) => {
       return !prev;
@@ -38,20 +49,19 @@ function App() {
 
   function updateCurrentUser(user) {
     let doResolve = false;
-    return new Promise( (resolve, reject) => {  
+    return new Promise((resolve, reject) => {
       setCookies("userIsSaved", true);
       setCookies("username", user.username);
       setCookies("cookieID", user.cookieID);
       setCurrentUser(() => {
-        doResolve=true;
-      return { ...user };
+        doResolve = true;
+        return { ...user };
       });
-      if(doResolve === true)
-        resolve();
-    })
+      if (doResolve === true) resolve();
+    });
   }
 
-  function logOut(){
+  function logOut() {
     setCurrentUser({});
     setCookies("userIsSaved", false);
     setCookies("username", "");
@@ -60,7 +70,6 @@ function App() {
     invertLoggedIn();
   }
 
-
   // checking for cookies
   if (checkCookies === true && cookies.userIsSaved === "true") {
     setCheckCookies(false);
@@ -68,12 +77,12 @@ function App() {
       username: cookies.username,
       cookieID: cookies.cookieID,
     };
-    fetch("http://localhost:8000/auto-login", {
+    fetch(expressIP + "/auto-login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      mode: 'cors',
+      mode: "cors",
       body: JSON.stringify(requestData),
     })
       .then((response) => response.json())
@@ -109,8 +118,8 @@ function App() {
   
   return (
     <div className="App height-100">
-      <Header logOut={logOut} />
-      {isLoggedIn ? (
+      {!compose ? <Header  invertCompose={invertCompose} logOut={logOut} /> : null}
+      {isLoggedIn ? (compose ? <EntryInput currentUser={currentUser} invertCompose={invertCompose}/> :
         <MainPage currentUser={currentUser} />
       ) : isSignedUp ? (
         <Login

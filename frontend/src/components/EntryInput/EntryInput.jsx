@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { expressIP } from "../../settings";
 import IconButton from "@mui/material/IconButton";
 import DoneIcon from "@mui/icons-material/Done";
 import $ from "jquery";
@@ -14,19 +15,20 @@ function EntryInput(props) {
       video: [],
       audio: [],
     },
+    backgroundAudio: "",
+    backgroundImage: ""
   });
 
-  const [isMedia, setMedia] = useState(false);
-  const [ready, setReady] = useState(true);
+  const [isMedia, setMedia] = useState(false);        //tracks if entry has media attachments (conditional rendering of MediaTray)
+  const [ready, setReady] = useState(true);           //tracks whether mediaTray is ready to be rendered or not
+  
 
   useEffect(setDimensions);
 
   function changeReady() {
-    console.log("switching ready: " + ready);
     setReady((prev) => {
       return !prev;
     });
-    console.log("switched ready: " + ready);
   }
 
   function handleTextChange(event) {
@@ -40,18 +42,37 @@ function EntryInput(props) {
     });
   }
 
+  function addBkgAudio(src) {
+    const temp = src;
+    setEntryData((prev) => {
+      return {
+        ...prev,
+        backgroundAudio: temp,
+      };
+    });
+  }
+
+  function addBkgImage(index){
+    setEntryData((prev) => {
+      return {
+        ...prev,
+        backgroundImage: index,
+      };
+    });
+  }
+
   function handleSubmit(event) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log(data.get("img"));
-    fetch("http://localhost:8000/submit-entry", {
+    fetch(expressIP + "/submit-entry", {
       method: "POST", // or 'PUT'
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         user: props.currentUser.username,
-        entry: entryData
+        entry: entryData,
       }),
     })
       .then((response) => response.json())
@@ -115,18 +136,18 @@ function EntryInput(props) {
         media: newMedia,
       };
     });
-    // setInterval(3000,changeReady());
   }
 
   function setDimensions() {
+    // $("#textInput").addClass("pt-4");
     let windowHeight = window.innerHeight;
-    let headerHeight = $("#header").outerHeight();
+    // let headerHeight = $("#header").outerHeight();
     let footerHeight = $("#footer").outerHeight();
     let titleHeight = $("#title-div").outerHeight();
-    $("#textInput").outerHeight(windowHeight - headerHeight - footerHeight);
+    $("#textInput").outerHeight(windowHeight - footerHeight - 25);
     let inputHeight = $("#textInput").outerHeight();
     $("#content-div").outerHeight(inputHeight - titleHeight);
-    $("#media-div").outerHeight(windowHeight - headerHeight - footerHeight);
+    $("#media-div").outerHeight(windowHeight - footerHeight - 25);
   }
 
   return (
@@ -183,7 +204,7 @@ function EntryInput(props) {
                   <tbody>
                     <tr>
                       <td className="no-media-container">
-                        <p className="align-middle no-media">
+                        <p className="align-middle no-media date-p">
                           You haven't added any media yet
                         </p>
                       </td>
@@ -210,7 +231,7 @@ function EntryInput(props) {
           </div>
         </form>
       </div>
-      <Footer api = {props.apiData} />
+      <Footer addBkgAudio={addBkgAudio} addBkgImage={addBkgImage} return={props.invertCompose}/>
       {setDimensions()}
     </div>
   );

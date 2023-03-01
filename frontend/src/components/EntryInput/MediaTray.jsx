@@ -3,6 +3,7 @@ import $ from "jquery";
 
 import Carousel from "./Carousel";
 import List from "./List";
+import FullView from "../FullView";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 
@@ -12,12 +13,24 @@ function MediaTray(props) {
   const [delSwitcher, setDelSwitcher] = useState(true);
   const compartments = Object.keys(props.mediaData);
   const compartmentData = Object.values(props.mediaData);
+  const [isFullView, setFullView] = useState(false);
+  const [fullViewMarker, setFullViewMarker] = useState({});
 
   useEffect(() => {
-    if(!props.ready){
+    if (!props.ready) {
       props.changeReady();
     }
   });
+
+  function fullViewToggle(type, index) {
+    setFullView((prev) => !prev);
+    console.log("type: " + type);
+    console.log("index: " + index);
+    setFullViewMarker({
+      type: type,
+      index: index,
+    });
+  }
 
   function deleteMedia(carouselType) {
     props.changeReady();
@@ -45,6 +58,14 @@ function MediaTray(props) {
 
   return (
     <div className="container-fluid px-3 media-tray-container" id="media-div">
+      {isFullView ? (
+        <FullView
+          compartments={compartments}
+          compartmentData={compartmentData}
+          marker = {fullViewMarker}
+          close = {() => {setFullView((prev) => !prev);}}
+        ></FullView>
+      ) : null}
       {compartments.map((fileType, index) => {
         if (compartmentData[index].length === 0) return null;
         if (fileType === "audio") {
@@ -77,15 +98,14 @@ function MediaTray(props) {
                 </IconButton>
               </div>
             </div>
-            { props.ready ? (
+            {props.ready ? (
               <Carousel
                 type={fileType}
                 data={compartmentData[index]}
                 key={index}
+                fullViewToggle={fullViewToggle}
               />
-            ) : (
-              null
-            )}
+            ) : null}
           </div>
         );
       })}

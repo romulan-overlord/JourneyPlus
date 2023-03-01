@@ -1,19 +1,19 @@
 import React, {useState, useEffect} from "react";
 
 function Card(props){
-    useEffect(function setHeight(){
-        let windowHeight = 1080;
-        let windowWidth = 1920;
-        let cardHeight = $("#card").outerHeight();
-        let cardWidth = $("#card").outerWidth();
-        $("#card" + props.index).outerHeight((windowHeight/windowWidth) * cardWidth);
-        console.log("Before resize: " + cardHeight);
-        console.log($("#card").outerHeight());
+
+    useEffect( () => {
+      const id = "#c" + props.index;
+      const imageID = props.entry.backgroundImage;
+      if(imageID === undefined)
+        $(id).css("background-color", "#908C3C");
+      const imageUrl = "./../images/bkg" + imageID + ".jpg";
+      $(id).css("background-image", "url(" + imageUrl + ")");
     })
 
     return (
-      <div className="card-container h-100 px-3 pb-2 col-lg-4 col-md-6">
-        <div className="card h-100 border-success card-red">
+      <div className="card-container px-3 pb-2 col-lg-4 col-md-6">
+        <div className="card h-100 border-success card-red" id={"c" + props.index}>
           <div className="card-body">
             <h3 className="main-page-card-title">{props.entry.title}</h3>
             <p className="main-page-card-text">

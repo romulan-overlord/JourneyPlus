@@ -1,5 +1,6 @@
 import React, {useState} from "react";
 import uniqid from 'uniqid';
+import { expressIP } from "../settings";
 import Link from "@mui/material/Link";
 
 function Login(props) {
@@ -27,7 +28,7 @@ function Login(props) {
       password: data.get("password"),
       cookieID: uniqid()
     };
-    fetch("http://localhost:8000/login", {
+    fetch(expressIP + "/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
