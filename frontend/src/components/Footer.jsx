@@ -52,8 +52,6 @@ export default function Footer(props) {
     $("#footer").css("border-top", "solid rgb(200,200,200) 1px");
     props.addBkgImage(i);
   }
-import ReactWeather, { useOpenWeather } from 'react-open-weather';
-export default function Footer(props) {
 
   const now = new Date().toDateString();
   const [time, setTime] = useState(now);
