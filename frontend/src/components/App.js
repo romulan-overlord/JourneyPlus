@@ -15,10 +15,10 @@ function App() {
   const [checkCookies, setCheckCookies] = useState(true);
   const [compose, setCompose] = useState(false);
 
-  // const [lat, setLat] = useState([]);
-  // const [long, setLong] = useState([]);
-  // const [apiData, setApiData] = useState({});
-  // const apiUrl = `https://api.openweathermap.org/data/2.5/weather/?lat=${lat}&lon=${long}&units=metric&APPID=45014d735557d276c6086a85e85ce49b`;
+  const [lat, setLat] = useState([]);
+  const [long, setLong] = useState([]);
+  const [apiData, setApiData] = useState({});
+  const apiUrl = `https://api.openweathermap.org/data/2.5/weather/?lat=${lat}&lon=${long}&units=metric&APPID=45014d735557d276c6086a85e85ce49b`;
 
   const [cookies, setCookies] = useCookies([
     "userIsSaved",
@@ -107,26 +107,6 @@ function App() {
         console.error("Error:", error);
       });
   }
-
-  // useEffect(() => {
-  //   const fetchData = async () =>{
-  //     navigator.geolocation.getCurrentPosition(function (position) {
-  //       setLat(position.coords.latitude);
-  //       setLong(position.coords.longitude);
-  //     });
-  //    setTimeout(() =>{
-  //      fetch(apiUrl)
-  //       .then((res) => res.json())
-  //       .then((result) => {
-  //         setApiData(result);
-  //         console.log(result);
-  //       });
-  //    }, 5000)
-
-  //   }
-  //   fetchData();
-  // }, [lat, long])
-
   return (
     <div className="App height-100">
       {!compose ? (

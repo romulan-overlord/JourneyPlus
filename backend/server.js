@@ -6,7 +6,7 @@ const sizeof = require('object-sizeof');
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt"); //Used to hash passwords
 const saltRounds = 10;  //Hashes the password 10 times which further enhances the security
-
+const https = require("https");
 const app = express();
 
 app.use(
@@ -76,6 +76,8 @@ app.post("/submit-entry", (req, res) => {
 });
 
 app.post("/signUp", (req, res) => {
+
+  console.log(req.body);
 
   Users.findOne(
     { username: req.body.username, email: req.body.email },
@@ -189,6 +191,8 @@ app.post("/auto-login", (req, res) => {
     }
   );
 });
+
+//------------------------------------------------------------- Weather API --------------------------------------------------------------------
 
 // const transporter = nodemailer.createTransport({
 //   host: "smtp.gmail.com",
