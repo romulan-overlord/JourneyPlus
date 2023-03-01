@@ -157,6 +157,11 @@ border-color: #31347B;
  
 }
 
+.dropdown{
+  background-color: #2B7099;
+  border-color: black;
+}
+
 /* Main Page Cards */
 
 .entry-display-container{

@@ -46,11 +46,18 @@ function Header(props) {
                 </td>
                 <td className="table_data">
                   <a className="nav-link" href="#">
-                    <FormControl size="small" sx={{ m: 1, minWidth: 120 }}>
-                      <InputLabel id="demo-simple-select-helper-label">
+                    {/* <FormControl
+                      size="small"
+                      sx={{minWidth: 120, color: "white", borderColor: "white" }}
+                    >
+                      <InputLabel
+                        id="demo-simple-select-helper-label"
+                        sx={{ color: "white" }}
+                      >
                         Post
                       </InputLabel>
                       <Select
+                        sx={{ color: "white" }}
                         labelId="demo-simple-select-helper-label"
                         id="demo-simple-select-helper"
                         label="Post"
@@ -60,7 +67,14 @@ function Header(props) {
                         <MenuItem value={1}>Private</MenuItem>
                         <MenuItem value={2}>Public</MenuItem>
                       </Select>
-                    </FormControl>
+                    </FormControl> */}
+                    <select
+                      className="form-select form-select-md dropdown"
+                      aria-label=".form-select-sm example"
+                    >
+                      <option selected>Private</option>
+                      <option value="1">Public</option>
+                    </select>
                   </a>
                 </td>
                 <td>

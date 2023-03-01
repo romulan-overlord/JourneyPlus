@@ -2,12 +2,14 @@ import { teal } from "@mui/material/colors";
 import { textAlign } from "@mui/system";
 import React, {useState} from "react";
 import Link from "@mui/material/Link";
+import PasswordStrengthBar from "react-password-strength-bar";
 
 function SignUp(props) {
 
   const [isUID, setUid] = useState(true);
   const [isEmail, setEmail] =useState(true);
-
+  const [Pwd, setPwd] = useState("");
+  console.log(Pwd);
   function invertUid() {
     setUid((prev) => {
       return !prev;
@@ -18,6 +20,10 @@ function SignUp(props) {
     setEmail((prev) => {
       return !prev;
     });
+  }
+
+  function handleChange(event){
+    setPwd(event.target.value);
   }
 
   // const [flag, setUid] = useState({});
@@ -140,7 +146,7 @@ function SignUp(props) {
                       {isEmail ? (
                         <div className="input-group flex-nowrap margin-between-input">
                           <input
-                            type="text"
+                            type="email"
                             name="email"
                             className="form-control"
                             placeholder="Email"
@@ -153,7 +159,7 @@ function SignUp(props) {
                         <div className="margin-between-input">
                           <input
                             onChange={invertEmail}
-                            type="text"
+                            type="email"
                             name="email"
                             className="form-control is-invalid"
                             aria-describedby="validationServer03Feedback"
@@ -165,9 +171,9 @@ function SignUp(props) {
                           </div>
                         </div>
                       )}
-
                       <div className="input-group flex-nowrap set-colour outline-dark margin-between-input">
                         <input
+                          onChange={handleChange}
                           type="password"
                           name="password"
                           className="form-control"
@@ -175,9 +181,13 @@ function SignUp(props) {
                           aria-label="Password"
                           aria-describedby="addon-wrapping"
                           required
-                         ></input>
+                        ></input>
                       </div>
                     </div>
+                    <PasswordStrengthBar
+                      password={Pwd}
+                      
+                    />
                     <div className="text-center">
                       <button
                         className="button-text btn btn-block btn-outline-dark set-signup-button-colour"

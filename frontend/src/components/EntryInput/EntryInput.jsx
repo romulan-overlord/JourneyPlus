@@ -210,7 +210,7 @@ function EntryInput(props) {
           </div>
         </form>
       </div>
-      <Footer />
+      <Footer api = {props.apiData} />
       {setDimensions()}
     </div>
   );
