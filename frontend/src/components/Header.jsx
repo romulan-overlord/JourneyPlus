@@ -37,39 +37,11 @@ function Header(props) {
                   <button type="button" className="btn btn-default" onClick={props.invertCompose}>
                     Compose
                   </button>
-                  {/* <Button
-                      variant="contained"
-                      startIcon={<MapsUgcIcon />}
-                    >
-                      Compose
-                    </Button> */}
                 </td>
                 <td className="table_data">
                   <a className="nav-link" href="#">
-                    {/* <FormControl
-                      size="small"
-                      sx={{minWidth: 120, color: "white", borderColor: "white" }}
-                    >
-                      <InputLabel
-                        id="demo-simple-select-helper-label"
-                        sx={{ color: "white" }}
-                      >
-                        Post
-                      </InputLabel>
-                      <Select
-                        sx={{ color: "white" }}
-                        labelId="demo-simple-select-helper-label"
-                        id="demo-simple-select-helper"
-                        label="Post"
-                        value={num}
-                        onChange={handleChange}
-                      >
-                        <MenuItem value={1}>Private</MenuItem>
-                        <MenuItem value={2}>Public</MenuItem>
-                      </Select>
-                    </FormControl> */}
                     <select
-                      className="form-select form-select-md dropdown"
+                      className="form-select form-select-md dropdown header-dropdown"
                       aria-label=".form-select-sm example"
                     >
                       <option selected>Private</option>

@@ -4,11 +4,15 @@ function Card(props){
 
     useEffect( () => {
       const id = "#c" + props.index;
+      const defaultImg = "./../images/img2.jpg";
       const imageID = props.entry.backgroundImage;
-      if(imageID === undefined)
-        $(id).css("background-color", "#908C3C");
-      const imageUrl = "./../images/bkg" + imageID + ".jpg";
-      $(id).css("background-image", "url(" + imageUrl + ")");
+      console.log(imageID);
+      if(imageID === undefined || imageID === "")
+        $(id).css("background-image", "url(" + defaultImg + ")");
+      else{
+        const imageUrl = "./../images/bkg" + imageID + ".jpg";
+        $(id).css("background-image", "url(" + imageUrl + ")");
+      }
     })
 
     return (
@@ -17,16 +21,8 @@ function Card(props){
           <div className="card-body">
             <h3 className="main-page-card-title">{props.entry.title}</h3>
             <p className="main-page-card-text">
-              {props.entry.content}
+              {props.entry.content.substring(0,200) + "..."}
             </p>
-            {/* <div className="text-center">
-                  <button
-                    className="btn btn-lg btn-block btn-outline-dark align-card-button"
-                    type="button"
-                  >
-                    Read More...
-                  </button>
-                </div> */}
           </div>
         </div>
       </div>

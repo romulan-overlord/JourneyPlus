@@ -13,7 +13,7 @@ function App() {
   const [isSignedUp, setIsSignedUp] = useState(false);
   const [currentUser, setCurrentUser] = useState();
   const [checkCookies, setCheckCookies] = useState(true);
-  const [compose, setCompose] = useState(false);;
+  const [compose, setCompose] = useState(false);
 
   // const [lat, setLat] = useState([]);
   // const [long, setLong] = useState([]);
@@ -36,7 +36,7 @@ function App() {
     setCompose((prev) => {
       return !prev;
     });
-    $("body").css("background-image", "none");
+    $("body").css("background-image", "url(" + "./../images/img2.jpg" + ")");
     $("#footer").css("background-color", "#17263f");
     $("#footer").css("border-top", "none");
   }
@@ -68,6 +68,17 @@ function App() {
     setCookies("cookieID", "");
     setCookies("password", "");
     invertLoggedIn();
+  }
+
+  function updateEntries(newEntry){
+    const newEntryArr = currentUser.entries;
+    newEntryArr.push(newEntry);
+    setCurrentUser( prev => {
+      return({
+        ...prev,
+        entries: newEntryArr
+      })
+    })
   }
 
   // checking for cookies
@@ -111,16 +122,22 @@ function App() {
   //         console.log(result);
   //       });
   //    }, 5000)
-      
+
   //   }
   //   fetchData();
   // }, [lat, long])
-  
+
   return (
     <div className="App height-100">
-      {!compose ? <Header  invertCompose={invertCompose} logOut={logOut} /> : null}
-      {isLoggedIn ? (compose ? <EntryInput currentUser={currentUser} invertCompose={invertCompose}/> :
-        <MainPage currentUser={currentUser} />
+      {!compose ? (
+        <Header invertCompose={invertCompose} logOut={logOut} />
+      ) : null}
+      {isLoggedIn ? (
+        compose ? (
+          <EntryInput currentUser={currentUser} invertCompose={invertCompose} updateEntries={updateEntries} />
+        ) : (
+          <MainPage currentUser={currentUser} />
+        )
       ) : isSignedUp ? (
         <Login
           invertLoggedIn={invertLoggedIn}

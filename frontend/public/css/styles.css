@@ -8,7 +8,7 @@ body {
   margin: 0;
   padding: 0;
   background-color: #2b4b82;
-  /* background-image: url("./../images/bkg1.jpg"); */
+  background-image: url("./../images/img2.jpg");
   background-size: cover; /* or "contain" depending on what you want */
   background-position: center center;
   background-repeat: no-repeat;
@@ -42,6 +42,7 @@ body {
 /* width */
 ::-webkit-scrollbar {
   width: 5px;
+  background: none;
 }
 
 /* Track */
@@ -165,7 +166,7 @@ body {
   border-color: #31347b;
 }
 
-.dropdown{
+.header-dropdown{
   background-color: #2B7099;
   border-color: black;
 }
@@ -186,6 +187,9 @@ body {
   background-size: cover;
   box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
   transition: 0.2s;
+  opacity: 0.85;
+  overflow: hidden;
+  white-space: pre-line;
 }
 
 .card-red:hover {

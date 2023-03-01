@@ -16,7 +16,8 @@ function EntryInput(props) {
       audio: [],
     },
     backgroundAudio: "",
-    backgroundImage: ""
+    backgroundImage: "",
+    date: 0,
   });
 
   const [isMedia, setMedia] = useState(false);        //tracks if entry has media attachments (conditional rendering of MediaTray)
@@ -78,6 +79,8 @@ function EntryInput(props) {
       .then((response) => response.json())
       .then((data) => {
         console.log("Success:", data);
+        props.updateEntries(entryData);
+        props.invertCompose();
       })
       .catch((error) => {
         console.error("Error:", error);
