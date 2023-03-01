@@ -2,32 +2,23 @@ import React, { useState, useEffect } from "react";
 import { expressIP } from "../../settings";
 import IconButton from "@mui/material/IconButton";
 import DoneIcon from "@mui/icons-material/Done";
+import EditIcon from "@mui/icons-material/Edit";
 import $ from "jquery";
 import MediaTray from "./MediaTray";
 import Footer from "../Footer";
 
 function EntryInput(props) {
-  const [entryData, setEntryData] = useState({
-    title: "",
-    content: "",
-    media: {
-      image: [],
-      video: [],
-      audio: [],
-    },
-    backgroundAudio: "",
-    backgroundImage: "",
-    date: "",
-    weather: {
-      desc: "",
-      icon: "",
-    },
-  });
+  const [entryData, setEntryData] = useState(props.passedEntry);
 
-  const [isMedia, setMedia] = useState(false); //tracks if entry has media attachments (conditional rendering of MediaTray)
+  const [isMedia, setMedia] = useState(!props.createMode); //tracks if entry has media attachments (conditional rendering of MediaTray)
   const [ready, setReady] = useState(true); //tracks whether mediaTray is ready to be rendered or not
 
   useEffect(setDimensions);
+
+  if(!props.createMode){
+    $("input").prop("disabled", true);
+    $("textarea").prop("disabled", true);
+  }
 
   function changeReady() {
     setReady((prev) => {
@@ -172,7 +163,7 @@ function EntryInput(props) {
         className="container-fluid width-100 text-input-container"
         id="textInput"
       >
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={props.createMode ? handleSubmit : null}>
           <div className="row mx-5">
             {/* this column contains title + done button + content */}
             <div className="col-md-8 px-0">
@@ -194,7 +185,11 @@ function EntryInput(props) {
                   </div>
                   <div className="container-fluid col-sm-1 mx-auto">
                     <IconButton className="mx-auto" type="submit">
-                      <DoneIcon fontSize="large" sx={{ color: "white" }} />
+                      {props.createMode ? (
+                        <DoneIcon fontSize="large" sx={{ color: "white" }} />
+                      ) : (
+                        <EditIcon fontSize="medium" sx={{ color: "white" }} />
+                      )}
                     </IconButton>
                   </div>
                 </div>
@@ -233,6 +228,7 @@ function EntryInput(props) {
                   removeMedia={removeMedia}
                   ready={ready}
                   changeReady={changeReady}
+                  createMode={props.createMode}
                 />
               )}
               <input
@@ -250,8 +246,10 @@ function EntryInput(props) {
       <Footer
         addBkgAudio={addBkgAudio}
         addBkgImage={addBkgImage}
-        return={props.invertCompose}
+        return={props.openEntry}
         setEnv={setEnv}
+        createMode={props.createMode}
+        entryData={entryData}
       />
       {setDimensions()}
     </div>

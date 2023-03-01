@@ -36,9 +36,12 @@ function Card(props) {
     <div
       className="card-container px-3 pb-2 col-lg-4 col-md-6"
       key={props.index}
+      onClick={() =>{
+        props.openEntry(props.entry, false);
+      }}
     >
       <div
-        className="card h-100 border-success card-red"
+        className="card h-100 card-red"
         id={"c" + props.index}
         key={props.index}
       >
