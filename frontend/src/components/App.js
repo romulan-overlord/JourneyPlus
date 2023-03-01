@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useCookies } from "react-cookie";
+import { expressIP } from "../settings";
 
 import EntryInput from "./EntryInput/EntryInput";
 import Header from "./Header";
@@ -30,6 +31,9 @@ function App() {
     setCompose((prev) => {
       return !prev;
     });
+    $("body").css("background-image", "none");
+    $("#footer").css("background-color", "#17263f");
+    $("#footer").css("border-top", "none");
   }
 
   function invertLoggedIn(event) {
@@ -68,7 +72,7 @@ function App() {
       username: cookies.username,
       cookieID: cookies.cookieID,
     };
-    fetch("http://localhost:8000/auto-login", {
+    fetch(expressIP + "/auto-login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -91,7 +95,7 @@ function App() {
   return (
     <div className="App height-100">
       {!compose ? <Header  invertCompose={invertCompose} logOut={logOut} /> : null}
-      {isLoggedIn ? (compose ? <EntryInput currentUser={currentUser} /> :
+      {isLoggedIn ? (compose ? <EntryInput currentUser={currentUser} invertCompose={invertCompose}/> :
         <MainPage currentUser={currentUser} />
       ) : isSignedUp ? (
         <Login

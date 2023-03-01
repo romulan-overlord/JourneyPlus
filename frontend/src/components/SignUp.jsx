@@ -1,6 +1,7 @@
 import { teal } from "@mui/material/colors";
 import { textAlign } from "@mui/system";
 import React, {useState} from "react";
+import { expressIP } from "../settings";
 import Link from "@mui/material/Link";
 
 function SignUp(props) {
@@ -31,7 +32,7 @@ function SignUp(props) {
       email: data.get("email"),
       password: data.get("password"),
     };
-    fetch("http://localhost:8000/signUp", {
+    fetch(expressIP + "/signUp", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -30,7 +30,7 @@ const mediaObjSchema = {
   audio: [String]
 }
 
-const MediaObj = mongoose.model("mediaObj", mediaObjSchema);
+// const MediaObj = mongoose.model("mediaObj", mediaObjSchema);
 
 const entrySchema = {
   title: String,

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { expressIP } from "../../settings";
 import IconButton from "@mui/material/IconButton";
 import DoneIcon from "@mui/icons-material/Done";
 import $ from "jquery";
@@ -64,7 +65,7 @@ function EntryInput(props) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log(data.get("img"));
-    fetch("http://localhost:8000/submit-entry", {
+    fetch(expressIP + "/submit-entry", {
       method: "POST", // or 'PUT'
       headers: {
         "Content-Type": "application/json",
@@ -138,20 +139,21 @@ function EntryInput(props) {
   }
 
   function setDimensions() {
+    // $("#textInput").addClass("pt-4");
     let windowHeight = window.innerHeight;
     // let headerHeight = $("#header").outerHeight();
     let footerHeight = $("#footer").outerHeight();
     let titleHeight = $("#title-div").outerHeight();
-    $("#textInput").outerHeight(windowHeight - footerHeight);
+    $("#textInput").outerHeight(windowHeight - footerHeight - 25);
     let inputHeight = $("#textInput").outerHeight();
     $("#content-div").outerHeight(inputHeight - titleHeight);
-    $("#media-div").outerHeight(windowHeight - footerHeight);
+    $("#media-div").outerHeight(windowHeight - footerHeight - 25);
   }
 
   return (
     <div>
       <div
-        className="container-fluid width-100 text-input-container pt-4"
+        className="container-fluid width-100 text-input-container"
         id="textInput"
       >
         <form onSubmit={handleSubmit}>
@@ -229,7 +231,7 @@ function EntryInput(props) {
           </div>
         </form>
       </div>
-      <Footer addBkgAudio={addBkgAudio} addBkgImage={addBkgImage}/>
+      <Footer addBkgAudio={addBkgAudio} addBkgImage={addBkgImage} return={props.invertCompose}/>
       {setDimensions()}
     </div>
   );

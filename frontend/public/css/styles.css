@@ -168,7 +168,7 @@ body {
 /* Main Page Cards */
 
 .entry-display-container {
-  height: 200px;
+  height: 250px;
   margin: 0;
 }
 
@@ -177,26 +177,29 @@ body {
 }
 
 .card-red {
-  background: linear-gradient(-45deg, #ffec61, #f321d7);
+  /* background: linear-gradient(-45deg, #ffec61, #f321d7); */
+  background-size: cover;
   box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
-  transition: 0.5s;
+  transition: 0.2s;
 }
 
 .card-red:hover {
   transition: 1;
-  transform: scale(1.05);
+  transform: scale(1.03);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.09), 0 4px 8px rgba(0, 0, 0, 0.05);
 }
 
 .main-page-card-title {
   font-family: "Montserrat";
   font-size: 1.4rem;
+  color: white;
   /* text-align: center; */
 }
 
 .main-page-card-text {
   font-size: 1.1rem;
   font-family: "Montserrat", serif;
+  color: white;
 }
 
 .align-card-button {
@@ -206,9 +209,8 @@ body {
 /* Create New Entry */
 
 .text-input-container {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
+  box-sizing: border-box;
+  padding-top: 25px;
 }
 
 .scroll-view {
@@ -284,7 +286,6 @@ body {
   color: rgba(165, 134, 134, 0.4);
 }
 
-/* audio player imported style */
 
 /* Footer */
 
@@ -315,8 +316,7 @@ body {
 }
 
 .return-button{
-  display: inline-block;
-  margin-left: auto;
+  text-align: right;
 }
 
 /* Full Viewer */
