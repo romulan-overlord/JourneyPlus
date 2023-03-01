@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import $ from "jquery";
 
-import CloudOutlinedIcon from "@mui/icons-material/CloudOutlined";
 import AttachFileOutlinedIcon from "@mui/icons-material/AttachFileOutlined";
 import MusicNoteIcon from "@mui/icons-material/MusicNote";
 import VolumeUpIcon from "@mui/icons-material/VolumeUp";
@@ -30,9 +29,8 @@ export default function Footer(props) {
   });
 
   useEffect( () => {
-    console.log("finna get da weather");
+    // console.log("finna get da weather");
     if(isWeather === true){
-      
       var getIP = "http://ip-api.com/json/";
       var openWeatherMap = "http://api.openweathermap.org/data/2.5/weather";
       $.getJSON(getIP).done(function (location) {
@@ -42,8 +40,12 @@ export default function Footer(props) {
           units: "metric",
           appid: "45014d735557d276c6086a85e85ce49b",
         }).done(function (weather) {
-          console.log(weather);
+          // console.log(weather);
           setUserWeather({
+            desc: weather.weather[0].main,
+            icon: weather.weather[0].icon
+          });
+          props.setEnv(time, {
             desc: weather.weather[0].main,
             icon: weather.weather[0].icon
           });
@@ -51,7 +53,6 @@ export default function Footer(props) {
       }); 
       setWeather(false);
     }
-    
   })
 
   function getBackgroundAudio(event) {
@@ -78,8 +79,7 @@ export default function Footer(props) {
     const i = index + 1;
     const imageUrl = "./../images/bkg" + i + ".jpg";
     $("body").css("background-image", "url(" + imageUrl + ")");
-    $("#footer").css("background-color", "rgba(18,18,18,0.3)");
-    $("#footer").css("border-top", "solid rgb(200,200,200) 1px");
+    
     props.addBkgImage(i);
   }
 
@@ -157,6 +157,7 @@ export default function Footer(props) {
                     onClick={() => {
                       setBackground(index);
                     }}
+                    key={index}
                   >
                     <img
                       className="dropdown-item"

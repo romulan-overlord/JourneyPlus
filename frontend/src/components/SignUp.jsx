@@ -3,6 +3,7 @@ import { textAlign } from "@mui/system";
 import React, {useState} from "react";
 import Link from "@mui/material/Link";
 import PasswordStrengthBar from "react-password-strength-bar";
+import { expressIP } from "../settings";
 
 function SignUp(props) {
 
@@ -37,7 +38,7 @@ function SignUp(props) {
       email: data.get("email"),
       password: data.get("password"),
     };
-    fetch("http://localhost:8000/signUp", {
+    fetch(expressIP + "/signUp", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

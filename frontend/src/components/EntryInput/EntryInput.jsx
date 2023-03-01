@@ -17,18 +17,31 @@ function EntryInput(props) {
     },
     backgroundAudio: "",
     backgroundImage: "",
-    date: 0,
+    date: "",
+    weather: {
+      desc: "",
+      icon: "",
+    },
   });
 
-  const [isMedia, setMedia] = useState(false);        //tracks if entry has media attachments (conditional rendering of MediaTray)
-  const [ready, setReady] = useState(true);           //tracks whether mediaTray is ready to be rendered or not
-  
+  const [isMedia, setMedia] = useState(false); //tracks if entry has media attachments (conditional rendering of MediaTray)
+  const [ready, setReady] = useState(true); //tracks whether mediaTray is ready to be rendered or not
 
   useEffect(setDimensions);
 
   function changeReady() {
     setReady((prev) => {
       return !prev;
+    });
+  }
+
+  function setEnv(date, weather) {
+    setEntryData((prev) => {
+      return {
+        ...prev,
+        date: date,
+        weather: weather,
+      };
     });
   }
 
@@ -53,7 +66,7 @@ function EntryInput(props) {
     });
   }
 
-  function addBkgImage(index){
+  function addBkgImage(index) {
     setEntryData((prev) => {
       return {
         ...prev,
@@ -234,7 +247,12 @@ function EntryInput(props) {
           </div>
         </form>
       </div>
-      <Footer addBkgAudio={addBkgAudio} addBkgImage={addBkgImage} return={props.invertCompose}/>
+      <Footer
+        addBkgAudio={addBkgAudio}
+        addBkgImage={addBkgImage}
+        return={props.invertCompose}
+        setEnv={setEnv}
+      />
       {setDimensions()}
     </div>
   );

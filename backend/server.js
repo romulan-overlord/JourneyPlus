@@ -2,10 +2,10 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-const sizeof = require('object-sizeof');
+const sizeof = require("object-sizeof");
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt"); //Used to hash passwords
-const saltRounds = 10;  //Hashes the password 10 times which further enhances the security
+const saltRounds = 10; //Hashes the password 10 times which further enhances the security
 const https = require("https");
 const app = express();
 
@@ -27,8 +27,8 @@ mongoose.connect("mongodb://localhost:27017/ProjectDB");
 const mediaObjSchema = {
   image: [String],
   video: [String],
-  audio: [String]
-}
+  audio: [String],
+};
 
 // const MediaObj = mongoose.model("mediaObj", mediaObjSchema);
 
@@ -37,7 +37,12 @@ const entrySchema = {
   content: String,
   media: mediaObjSchema,
   backgroundAudio: String,
-  backgroundImage: String
+  backgroundImage: String,
+  date: String,
+  weather: {
+    desc: String,
+    icon: String,
+  },
 };
 
 const Entry = mongoose.model("entry", entrySchema);
@@ -64,21 +69,21 @@ app.post("/submit-entry", (req, res) => {
   console.log("post received");
   console.log("size of post: " + sizeof(req.body));
   const newEntry = new Entry(req.body.entry);
-  const user = Users.findOne({ username: req.body.user }, function (err, results) {
-    if (!err) {
-      if (results) {
-        results.entries.push(newEntry);
-        results.save();
+  const user = Users.findOne(
+    { username: req.body.user },
+    function (err, results) {
+      if (!err) {
+        if (results) {
+          results.entries.push(newEntry);
+          results.save();
+        }
       }
     }
-  });
+  );
   res.send({ mesage: "success" });
 });
 
 app.post("/signUp", (req, res) => {
-
-  console.log(req.body);
-
   Users.findOne(
     { username: req.body.username, email: req.body.email },
     async (err, doc) => {
@@ -104,9 +109,9 @@ app.post("/signUp", (req, res) => {
                   success: "902", //If the email is incorrect, it will return an error message by rendering a different input style for the email
                 });
               else if (!doc) {
-                const hashedPassword = await bcrypt.hash(req.body.password, 10);  //the function bcrypt.hash hashes the password entered
+                const hashedPassword = await bcrypt.hash(req.body.password, 10); //the function bcrypt.hash hashes the password entered
 
-                const newUser = new Users({ 
+                const newUser = new Users({
                   firstName: req.body.firstName,
                   lastName: req.body.lastName,
                   username: req.body.username,
@@ -129,7 +134,6 @@ app.post("/signUp", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  console.log(req.body);
   Users.findOne(
     {
       username: req.body.username,
@@ -137,12 +141,15 @@ app.post("/login", (req, res) => {
     async (err, foundUser) => {
       if (err) throw err;
       else {
-        if (foundUser) {     //Username has been found in the database
-          bcrypt.compare(   //this function compares the entered password with the password saved in the database
+        if (foundUser) {
+          //Username has been found in the database
+          bcrypt.compare(
+            //this function compares the entered password with the password saved in the database
             req.body.password,
             foundUser.password,
             function (err, result) {
-              if (result === true) {  //the typed in password and the password saved in the database matches
+              if (result === true) {
+                //the typed in password and the password saved in the database matches
                 foundUser.cookieID = req.body.cookieID; //The user is assigned a cookie
                 foundUser.save();
                 res.send({
@@ -167,7 +174,6 @@ app.post("/login", (req, res) => {
 });
 
 app.post("/auto-login", (req, res) => {
-  // console.log(req.body);
   Users.findOne(
     {
       username: req.body.username,

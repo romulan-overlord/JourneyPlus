@@ -198,6 +198,15 @@ body {
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.09), 0 4px 8px rgba(0, 0, 0, 0.05);
 }
 
+.bottom-menu{
+  position: absolute;
+  bottom: 0;
+}
+
+.bottom-menu-col{
+  text-align: right;
+}
+
 .main-page-card-title {
   font-family: "Montserrat";
   font-size: 1.4rem;
@@ -303,7 +312,10 @@ body {
   height: 25px;
   position: fixed;
   bottom: 0;
-  background-color: #17263f;
+  /* background-color: #17263f; */
+  /* background: none; */
+  background-color: rgba(18,18,18,0.3);
+  border-top: solid rgb(200,200,200) 1px;
 }
 
 .my-dropdown{
