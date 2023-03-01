@@ -316,6 +316,10 @@ body {
   overflow: auto;
 }
 
+.weatherIcon{
+  height: 25px;
+}
+
 .date-p {
   color: white;
 }
