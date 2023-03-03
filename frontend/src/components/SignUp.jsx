@@ -187,6 +187,7 @@ function SignUp(props) {
                     </div>
                     <PasswordStrengthBar
                       password={Pwd}
+                      // scoreWordStyle={color: }
                     />
                     <div className="text-center">
                       <button

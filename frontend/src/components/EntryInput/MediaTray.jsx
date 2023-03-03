@@ -77,6 +77,7 @@ function MediaTray(props) {
                 data={compartmentData[index]}
                 key={index}
                 deleteMedia={deleteAudio}
+                createMode={props.createMode}
               />
             </div>
           );
@@ -87,7 +88,7 @@ function MediaTray(props) {
               <div className="col-10">
                 <span className="lead">{_.capitalize(fileType)}s</span>
               </div>
-              <div className="col-1">
+              {props.createMode ? (<div className="col-1">
                 <IconButton
                   className="mx-auto"
                   onClick={() => {
@@ -96,7 +97,7 @@ function MediaTray(props) {
                 >
                   <DeleteIcon fontSize="small" sx={{ color: "white" }} />
                 </IconButton>
-              </div>
+              </div>) : null}
             </div>
             {props.ready ? (
               <Carousel

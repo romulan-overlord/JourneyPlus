@@ -22,7 +22,7 @@ function MainPage(props) {
       <div className="container-fluid px-lg-5 px-md-3 px-2 row entry-display-container" id="entryRow">
         {userReady
           ? props.currentUser.entries.map((entry, index) => {
-              return <Card entry={entry} index={index} key={index}/>;
+              return <Card entry={entry} index={index} key={index} invertCompose={props.invertCompose} openEntry={props.openEntry}/>;
             })
           : null}
       </div>

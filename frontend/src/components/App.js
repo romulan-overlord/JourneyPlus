@@ -14,6 +14,24 @@ function App() {
   const [currentUser, setCurrentUser] = useState();
   const [checkCookies, setCheckCookies] = useState(true);
   const [compose, setCompose] = useState(false);
+  const [createMode, setCreateMode] = useState(true);
+  const [passedEntry, setPassedEntry] = useState({
+    entryID: "",
+    title: "",
+    content: "",
+    media: {
+      image: [],
+      video: [],
+      audio: [],
+    },
+    backgroundAudio: "",
+    backgroundImage: "",
+    date: "",
+    weather: {
+      desc: "",
+      icon: "",
+    },
+  });
 
   const [lat, setLat] = useState([]);
   const [long, setLong] = useState([]);
@@ -39,6 +57,12 @@ function App() {
     $("body").css("background-image", "url(" + "./../images/img2.jpg" + ")");
     $("#footer").css("background-color", "#17263f");
     $("#footer").css("border-top", "none");
+  }
+
+  function openEntry(entry, bool) {
+    invertCompose();
+    setPassedEntry(entry);
+    setCreateMode(bool);
   }
 
   function invertLoggedIn(event) {
@@ -70,15 +94,15 @@ function App() {
     invertLoggedIn();
   }
 
-  function updateEntries(newEntry){
+  function updateEntries(newEntry) {
     const newEntryArr = currentUser.entries;
     newEntryArr.push(newEntry);
-    setCurrentUser( prev => {
-      return({
+    setCurrentUser((prev) => {
+      return {
         ...prev,
-        entries: newEntryArr
-      })
-    })
+        entries: newEntryArr,
+      };
+    });
   }
 
   // checking for cookies
@@ -114,9 +138,15 @@ function App() {
       ) : null}
       {isLoggedIn ? (
         compose ? (
-          <EntryInput currentUser={currentUser} invertCompose={invertCompose} updateEntries={updateEntries} />
+          <EntryInput
+            currentUser={currentUser}
+            updateEntries={updateEntries}
+            passedEntry={passedEntry}
+            createMode={createMode}
+            openEntry={openEntry}
+          />
         ) : (
-          <MainPage currentUser={currentUser} />
+          <MainPage currentUser={currentUser} openEntry={openEntry} />
         )
       ) : isSignedUp ? (
         <Login

@@ -9,20 +9,22 @@ function List(props) {
         return (
           <div key={index} className="row">
             <div className="col-lg-10">
-            <audio controls className="audio-player" id={'m' + index}>
-              <source src={file} type="audio/mpeg" ></source>
-            </audio>
+              <audio controls className="audio-player" id={"m" + index}>
+                <source src={file} type="audio/mpeg"></source>
+              </audio>
             </div>
-            <div className="col-lg-1">
-            <IconButton
-              className="mx-auto"
-              onClick={() => {
-                props.deleteMedia("audio", index);
-              }}
-            >
-              <DeleteIcon fontSize="small" sx={{ color: "white" }} />
-            </IconButton>
-            </div>
+            {props.createMode ? (
+              <div className="col-lg-1">
+                <IconButton
+                  className="mx-auto"
+                  onClick={() => {
+                    props.deleteMedia("audio", index);
+                  }}
+                >
+                  <DeleteIcon fontSize="small" sx={{ color: "white" }} />
+                </IconButton>
+              </div>
+            ) : null}
           </div>
         );
       })}

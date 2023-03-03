@@ -13,6 +13,8 @@ function Card(props) {
 
   function checkMedia() {
     let tempBool = true;
+  // console.log(props.entry.media.image.length);
+  const isMedia = () => {
     if (
       props.entry.media.image.length === 0 &&
       props.entry.media.video.length === 0 &&
@@ -42,6 +44,7 @@ function Card(props) {
     const id = "#c" + props.index;
     const defaultImg = "./../images/img2.jpg";
     const imageID = props.entry.backgroundImage;
+    // console.log(imageID);
     if (imageID === undefined || imageID === "")
       $(id).css("background-image", "url(" + defaultImg + ")");
     else {
@@ -58,9 +61,12 @@ function Card(props) {
     <div
       className="card-container px-3 pb-2 col-lg-4 col-md-6"
       key={props.index}
+      onClick={() =>{
+        props.openEntry(props.entry, false);
+      }}
     >
       <div
-        className="card h-100 border-success card-red"
+        className="card h-100 card-red"
         id={"c" + props.index}
         key={props.index}
       >

@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const uniqid = require("uniqid");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const sizeof = require("object-sizeof");
@@ -33,6 +34,7 @@ const mediaObjSchema = {
 // const MediaObj = mongoose.model("mediaObj", mediaObjSchema);
 
 const entrySchema = {
+  entryID: String,
   title: String,
   content: String,
   media: mediaObjSchema,
@@ -68,6 +70,8 @@ app.get("/message", (req, res) => {
 app.post("/submit-entry", (req, res) => {
   console.log("post received");
   console.log("size of post: " + sizeof(req.body));
+  req.body.entry.entryID = uniqid();
+  console.log(req.body);
   const newEntry = new Entry(req.body.entry);
   const user = Users.findOne(
     { username: req.body.user },
