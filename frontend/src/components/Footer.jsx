@@ -15,10 +15,7 @@ export default function Footer(props) {
   const [muteAudio, setMuteAudio] = useState(false);
   const [reRender, setRender] = useState(false);
   const [isWeather, setWeather] = useState(props.createMode);
-  // const [userWeather, setUserWeather] = useState({
-  //   desc: "",
-  //   icon: "",
-  // });
+  const [renderBkg, setRenBkg] = useState(true);
 
   useEffect(() => {
     if (reRender) {
@@ -28,9 +25,18 @@ export default function Footer(props) {
     }
   });
 
+  // useEffect(() => {
+  //   if (renderBkg === true && props.createMode === false) {
+  //     setRenBkg(false);
+  //     setBackground(props.entryData.backgroundImage);
+  //   }
+  // });
+  if (!props.createMode) setBackground(props.entryData.backgroundImage);
+
   useEffect(() => {
-    // console.log("finna get da weather");
+    console.log("finna get da weather");
     if (isWeather === true) {
+      console.log("in true");
       var getIP = "http://ip-api.com/json/";
       var openWeatherMap = "http://api.openweathermap.org/data/2.5/weather";
       $.getJSON(getIP).done(function (location) {
@@ -56,6 +62,7 @@ export default function Footer(props) {
   });
 
   function getBackgroundAudio(event) {
+    console.log("in get bkg aud");
     const file = event.target.files;
     var reader = new FileReader();
     reader.readAsDataURL(file[0]);
@@ -67,6 +74,7 @@ export default function Footer(props) {
   }
 
   function muteBkg() {
+    console.log("in muteBkg");
     setMuteAudio((prev) => {
       return !prev;
     });
@@ -75,29 +83,32 @@ export default function Footer(props) {
     });
   }
 
-  if (!props.createMode) setBackground(props.entryData.backgroundImage);
-
   function setBackground(index) {
+    console.log("in set back: " + index + " " + typeof index);
     if (index === "" || index === undefined) return;
-    const i = index + 1;
+    let i = 0;
+    if (props.createMode === true) i = index + 1;
+    else i = index;
     const imageUrl = "./../images/bkg" + i + ".jpg";
     $("body").css("background-image", "url(" + imageUrl + ")");
-    props.addBkgImage(i);
+    if (props.createMode === true) props.addBkgImage(i);
   }
 
   const now = new Date().toDateString();
   const [time, setTime] = useState(now);
-  // const [weather, getWeather] = useState("");
   function updateTime() {
     setTime(new Date().toDateString());
   }
 
-  const weatherIcon =
-    "http://openweathermap.org/img/wn/" +
-    props.entryData.weather.icon +
-    "@2x.png";
+  let weatherIcon = "";
 
-  //API Key: 45014d735557d276c6086a85e85ce49b
+  if (props.entryData.weather.icon !== undefined) {
+    weatherIcon =
+      "http://openweathermap.org/img/wn/" +
+      props.entryData.weather.icon +
+      "@2x.png";
+  }
+
   return (
     <div className="footer px-5" id="footer">
       <div className="row mx-0">

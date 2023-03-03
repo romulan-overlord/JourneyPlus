@@ -16,6 +16,7 @@ function App() {
   const [compose, setCompose] = useState(false);
   const [createMode, setCreateMode] = useState(true);
   const [passedEntry, setPassedEntry] = useState({
+    entryID: "",
     title: "",
     content: "",
     media: {

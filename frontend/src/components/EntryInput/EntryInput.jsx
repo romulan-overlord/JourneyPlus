@@ -15,7 +15,7 @@ function EntryInput(props) {
 
   useEffect(setDimensions);
 
-  if(!props.createMode){
+  if (!props.createMode) {
     $("input").prop("disabled", true);
     $("textarea").prop("disabled", true);
   }
@@ -69,7 +69,6 @@ function EntryInput(props) {
   function handleSubmit(event) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log(data.get("img"));
     fetch(expressIP + "/submit-entry", {
       method: "POST", // or 'PUT'
       headers: {
@@ -84,7 +83,26 @@ function EntryInput(props) {
       .then((data) => {
         console.log("Success:", data);
         props.updateEntries(entryData);
-        props.invertCompose();
+        props.openEntry(
+          {
+            entryID: "",
+            title: "",
+            content: "",
+            media: {
+              image: [],
+              video: [],
+              audio: [],
+            },
+            backgroundAudio: "",
+            backgroundImage: "",
+            date: "",
+            weather: {
+              desc: "",
+              icon: "",
+            },
+          },
+          true
+        );
       })
       .catch((error) => {
         console.error("Error:", error);

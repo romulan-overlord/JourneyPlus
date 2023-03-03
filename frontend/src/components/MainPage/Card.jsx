@@ -3,7 +3,7 @@ import PermMediaIcon from "@mui/icons-material/PermMedia";
 
 function Card(props) {
 
-  console.log(props.entry.media.image.length);
+  // console.log(props.entry.media.image.length);
   const isMedia = () => {
     if (
       props.entry.media.image.length === 0 &&
@@ -23,7 +23,7 @@ function Card(props) {
     const id = "#c" + props.index;
     const defaultImg = "./../images/img2.jpg";
     const imageID = props.entry.backgroundImage;
-    console.log(imageID);
+    // console.log(imageID);
     if (imageID === undefined || imageID === "")
       $(id).css("background-image", "url(" + defaultImg + ")");
     else {
