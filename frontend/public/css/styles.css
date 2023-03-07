@@ -471,5 +471,36 @@ body {
   margin-right: 1rem;
 }
 
+/* Followers */
+.rounded-circle {
+    border-radius: 50%!important;
+}
+
+.img-thumbnail {
+    padding: .25rem;
+    background-color: #ecf2f5;
+    border: 1px solid #dee2e6;
+    border-radius: .25rem;
+    max-width: 100%;
+    height: auto;
+}
+.avatar-md {
+    height: 3.5rem;
+    width: 3.5rem;
+}
+
+.bg-transparent {
+    --bs-bg-opacity: 1;
+    background-color: transparent!important;
+}
+
+.unfollow-button{
+  margin-right: 0.6%;
+}
+
+.loading-container{
+  background-color: rgba(18, 18, 18, 0.5)
+}
+
 
 
