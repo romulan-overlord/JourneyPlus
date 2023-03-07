@@ -31,10 +31,16 @@ const mediaObjSchema = {
   audio: [String],
 };
 
-// const MediaObj = mongoose.model("mediaObj", mediaObjSchema);
+const mediaWarehouseSchema = {
+  id: String,
+  data: String,
+};
+
+const MediaWarehouse = mongoose.model("mediaWarehouse", mediaWarehouseSchema);
 
 const entrySchema = {
   entryID: String,
+  size: Number,
   title: String,
   content: String,
   media: mediaObjSchema,
@@ -63,28 +69,136 @@ const userSchema = new mongoose.Schema({
 
 const Users = mongoose.model("user", userSchema);
 
-app.get("/message", (req, res) => {
-  res.send("hello fren");
-});
+function reduceEntry(entry) {
+  entry.size = sizeof(entry);
+  // console.log(req.body);
+  const newEntry = new Entry(entry);
+  let { backgroundAudio: bAud, media: myMedia } = newEntry;
+  if (bAud.length > 0) {
+    const audioWare = new MediaWarehouse({
+      id: uniqid(),
+      data: bAud,
+    });
+    newEntry.backgroundAudio = audioWare.id;
+    audioWare.save();
+  }
+
+  if (myMedia.image.length !== 0) {
+    for (let i = 0; i < myMedia.image.length; i++) {
+      const tempWare = new MediaWarehouse({
+        id: uniqid(),
+        data: myMedia.image[i],
+      });
+      myMedia.image[i] = tempWare.id;
+      tempWare.save();
+    }
+  }
+
+  if (myMedia.video.length !== 0) {
+    for (let i = 0; i < myMedia.video.length; i++) {
+      const tempWare = new MediaWarehouse({
+        id: uniqid(),
+        data: myMedia.video[i],
+      });
+      myMedia.video[i] = tempWare.id;
+      tempWare.save();
+    }
+  }
+
+  if (myMedia.audio.length !== 0) {
+    for (let i = 0; i < myMedia.audio.length; i++) {
+      const tempWare = new MediaWarehouse({
+        id: uniqid(),
+        data: myMedia.audio[i],
+      });
+      myMedia.audio[i] = tempWare.id;
+      tempWare.save();
+    }
+  }
+
+  return newEntry;
+}
+
+function deleteEntry(mainEntry) {
+  const entry = mainEntry;
+  MediaWarehouse.deleteOne({ id: entry.backgroundAudio })
+    .then(function () {
+      console.log("Data deleted"); // Success
+    })
+    .catch(function (error) {
+      console.log(error); // Failure
+    });
+  for (let i = 0; i < entry.media.image.length; i++) {
+    MediaWarehouse.deleteOne({ id: entry.media.image[i] })
+      .then(function () {
+        console.log("image deleted"); // Success
+      })
+      .catch(function (error) {
+        console.log(error); // Failure
+      });
+  }
+  for (let i = 0; i < entry.media.video.length; i++) {
+    MediaWarehouse.deleteOne({ id: entry.media.video[i] });
+  }
+  for (let i = 0; i < entry.media.audio.length; i++) {
+    MediaWarehouse.deleteOne({ id: entry.media.audio[i] });
+  }
+}
 
 app.post("/submit-entry", (req, res) => {
   console.log("post received");
   console.log("size of post: " + sizeof(req.body));
-  req.body.entry.entryID = uniqid();
-  console.log(req.body);
-  const newEntry = new Entry(req.body.entry);
-  const user = Users.findOne(
-    { username: req.body.user },
-    function (err, results) {
-      if (!err) {
-        if (results) {
+  Users.findOne({ username: req.body.user }, async function (err, results) {
+    var newEntry = null;
+    if (err) throw err;
+    if (results) {
+      for (let i = 0; i < results.entries.length; i++) {
+        if (results.entries[i].entryID === req.body.entry.entryID) {
+          deleteEntry(results.entries[i]);
+          results.entries.splice(i, 1);
+          newEntry = reduceEntry(req.body.entry);
           results.entries.push(newEntry);
-          results.save();
         }
       }
+      if (newEntry === null) {
+        req.body.entry.entryID = uniqid();
+        newEntry = reduceEntry(req.body.entry);
+        results.entries.push(newEntry);
+      }
+      results.save();
+      res.send({ mesage: "success", savedEntry: newEntry });
     }
-  );
-  res.send({ mesage: "success" });
+  });
+
+  // const user = Users.findOne(
+  //   { username: req.body.user },
+  //   function (err, results) {
+  //     if (!err) {
+  //       if (results) {
+  //         results.entries.push(newEntry);
+  //         results.save();
+  //       }
+  //     }
+  //   }
+  // );
+});
+
+app.post("/removeEntry", (req, res) => {
+  console.log("hellp");
+  Users.findOne({username: req.body.user}, async (err,results) => {
+    if(err) throw err;
+    if(results){
+      for (let i = 0; i < results.entries.length; i++) {
+        if (results.entries[i].entryID === req.body.entryID) {
+          deleteEntry(results.entries[i]);
+          results.entries.splice(i, 1);
+          break;
+        }
+      }
+      results.save();
+      res.send({message: "success"});
+    }
+  })
 });
 
 app.post("/signUp", (req, res) => {
@@ -200,6 +314,88 @@ app.post("/auto-login", (req, res) => {
       }
     }
   );
+});
+
+app.post("/getFullData", (req, res) => {
+  async function getData() {
+    let entry = req.body;
+    console.log("before fetch: \n" + entry.backgroundAudio);
+    if (entry.backgroundAudio.length > 0) {
+      console.log("aud exists");
+      MediaWarehouse.findOne(
+        { id: entry.backgroundAudio },
+        async (err, foundMedia) => {
+          if (err) throw err;
+          else if (foundMedia) {
+            entry.backgroundAudio = foundMedia.data;
+          }
+        }
+      );
+    }
+
+    if (entry.media.image.length !== 0) {
+      for (let i = 0; i < entry.media.image.length; i++) {
+        MediaWarehouse.findOne(
+          { id: entry.media.image[i] },
+          async (err, foundMedia) => {
+            if (err) throw err;
+            else if (foundMedia) {
+              entry.media.image[i] = foundMedia.data;
+            }
+          }
+        );
+      }
+    }
+
+    if (entry.media.video.length !== 0) {
+      for (let i = 0; i < entry.media.video.length; i++) {
+        MediaWarehouse.findOne(
+          { id: entry.media.video[i] },
+          async (err, foundMedia) => {
+            if (err) throw err;
+            else if (foundMedia) {
+              entry.media.video[i] = foundMedia.data;
+            }
+          }
+        );
+      }
+    }
+
+    if (entry.media.audio.length !== 0) {
+      for (let i = 0; i < entry.media.audio.length; i++) {
+        MediaWarehouse.findOne(
+          { id: entry.media.audio[i] },
+          async (err, foundMedia) => {
+            if (err) throw err;
+            else if (foundMedia) {
+              entry.media.audio[i] = foundMedia.data;
+            }
+          }
+        );
+      }
+    }
+
+    let myPromise = new Promise(function (myResolve, myReject) {
+      console.log("in promise");
+      console.log(entry);
+      console.log(sizeof(entry) + "    " + req.body.size);
+      let timeout = (n) => {
+        console.log("in timeout: ");
+        setTimeout(() => {
+          if (sizeof(entry) >= req.body.size - 1000) myResolve();
+          // else if(count >= 20) myResolve();
+          else {
+            timeout(n);
+          }
+        }, n);
+      };
+      timeout(50);
+    });
+    myPromise.then(() => {
+      res.send(entry);
+    });
+  }
+  getData();
 });
 
 //------------------------------------------------------------- Weather API --------------------------------------------------------------------

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import PermMediaIcon from "@mui/icons-material/PermMedia";
 import AudiotrackIcon from "@mui/icons-material/Audiotrack";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 function Card(props) {
-  console.log(props.entry.media.video.length === 0);
+  // console.log(props.entry.media.video.length === 0);
 
   const [checkFlags, setCheck] = useState(true);
   const [flags, setFlags] = useState({
@@ -13,31 +14,35 @@ function Card(props) {
 
   function checkMedia() {
     let tempBool = true;
-  // console.log(props.entry.media.image.length);
-  const isMedia = () => {
-    if (
-      props.entry.media.image.length === 0 &&
-      props.entry.media.video.length === 0 &&
-      props.entry.media.audio.length === 0
-    )
-      tempBool = false;
-    else tempBool = true;
-    setFlags((prev) => {
-      return {
-        ...prev,
-        isMedia: tempBool,
-      };
-    });
+    // console.log(props.entry.media.image.length);
+    const isMedia = () => {
+      if (
+        props.entry.media.image.length === 0 &&
+        props.entry.media.video.length === 0 &&
+        props.entry.media.audio.length === 0
+      )
+        tempBool = false;
+      else tempBool = true;
+      setFlags((prev) => {
+        return {
+          ...prev,
+          isMedia: tempBool,
+        };
+      });
 
-    if (props.entry.backgroundAudio === "" || props.entry.backgroundAudio === undefined)
-      tempBool = false;
-    tempBool =  true;
-    setFlags((prev) => {
-      return {
-        ...prev,
-        isBkgAud: tempBool,
-      };
-    });
+      if (
+        props.entry.backgroundAudio === "" ||
+        props.entry.backgroundAudio === undefined
+      )
+        tempBool = false;
+      tempBool = true;
+      setFlags((prev) => {
+        return {
+          ...prev,
+          isBkgAud: tempBool,
+        };
+      });
+    };
   }
 
   useEffect(() => {
@@ -51,9 +56,9 @@ function Card(props) {
       const imageUrl = "./../images/bkg" + imageID + ".jpg";
       $(id).css("background-image", "url(" + imageUrl + ")");
     }
-    if(checkFlags === true){
+    if (checkFlags === true) {
       checkMedia();
-      setCheck(false)
+      setCheck(false);
     }
   });
 
@@ -61,16 +66,58 @@ function Card(props) {
     <div
       className="card-container px-3 pb-2 col-lg-4 col-md-6"
       key={props.index}
-      onClick={() =>{
-        props.openEntry(props.entry, false);
-      }}
     >
       <div
         className="card h-100 card-red"
         id={"c" + props.index}
         key={props.index}
       >
-        <div className="card-body" key={props.index}>
+        <div className="card-menu">
+          <div className="dropdown card-dropdown">
+            <a
+              className="btn btn-sm  bkg-btn"
+              href="#"
+              role="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <MoreVertIcon className="date-p" fontSize="small"></MoreVertIcon>
+            </a>
+            <ul className="dropdown-menu px-2">
+              <li
+                className="card-menu-item"
+                onClick={() => {
+                  props.openEntry(props.entry, false);
+                }}
+              >
+                View
+              </li>
+              <li
+                className="card-menu-item"
+                onClick={() => {
+                  props.openEntry(props.entry, true);
+                }}
+              >
+                Edit
+              </li>
+              <li
+                className="card-menu-item"
+                onClick={() => {
+                  props.deleteEntry(props.entry.entryID);
+                }}
+              >
+                Delete
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div
+          className="card-body"
+          key={props.index}
+          onClick={() => {
+            props.openEntry(props.entry, false);
+          }}
+        >
           <h3 className="main-page-card-title">{props.entry.title}</h3>
           <p className="main-page-card-text">
             {props.entry.content.substring(0, 200) + "..."}

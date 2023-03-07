@@ -34,9 +34,9 @@ export default function Footer(props) {
   if (!props.createMode) setBackground(props.entryData.backgroundImage);
 
   useEffect(() => {
-    console.log("finna get da weather");
+    // console.log("finna get da weather");
     if (isWeather === true) {
-      console.log("in true");
+      // console.log("in true");
       var getIP = "http://ip-api.com/json/";
       var openWeatherMap = "http://api.openweathermap.org/data/2.5/weather";
       $.getJSON(getIP).done(function (location) {
@@ -201,25 +201,7 @@ export default function Footer(props) {
           <span
             className="date-p"
             onClick={() => {
-              props.return(
-                {
-                  title: "",
-                  content: "",
-                  media: {
-                    image: [],
-                    video: [],
-                    audio: [],
-                  },
-                  backgroundAudio: "",
-                  backgroundImage: "",
-                  date: "",
-                  weather: {
-                    desc: "",
-                    icon: "",
-                  },
-                },
-                true
-              );
+              props.return();
             }}
           >
             Return

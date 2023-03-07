@@ -59,10 +59,90 @@ function App() {
     $("#footer").css("border-top", "none");
   }
 
+  function invertCreateMode() {
+    setCreateMode((prev) => {
+      return !prev;
+    });
+  }
+
   function openEntry(entry, bool) {
+    fetch(expressIP + "/getFullData", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      mode: "cors",
+      body: JSON.stringify(entry),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        invertCompose();
+        setPassedEntry(data);
+        setCreateMode(bool);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }
+
+  function deleteEntry(entryID) {
+    console.log(expressIP + "/removeEntry");
+    fetch(expressIP + "/removeEntry", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      mode: "cors",
+      body: JSON.stringify({
+        user: currentUser.username,
+        entryID: entryID,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        // invertCompose();
+        // setPassedEntry(data);
+        // setCreateMode(bool);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+    const newEntryArr = currentUser.entries;
+    for (let i = 0; i < newEntryArr.length; i++) {
+      if (newEntryArr[i].entryID === entryID) {
+        newEntryArr.splice(i, 1);
+      }
+    }
+    setCurrentUser((prev) => {
+      return {
+        ...prev,
+        entries: newEntryArr,
+      };
+    });
+  }
+
+  function exitEntry() {
     invertCompose();
-    setPassedEntry(entry);
-    setCreateMode(bool);
+    setPassedEntry({
+      entryID: "",
+      title: "",
+      content: "",
+      media: {
+        image: [],
+        video: [],
+        audio: [],
+      },
+      backgroundAudio: "",
+      backgroundImage: "",
+      date: "",
+      weather: {
+        desc: "",
+        icon: "",
+      },
+    });
+    setCreateMode(true);
   }
 
   function invertLoggedIn(event) {
@@ -96,6 +176,11 @@ function App() {
 
   function updateEntries(newEntry) {
     const newEntryArr = currentUser.entries;
+    for (let i = 0; i < newEntryArr.length; i++) {
+      if (newEntryArr[i].entryID === newEntry.entryID) {
+        newEntryArr.splice(i, 1);
+      }
+    }
     newEntryArr.push(newEntry);
     setCurrentUser((prev) => {
       return {
@@ -131,6 +216,7 @@ function App() {
         console.error("Error:", error);
       });
   }
+
   return (
     <div className="App height-100">
       {!compose ? (
@@ -143,10 +229,15 @@ function App() {
             updateEntries={updateEntries}
             passedEntry={passedEntry}
             createMode={createMode}
-            openEntry={openEntry}
+            invertCreateMode={invertCreateMode}
+            exitEntry={exitEntry}
           />
         ) : (
-          <MainPage currentUser={currentUser} openEntry={openEntry} />
+          <MainPage
+            currentUser={currentUser}
+            openEntry={openEntry}
+            deleteEntry={deleteEntry}
+          />
         )
       ) : isSignedUp ? (
         <Login

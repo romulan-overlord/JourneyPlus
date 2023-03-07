@@ -82,31 +82,19 @@ function EntryInput(props) {
       .then((response) => response.json())
       .then((data) => {
         console.log("Success:", data);
-        props.updateEntries(entryData);
-        props.openEntry(
-          {
-            entryID: "",
-            title: "",
-            content: "",
-            media: {
-              image: [],
-              video: [],
-              audio: [],
-            },
-            backgroundAudio: "",
-            backgroundImage: "",
-            date: "",
-            weather: {
-              desc: "",
-              icon: "",
-            },
-          },
-          true
-        );
+        props.updateEntries(data.savedEntry);
+        props.exitEntry();
       })
       .catch((error) => {
         console.error("Error:", error);
       });
+  }
+
+  function handleEdit(event){
+    event.preventDefault();
+    props.invertCreateMode();
+    $("input").prop("disabled", false);
+    $("textarea").prop("disabled", false);
   }
 
   function getFiles(event) {
@@ -181,7 +169,7 @@ function EntryInput(props) {
         className="container-fluid width-100 text-input-container"
         id="textInput"
       >
-        <form onSubmit={props.createMode ? handleSubmit : null}>
+        <form onSubmit={props.createMode ? handleSubmit : handleEdit}>
           <div className="row mx-5">
             {/* this column contains title + done button + content */}
             <div className="col-md-8 px-0">
@@ -264,7 +252,7 @@ function EntryInput(props) {
       <Footer
         addBkgAudio={addBkgAudio}
         addBkgImage={addBkgImage}
-        return={props.openEntry}
+        return={props.exitEntry}
         setEnv={setEnv}
         createMode={props.createMode}
         entryData={entryData}
