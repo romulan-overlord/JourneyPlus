@@ -151,9 +151,9 @@ body {
 }
 
 .btn-default {
-  background-color: #f7b4a7;
+  /* background-color: #B2DBD6; */
   color: #fff;
-  border-color: #2f3e48;
+/* border-color: #B2DBD6; */
 }
 
 .btn-default:hover,
@@ -161,13 +161,13 @@ body {
 .btn-default:active,
 .btn-default.active,
 .open .dropdown-toggle.btn-default {
-  background-color: #2f3e48;
-  color: #fff;
-  border-color: #31347b;
+  background-color: #D1EDF2;
+  color: black;
+  border-color: #D1EDF2;
 }
 
 .header-dropdown{
-  background-color: #2B7099;
+  background-color: #B2CADB;
   border-color: black;
 }
 
@@ -377,3 +377,83 @@ body {
   right: 50px;
   z-index: 4;
 }
+
+/* Profile Page */
+.img-account-profile {
+    height: 10rem;
+}
+.rounded-circle {
+    border-radius: 50% !important;
+}
+.card-profile {
+    font-family:  "Montserrat";
+    box-shadow: 0 0.15rem 1.75rem 0 rgb(33 40 50 / 15%);
+}
+.card-profile .card-header-profile {
+    font-weight: 500;
+}
+.card-header-profile:first-child {
+    border-radius: 0.35rem 0.35rem 0 0;
+}
+.card-header-profile {
+    font-size: 20px;
+    padding: 1rem 1.35rem;
+    margin-bottom: 0;
+    background-color: rgba(33, 40, 50, 0.03);
+    border-bottom: 1px solid rgba(33, 40, 50, 0.125);
+}
+.form-control, .dataTable-input {
+    display: block;
+    width: 100%;
+    padding: 0.875rem 1.125rem;
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1;
+    color: #69707a;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #c5ccd6;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border-radius: 0.35rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.follow-container{
+  font-family:  "Montserrat";
+  margin-top: 20px;
+}
+
+.edit-profile-container{
+  font-family:  "Montserrat";
+}
+
+.profile-cancel-button{
+  margin-right: 4px;
+}
+
+/* Navigation Bar in Profile Page */
+.nav-borders .nav-link.active {
+  font-family: "Montserrat";
+  font-size: 18px;
+  color: #0061f2;
+  border-bottom-color: #0061f2;
+}
+.nav-borders .nav-link {
+  font-family: "Montserrat";
+  font-size: 18px;
+  color: #69707a;
+  border-bottom-width: 0.125rem;
+  border-bottom-style: solid;
+  border-bottom-color: transparent;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 0;
+  padding-right: 0;
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+
+

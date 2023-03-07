@@ -7,6 +7,7 @@ import Header from "./Header";
 import SignUp from "./SignUp";
 import Login from "./Login";
 import MainPage from "./MainPage/MainPage";
+import ProfilePage from "./ProfilePage/ProfilePage";
 
 function App() {
   const [isLoggedIn, setLoggedIn] = useState(false);
@@ -43,6 +44,14 @@ function App() {
     "username",
     "password",
   ]);
+
+  const [profilePage, setProfilePage] = useState(false);
+
+  function invertProfilePage(event){
+    setProfilePage((prev) =>{
+      return !prev;
+    });
+  }
 
   function invertIsSignedUp(event) {
     setIsSignedUp((prev) => {
@@ -134,10 +143,14 @@ function App() {
   return (
     <div className="App height-100">
       {!compose ? (
-        <Header invertCompose={invertCompose} logOut={logOut} />
+        <Header
+          invertCompose={invertCompose}
+          logOut={logOut}
+          invertProfilePage={invertProfilePage}
+        />
       ) : null}
       {isLoggedIn ? (
-        compose ? (
+        (compose ? (
           <EntryInput
             currentUser={currentUser}
             updateEntries={updateEntries}
@@ -147,7 +160,12 @@ function App() {
           />
         ) : (
           <MainPage currentUser={currentUser} openEntry={openEntry} />
-        )
+        ),
+        profilePage ? (
+          <ProfilePage currentUser={currentUser} logOut={logOut} />
+        ) : (
+          <MainPage currentUser={currentUser} openEntry={openEntry} />
+        ))
       ) : isSignedUp ? (
         <Login
           invertLoggedIn={invertLoggedIn}
