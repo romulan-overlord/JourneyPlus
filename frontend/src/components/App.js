@@ -181,6 +181,7 @@ function App() {
     setCookies("cookieID", "");
     setCookies("password", "");
     invertLoggedIn();
+    invertProfilePage();
   }
 
   function updateEntries(newEntry) {
@@ -245,13 +246,13 @@ function App() {
             invertCreateMode={invertCreateMode}
             exitEntry={exitEntry}
           />
-        ) : (
+        ) : !profilePage ? (
           <MainPage
             currentUser={currentUser}
             openEntry={openEntry}
             deleteEntry={deleteEntry}
           />
-        )) : isSignedUp ? (
+        ) : <ProfilePage currentUser={currentUser} logOut={logOut} />) : isSignedUp ? (
         <Login
           invertLoggedIn={invertLoggedIn}
           switch={invertIsSignedUp}
