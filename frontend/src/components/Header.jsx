@@ -8,6 +8,7 @@ import Select from "@mui/material/Select";
 import {Button} from "@mui/material";
 import MapsUgcIcon from "@mui/icons-material/MapsUgc";
 import Tooltip from "@mui/material/Tooltip";
+import ProfilePage from "./ProfilePage/ProfilePage";
 
 function Header(props) {
   const [num, setNum] = useState("");
@@ -32,31 +33,38 @@ function Header(props) {
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
             <table className="width-100">
-              <tr>
-                <td className="table_data">
-                  <button type="button" className="btn btn-default" onClick={props.invertCompose}>
-                    Compose
-                  </button>
-                </td>
-                <td className="table_data">
-                  <a className="nav-link" href="#">
-                    <select
-                      className="form-select form-select-md dropdown header-dropdown"
-                      aria-label=".form-select-sm example"
+              <tbody>
+                <tr>
+                  <td className="table_data">
+                    <button
+                      type="button"
+                      className="btn btn-default"
+                      onClick={props.invertCompose}
                     >
-                      <option selected>Private</option>
-                      <option value="1">Public</option>
-                    </select>
-                  </a>
-                </td>
-                <td>
-                  <a className="nav-link" href="#">
-                    <Avatar onClick={props.logOut}>
-                      <PersonIcon />
-                    </Avatar>
-                  </a>
-                </td>
-              </tr>
+                      Compose
+                    </button>
+                  </td>
+                  <td className="table_data">
+                    <a className="nav-link" href="#">
+                      <select
+                        className="form-select form-select-md dropdown header-dropdown"
+                        aria-label=".form-select-sm example"
+                      >
+                        <option>Private</option>
+                        <option value="1">Public</option>
+                      </select>
+                    </a>
+                  </td>
+                  <td>
+                    <a className="nav-link" href="#">
+                      <Avatar onClick={props.invertProfilePage}>
+                        {/* props.logOut  */}
+                        <PersonIcon />
+                      </Avatar>
+                    </a>
+                  </td>
+                </tr>
+              </tbody>
             </table>
           </ul>
         </div>
