@@ -6,6 +6,8 @@ import MusicNoteIcon from "@mui/icons-material/MusicNote";
 import VolumeUpIcon from "@mui/icons-material/VolumeUp";
 import VolumeOffIcon from "@mui/icons-material/VolumeOff";
 import WallpaperIcon from "@mui/icons-material/Wallpaper";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 
 import backgrounds from "../settings";
 
@@ -15,7 +17,7 @@ export default function Footer(props) {
   const [muteAudio, setMuteAudio] = useState(false);
   const [reRender, setRender] = useState(false);
   const [isWeather, setWeather] = useState(props.createMode);
-  const [renderBkg, setRenBkg] = useState(true);
+  const [isPrivate, setPrivate] = useState(props.entryData.private);
 
   useEffect(() => {
     if (reRender) {
@@ -87,11 +89,18 @@ export default function Footer(props) {
     console.log("in set back: " + index + " " + typeof index);
     if (index === "" || index === undefined) return;
     let i = 0;
-    if (props.createMode === true) i = index + 1;
+    if (props.createMode === true) i = index;
     else i = index;
     const imageUrl = "./../images/bkg" + i + ".jpg";
     $("body").css("background-image", "url(" + imageUrl + ")");
     if (props.createMode === true) props.addBkgImage(i);
+  }
+
+  function toggleVisibility() {
+    props.switchVisibility(!isPrivate);
+    setPrivate((prev) => {
+      return !prev;
+    });
   }
 
   const now = new Date().toDateString();
@@ -122,7 +131,12 @@ export default function Footer(props) {
           <span className="date-p mx-2">|</span>
           {props.createMode ? (
             <span>
-              <span className="date-p">
+              <span
+                className="date-p"
+                data-toggle="tooltip"
+                data-placement="top"
+                title="Attach media files"
+              >
                 <label htmlFor="files">
                   <AttachFileOutlinedIcon fontSize="small"></AttachFileOutlinedIcon>
                 </label>
@@ -138,7 +152,12 @@ export default function Footer(props) {
                   accept="audio/*"
                 />
 
-                <label htmlFor="bkgAudio">
+                <label
+                  htmlFor="bkgAudio"
+                  data-toggle="tooltip"
+                  data-placement="top"
+                  title="Add background audio"
+                >
                   <MusicNoteIcon fontSize="small"></MusicNoteIcon>
                 </label>
               </span>
@@ -155,7 +174,13 @@ export default function Footer(props) {
             </audio>
           ) : null}
 
-          <span className="date-p" onClick={muteBkg}>
+          <span
+            className="date-p"
+            onClick={muteBkg}
+            data-toggle="tooltip"
+            data-placement="top"
+            title="Toggle background audio"
+          >
             {muteAudio ? (
               <VolumeOffIcon fontSize="small"></VolumeOffIcon>
             ) : (
@@ -166,11 +191,13 @@ export default function Footer(props) {
           {props.createMode ? (
             <div className="dropdown my-dropdown">
               <a
-                className="btn btn-sm dropdown-toggle bkg-btn"
+                className="btn btn-sm bkg-btn"
                 href="#"
                 role="button"
                 data-bs-toggle="dropdown"
-                aria-expanded="false"
+                data-toggle="tooltip"
+                data-placement="top"
+                title="Change background image"
               >
                 <WallpaperIcon
                   className="date-p"
@@ -194,6 +221,24 @@ export default function Footer(props) {
                   );
                 })}
               </ul>
+            </div>
+          ) : null}
+          {props.createMode ? (
+            <div className="d-inline">
+              <span className="date-p mx-2">|</span>
+              <span
+                className="date-p"
+                onClick={toggleVisibility}
+                data-toggle="tooltip"
+                data-placement="top"
+                title={"This post is " +( isPrivate ? "private" : "public")}
+              >
+                {isPrivate ? (
+                  <VisibilityOffOutlinedIcon fontSize="small" />
+                ) : (
+                  <VisibilityOutlinedIcon fontSize="small" />
+                )}
+              </span>
             </div>
           ) : null}
         </div>

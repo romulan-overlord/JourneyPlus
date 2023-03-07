@@ -1,21 +1,18 @@
-import React, {useState} from "react";
-import {Avatar} from "@mui/material";
+import React, { useState } from "react";
+import $ from "jquery";
+
+import { Avatar } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import {Button} from "@mui/material";
+import { Button } from "@mui/material";
 import MapsUgcIcon from "@mui/icons-material/MapsUgc";
 import Tooltip from "@mui/material/Tooltip";
 import ProfilePage from "./ProfilePage/ProfilePage";
 
 function Header(props) {
-  const [num, setNum] = useState("");
-
-  const handleChange = (event) => {
-    setNum(event.target.value);
-  };
   return (
     <nav className="navbar navbar-expand-md navbar-dark" id="header">
       <div className="container-fluid navbar-container mx-lg-5 mx-md-3 py-md-2 py-2 mx-2">
@@ -45,15 +42,36 @@ function Header(props) {
                     </button>
                   </td>
                   <td className="table_data">
-                    <a className="nav-link" href="#">
-                      <select
-                        className="form-select form-select-md dropdown header-dropdown"
-                        aria-label=".form-select-sm example"
+                    <li className="nav-item dropdown">
+                      <a
+                        className="nav-link"
+                        href="#"
+                        role="button"
+                        data-bs-toggle="dropdown"
                       >
-                        <option>Private</option>
-                        <option value="1">Public</option>
-                      </select>
-                    </a>
+                        {props.private ? "Private" : "Public"}
+                      </a>
+                      <ul className="dropdown-menu">
+                        <li
+                          onClick={() => {
+                            props.setVisibility(true);
+                          }}
+                        >
+                          <a className="dropdown-item" href="#">
+                            Private
+                          </a>
+                        </li>
+                        <li
+                          onClick={() => {
+                            props.setVisibility(false);
+                          }}
+                        >
+                          <a className="dropdown-item" href="#">
+                            Public
+                          </a>
+                        </li>
+                      </ul>
+                    </li>
                   </td>
                   <td>
                     <a className="nav-link" href="#">

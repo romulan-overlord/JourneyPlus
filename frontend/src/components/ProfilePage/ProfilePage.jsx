@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import PersonAdd from "@mui/icons-material/PersonAdd";
 import PeopleIcon from "@mui/icons-material/People";
 import People from "@mui/icons-material/People";
+import { expressIP } from "../../settings";
 
 function ProfilePage(props){
   // const[editProfile, setEditProfile] = useState("true");
@@ -26,6 +27,18 @@ function ProfilePage(props){
       }}
     />
   );
+
+  function fetchUsers(){
+    fetch(expressIP + "/fetchUsers", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+    })
+  }
 
   return (
     <div className="container-xl px-4 mt-4">

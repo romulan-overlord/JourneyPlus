@@ -51,6 +51,7 @@ const entrySchema = {
     desc: String,
     icon: String,
   },
+  private: Boolean,
 };
 
 const Entry = mongoose.model("entry", entrySchema);
@@ -63,11 +64,21 @@ const userSchema = new mongoose.Schema({
   },
   username: String,
   email: String,
+  picture: String,
   cookieID: String,
   entries: [entrySchema],
+  following: [String],
+  followers: [String],
 });
 
 const Users = mongoose.model("user", userSchema);
+
+const networkSchema = new mongoose.Schema({
+  users: [String],
+  userCount: Number,
+});
+
+const Network = mongoose.model("network", networkSchema);
 
 function reduceEntry(entry) {
   entry.size = sizeof(entry);
@@ -115,7 +126,6 @@ function reduceEntry(entry) {
       tempWare.save();
     }
   }
-
   return newEntry;
 }
 
@@ -169,25 +179,13 @@ app.post("/submit-entry", (req, res) => {
       res.send({ mesage: "success", savedEntry: newEntry });
     }
   });
-
-  // const user = Users.findOne(
-  //   { username: req.body.user },
-  //   function (err, results) {
-  //     if (!err) {
-  //       if (results) {
-  //         results.entries.push(newEntry);
-  //         results.save();
-  //       }
-  //     }
-  //   }
-  // );
 });
 
 app.post("/removeEntry", (req, res) => {
   console.log("hellp");
-  Users.findOne({username: req.body.user}, async (err,results) => {
-    if(err) throw err;
-    if(results){
+  Users.findOne({ username: req.body.user }, async (err, results) => {
+    if (err) throw err;
+    if (results) {
       for (let i = 0; i < results.entries.length; i++) {
         if (results.entries[i].entryID === req.body.entryID) {
           deleteEntry(results.entries[i]);
@@ -196,9 +194,9 @@ app.post("/removeEntry", (req, res) => {
         }
       }
       results.save();
-      res.send({message: "success"});
+      res.send({ message: "success" });
     }
-  })
+  });
 });
 
 app.post("/signUp", (req, res) => {
@@ -235,9 +233,16 @@ app.post("/signUp", (req, res) => {
                   username: req.body.username,
                   cookieID: "",
                   email: req.body.email,
+                  picture: req.body.picture,
                   password: hashedPassword,
                 });
                 await newUser.save();
+                Network.findOne({}, (err, data) => {
+                  if (err) throw err;
+                  data.users.push(req.body.username);
+                  data.userCount = data.userCount + 1;
+                  data.save();
+                });
                 console.log("User Created");
                 res.send({
                   success: "999", //The user has been successfully signed up and saved in the database
@@ -376,11 +381,11 @@ app.post("/getFullData", (req, res) => {
     }
 
     let myPromise = new Promise(function (myResolve, myReject) {
-      console.log("in promise");
-      console.log(entry);
-      console.log(sizeof(entry) + "    " + req.body.size);
+      // console.log("in promise");
+      // console.log(entry);
+      // console.log(sizeof(entry) + "    " + req.body.size);
       let timeout = (n) => {
-        console.log("in timeout: ");
+        // console.log("in timeout: ");
         setTimeout(() => {
           if (sizeof(entry) >= req.body.size - 1000) myResolve();
           // else if(count >= 20) myResolve();
@@ -396,6 +401,38 @@ app.post("/getFullData", (req, res) => {
     });
   }
   getData();
+});
+
+app.get("/fetchUsers", (req, res) => {
+  const userArray = [];
+  Network.findOne({}, async (err, result) => {
+    if (err) throw err;
+    for (let i = 0; i < result.userCount; i++) {
+      Users.findOne({ username: result.users[i] }, async (err, user) => {
+        if (err) throw err;
+        // console.log(user);
+        userArray.push({
+          username: user.username,
+          picture: user.picture,
+          firstName: user.firstName,
+          lastName: user.lastName,
+        });
+      });
+    }
+    let readyPromise = new Promise(function (resolve, reject) {
+      let timeout = (n) => {
+        // console.log("in timeout: ");
+        setTimeout(() => {
+          if (userArray.length === result.userCount) resolve();
+          else timeout(n);
+        }, n);
+      };
+      timeout(50);
+    });
+    readyPromise.then(() => {
+      res.send({ users: userArray });
+    });
+  });
 });
 
 //------------------------------------------------------------- Weather API --------------------------------------------------------------------

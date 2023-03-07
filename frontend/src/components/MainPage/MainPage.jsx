@@ -33,6 +33,7 @@ function MainPage(props) {
                 invertCompose={props.invertCompose}
                 openEntry={props.openEntry}
                 deleteEntry={props.deleteEntry}
+                private={props.private}
               />
             );
           })
