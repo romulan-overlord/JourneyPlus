@@ -385,7 +385,6 @@ app.post("/getFullData", (req, res) => {
       // console.log(entry);
       // console.log(sizeof(entry) + "    " + req.body.size);
       let timeout = (n) => {
-        // console.log("in timeout: ");
         setTimeout(() => {
           if (sizeof(entry) >= req.body.size - 1000) myResolve();
           // else if(count >= 20) myResolve();
@@ -403,8 +402,8 @@ app.post("/getFullData", (req, res) => {
   getData();
 });
 
-app.get("/fetchUsers", (req, res) => {
-  const userArray = [];
+app.post("/fetchUsers", (req, res) => {
+  let userArray = [];
   Network.findOne({}, async (err, result) => {
     if (err) throw err;
     for (let i = 0; i < result.userCount; i++) {
@@ -423,16 +422,139 @@ app.get("/fetchUsers", (req, res) => {
       let timeout = (n) => {
         // console.log("in timeout: ");
         setTimeout(() => {
-          if (userArray.length === result.userCount) resolve();
-          else timeout(n);
+          if (userArray.length === (result.userCount)) {
+            userArray = userArray.filter((n) => {
+              console.log("checking: " + n)
+              return !req.body.following.includes(n.username);
+            });
+            console.log(userArray);
+            res.send({ users: userArray });
+            resolve();
+          } else timeout(n);
         }, n);
       };
       timeout(50);
     });
     readyPromise.then(() => {
-      res.send({ users: userArray });
+      console.log("UwU");
     });
   });
+});
+
+app.post("/fetchFollowers", (req, res) => {
+  const followerArray = [];
+  Users.findOne(
+    {
+      username: req.body.username,
+      cookieID: req.body.cookieID,
+    },
+    async (err, user) => {
+      if (err) throw err;
+      for (let i = 0; i < user.followers.length; i++) {
+        Users.findOne({ username: user.followers[i] }, (err, follower) => {
+          if (err) throw err;
+          followerArray.push({
+            username: follower.username,
+            picture: follower.picture,
+            firstName: follower.firstName,
+            lastName: follower.lastName,
+          });
+        });
+      }
+      let readyPromise = new Promise(function (resolve, reject) {
+        let timeout = (n) => {
+          // console.log("in timeout: ");
+          setTimeout(() => {
+            if (followerArray.length === user.followers.length) resolve();
+            else timeout(n);
+          }, n);
+        };
+        timeout(50);
+      });
+      readyPromise.then(() => {
+        res.send({ followers: followerArray });
+      });
+    }
+  );
+});
+
+app.post("/fetchFollowing", (req, res) => {
+  const followingArray = [];
+  Users.findOne(
+    {
+      username: req.body.username,
+      cookieID: req.body.cookieID,
+    },
+    async (err, user) => {
+      if (err) throw err;
+      for (let i = 0; i < user.following.length; i++) {
+        Users.findOne({ username: user.following[i] }, (err, following) => {
+          if (err) throw err;
+          followingArray.push({
+            username: following.username,
+            picture: following.picture,
+            firstName: following.firstName,
+            lastName: following.lastName,
+          });
+        });
+      }
+      let readyPromise = new Promise(function (resolve, reject) {
+        let timeout = (n) => {
+          // console.log("in timeout: ");
+          setTimeout(() => {
+            if (followingArray.length === user.following.length) resolve();
+            else timeout(n);
+          }, n);
+        };
+        timeout(50);
+      });
+      readyPromise.then(() => {
+        res.send({ following: followingArray });
+      });
+    }
+  );
+});
+
+app.post("/follow", (req, res) => {
+  console.log(req.body);
+  Users.findOne(
+    { username: req.body.username, cookieID: req.body.cookieID },
+    (err, user) => {
+      if (err) throw err;
+      user.following.push(req.body.follow);
+      user.following = [...new Set(user.following)];
+      user.save();
+      Users.findOne({ username: req.body.follow }, (err, user) => {
+        if (err) throw err;
+        user.followers.push(req.body.username);
+        user.followers = [...new Set(user.followers)];
+        user.save();
+        res.send({ status: true });
+      });
+    }
+  );
+});
+
+app.post("/unfollow", (req, res) => {
+  console.log(req.body);
+  Users.findOne(
+    { username: req.body.username, cookieID: req.body.cookieID },
+    (err, user) => {
+      if (err) throw err;
+      let index = user.following.indexOf(req.body.unfollow);
+      user.following.splice(index, 1);
+      user.save();
+      Users.findOne({ username: req.body.unfollow }, (err, user) => {
+        if (err) throw err;
+        let index = user.followers.indexOf(req.body.username);
+        user.followers.splice(index, 1);
+        // user.followers.push(req.body.username);
+        // user.followers = [...new Set(user.followers)];
+        user.save();
+        res.send({ status: true });
+      });
+    }
+  );
 });
 
 //------------------------------------------------------------- Weather API --------------------------------------------------------------------

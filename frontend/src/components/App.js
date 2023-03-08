@@ -182,6 +182,15 @@ function App() {
     });
   }
 
+  function updateNetwork(update) {
+    setCurrentUser((prev) => {
+      return {
+        ...prev,
+        ...update,
+      };
+    });
+  }
+
   function logOut() {
     setCurrentUser({});
     setCookies("userIsSaved", false);
@@ -264,7 +273,7 @@ function App() {
             private={displayPrivate}
           />
         ) : (
-          <ProfilePage currentUser={currentUser} logOut={logOut} />
+          <ProfilePage currentUser={currentUser} logOut={logOut} updateNetwork={updateNetwork}/>
         )
       ) : isSignedUp ? (
         <Login
