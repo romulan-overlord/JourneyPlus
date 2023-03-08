@@ -67,7 +67,10 @@ function ProfilePage(props) {
       {isFollowers ? <Followers /> : null}
       {isFollowing ? (
         isUsers ? (
-          <Users invertUsers={invertUsers} />
+          <Users invertUsers={invertUsers} 
+          
+          
+          />
         ) : (
           <Following invertUsers={invertUsers} />
         )

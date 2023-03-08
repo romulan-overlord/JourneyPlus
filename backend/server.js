@@ -380,6 +380,10 @@ app.post("/getFullData", (req, res) => {
       console.log(entry);
       console.log(sizeof(entry) + "    " + req.body.size);
       let timeout = (n) => {
+
+
+
+        
         setTimeout(() => {
           if (sizeof(entry) >= req.body.size - 1000) myResolve();
           // else if(count >= 20) myResolve();
