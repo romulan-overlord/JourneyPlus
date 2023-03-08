@@ -22,18 +22,27 @@ function ProfilePage(props) {
     setFollowers(true);
     setFollowing(false);
   }
-  
+
   function openFollowing(event) {
     setIsProfile(false);
     setFollowers(false);
     setFollowing(true);
   }
 
-  function invertUsers(event){
+  function invertUsers(event) {
     setUsers((prev) => {
-        return !prev;
-    })
+      return !prev;
+    });
   }
+  const ColoredLine = ({ color }) => (
+    <hr
+      style={{
+        color: color,
+        backgroundColor: color,
+        height: 3,
+      }}
+    />
+  );
 
   return (
     <div className="container-xl px-4 mt-4">
@@ -64,15 +73,33 @@ function ProfilePage(props) {
       {isProfile ? (
         <Profile currentUser={props.currentUser} logOut={props.logOut} />
       ) : null}
-      {isFollowers ? <Followers /> : null}
+      {isFollowers ? (
+        <Followers
+          currentUser={{
+            username: props.currentUser.username,
+            cookieID: props.currentUser.cookieID,
+          }}
+        />
+      ) : null}
       {isFollowing ? (
         isUsers ? (
-          <Users invertUsers={invertUsers} 
-          
-          
+          <Users
+            invertUsers={invertUsers}
+            currentUser={{
+              username: props.currentUser.username,
+              cookieID: props.currentUser.cookieID,
+              following: props.currentUser.following,
+            }}
           />
         ) : (
-          <Following invertUsers={invertUsers} />
+          <Following
+            invertUsers={invertUsers}
+            currentUser={{
+              username: props.currentUser.username,
+              cookieID: props.currentUser.cookieID,
+            }}
+            updateNetwork = {props.updateNetwork}
+          />
         )
       ) : null}
     </div>

@@ -36,6 +36,7 @@ function SignUp(props) {
       lastName: data.get("lastName"),
       username: data.get("username"),
       email: data.get("email"),
+      picture: "",
       password: data.get("password"),
     };
     fetch(expressIP + "/signUp", {

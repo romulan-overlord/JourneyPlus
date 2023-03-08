@@ -16,6 +16,7 @@ function App() {
   const [checkCookies, setCheckCookies] = useState(true);
   const [compose, setCompose] = useState(false);
   const [createMode, setCreateMode] = useState(true);
+  const [displayPrivate, setPrivate] = useState(true);
   const [passedEntry, setPassedEntry] = useState({
     entryID: "",
     title: "",
@@ -32,6 +33,7 @@ function App() {
       desc: "",
       icon: "",
     },
+    private: true,
   });
 
   const [lat, setLat] = useState([]);
@@ -47,8 +49,8 @@ function App() {
 
   const [profilePage, setProfilePage] = useState(false);
 
-  function invertProfilePage(event){
-    setProfilePage((prev) =>{
+  function invertProfilePage(event) {
+    setProfilePage((prev) => {
       return !prev;
     });
   }
@@ -57,6 +59,11 @@ function App() {
     setIsSignedUp((prev) => {
       return !prev;
     });
+  }
+
+  function setVisibility(visibility) {
+    console.log("setting visibility: " + visibility);
+    setPrivate(visibility);
   }
 
   function invertCompose() {
@@ -150,6 +157,7 @@ function App() {
         desc: "",
         icon: "",
       },
+      private: true,
     });
     setCreateMode(true);
   }
@@ -171,6 +179,15 @@ function App() {
         return { ...user };
       });
       if (doResolve === true) resolve();
+    });
+  }
+
+  function updateNetwork(update) {
+    setCurrentUser((prev) => {
+      return {
+        ...prev,
+        ...update,
+      };
     });
   }
 
@@ -234,10 +251,12 @@ function App() {
           invertCompose={invertCompose}
           logOut={logOut}
           invertProfilePage={invertProfilePage}
+          private={displayPrivate}
+          setVisibility={setVisibility}
         />
       ) : null}
-      {isLoggedIn ? 
-        (compose ? (
+      {isLoggedIn ? (
+        compose ? (
           <EntryInput
             currentUser={currentUser}
             updateEntries={updateEntries}
@@ -251,8 +270,12 @@ function App() {
             currentUser={currentUser}
             openEntry={openEntry}
             deleteEntry={deleteEntry}
+            private={displayPrivate}
           />
-        ) : <ProfilePage currentUser={currentUser} logOut={logOut} />) : isSignedUp ? (
+        ) : (
+          <ProfilePage currentUser={currentUser} logOut={logOut} updateNetwork={updateNetwork}/>
+        )
+      ) : isSignedUp ? (
         <Login
           invertLoggedIn={invertLoggedIn}
           switch={invertIsSignedUp}

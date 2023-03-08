@@ -51,6 +51,7 @@ const entrySchema = {
     desc: String,
     icon: String,
   },
+  private: Boolean,
 };
 
 const Entry = mongoose.model("entry", entrySchema);
@@ -63,11 +64,21 @@ const userSchema = new mongoose.Schema({
   },
   username: String,
   email: String,
+  picture: String,
   cookieID: String,
   entries: [entrySchema],
+  following: [String],
+  followers: [String],
 });
 
 const Users = mongoose.model("user", userSchema);
+
+const networkSchema = new mongoose.Schema({
+  users: [String],
+  userCount: Number,
+});
+
+const Network = mongoose.model("network", networkSchema);
 
 function reduceEntry(entry) {
   entry.size = sizeof(entry);
@@ -115,7 +126,6 @@ function reduceEntry(entry) {
       tempWare.save();
     }
   }
-
   return newEntry;
 }
 
@@ -169,25 +179,13 @@ app.post("/submit-entry", (req, res) => {
       res.send({ mesage: "success", savedEntry: newEntry });
     }
   });
-
-  // const user = Users.findOne(
-  //   { username: req.body.user },
-  //   function (err, results) {
-  //     if (!err) {
-  //       if (results) {
-  //         results.entries.push(newEntry);
-  //         results.save();
-  //       }
-  //     }
-  //   }
-  // );
 });
 
 app.post("/removeEntry", (req, res) => {
   console.log("hellp");
-  Users.findOne({username: req.body.user}, async (err,results) => {
-    if(err) throw err;
-    if(results){
+  Users.findOne({ username: req.body.user }, async (err, results) => {
+    if (err) throw err;
+    if (results) {
       for (let i = 0; i < results.entries.length; i++) {
         if (results.entries[i].entryID === req.body.entryID) {
           deleteEntry(results.entries[i]);
@@ -196,9 +194,9 @@ app.post("/removeEntry", (req, res) => {
         }
       }
       results.save();
-      res.send({message: "success"});
+      res.send({ message: "success" });
     }
-  })
+  });
 });
 
 app.post("/signUp", (req, res) => {
@@ -235,9 +233,16 @@ app.post("/signUp", (req, res) => {
                   username: req.body.username,
                   cookieID: "",
                   email: req.body.email,
+                  picture: req.body.picture,
                   password: hashedPassword,
                 });
                 await newUser.save();
+                Network.findOne({}, (err, data) => {
+                  if (err) throw err;
+                  data.users.push(req.body.username);
+                  data.userCount = data.userCount + 1;
+                  data.save();
+                });
                 console.log("User Created");
                 res.send({
                   success: "999", //The user has been successfully signed up and saved in the database
@@ -376,9 +381,9 @@ app.post("/getFullData", (req, res) => {
     }
 
     let myPromise = new Promise(function (myResolve, myReject) {
-      console.log("in promise");
-      console.log(entry);
-      console.log(sizeof(entry) + "    " + req.body.size);
+      // console.log("in promise");
+      // console.log(entry);
+      // console.log(sizeof(entry) + "    " + req.body.size);
       let timeout = (n) => {
 
 
@@ -399,6 +404,161 @@ app.post("/getFullData", (req, res) => {
     });
   }
   getData();
+});
+
+app.post("/fetchUsers", (req, res) => {
+  let userArray = [];
+  Network.findOne({}, async (err, result) => {
+    if (err) throw err;
+    for (let i = 0; i < result.userCount; i++) {
+      Users.findOne({ username: result.users[i] }, async (err, user) => {
+        if (err) throw err;
+        // console.log(user);
+        userArray.push({
+          username: user.username,
+          picture: user.picture,
+          firstName: user.firstName,
+          lastName: user.lastName,
+        });
+      });
+    }
+    let readyPromise = new Promise(function (resolve, reject) {
+      let timeout = (n) => {
+        // console.log("in timeout: ");
+        setTimeout(() => {
+          if (userArray.length === (result.userCount)) {
+            userArray = userArray.filter((n) => {
+              console.log("checking: " + n)
+              return !req.body.following.includes(n.username);
+            });
+            console.log(userArray);
+            res.send({ users: userArray });
+            resolve();
+          } else timeout(n);
+        }, n);
+      };
+      timeout(50);
+    });
+    readyPromise.then(() => {
+      console.log("UwU");
+    });
+  });
+});
+
+app.post("/fetchFollowers", (req, res) => {
+  const followerArray = [];
+  Users.findOne(
+    {
+      username: req.body.username,
+      cookieID: req.body.cookieID,
+    },
+    async (err, user) => {
+      if (err) throw err;
+      for (let i = 0; i < user.followers.length; i++) {
+        Users.findOne({ username: user.followers[i] }, (err, follower) => {
+          if (err) throw err;
+          followerArray.push({
+            username: follower.username,
+            picture: follower.picture,
+            firstName: follower.firstName,
+            lastName: follower.lastName,
+          });
+        });
+      }
+      let readyPromise = new Promise(function (resolve, reject) {
+        let timeout = (n) => {
+          // console.log("in timeout: ");
+          setTimeout(() => {
+            if (followerArray.length === user.followers.length) resolve();
+            else timeout(n);
+          }, n);
+        };
+        timeout(50);
+      });
+      readyPromise.then(() => {
+        res.send({ followers: followerArray });
+      });
+    }
+  );
+});
+
+app.post("/fetchFollowing", (req, res) => {
+  const followingArray = [];
+  Users.findOne(
+    {
+      username: req.body.username,
+      cookieID: req.body.cookieID,
+    },
+    async (err, user) => {
+      if (err) throw err;
+      for (let i = 0; i < user.following.length; i++) {
+        Users.findOne({ username: user.following[i] }, (err, following) => {
+          if (err) throw err;
+          followingArray.push({
+            username: following.username,
+            picture: following.picture,
+            firstName: following.firstName,
+            lastName: following.lastName,
+          });
+        });
+      }
+      let readyPromise = new Promise(function (resolve, reject) {
+        let timeout = (n) => {
+          // console.log("in timeout: ");
+          setTimeout(() => {
+            if (followingArray.length === user.following.length) resolve();
+            else timeout(n);
+          }, n);
+        };
+        timeout(50);
+      });
+      readyPromise.then(() => {
+        res.send({ following: followingArray });
+      });
+    }
+  );
+});
+
+app.post("/follow", (req, res) => {
+  console.log(req.body);
+  Users.findOne(
+    { username: req.body.username, cookieID: req.body.cookieID },
+    (err, user) => {
+      if (err) throw err;
+      user.following.push(req.body.follow);
+      user.following = [...new Set(user.following)];
+      user.save();
+      Users.findOne({ username: req.body.follow }, (err, user) => {
+        if (err) throw err;
+        user.followers.push(req.body.username);
+        user.followers = [...new Set(user.followers)];
+        user.save();
+        res.send({ status: true });
+      });
+    }
+  );
+});
+
+app.post("/unfollow", (req, res) => {
+  console.log(req.body);
+  Users.findOne(
+    { username: req.body.username, cookieID: req.body.cookieID },
+    (err, user) => {
+      if (err) throw err;
+      let index = user.following.indexOf(req.body.unfollow);
+      user.following.splice(index, 1);
+      user.save();
+      Users.findOne({ username: req.body.unfollow }, (err, user) => {
+        if (err) throw err;
+        let index = user.followers.indexOf(req.body.username);
+        user.followers.splice(index, 1);
+        // user.followers.push(req.body.username);
+        // user.followers = [...new Set(user.followers)];
+        user.save();
+        res.send({ status: true });
+      });
+    }
+  );
 });
 
 //------------------------------------------------------------- Weather API --------------------------------------------------------------------

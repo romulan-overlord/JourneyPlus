@@ -90,7 +90,7 @@ function EntryInput(props) {
       });
   }
 
-  function handleEdit(event){
+  function handleEdit(event) {
     event.preventDefault();
     props.invertCreateMode();
     $("input").prop("disabled", false);
@@ -163,6 +163,15 @@ function EntryInput(props) {
     $("#media-div").outerHeight(windowHeight - footerHeight - 25);
   }
 
+  function switchVisibility(visibility) {
+    setEntryData((prev) => {
+      return {
+        ...prev,
+        private: visibility,
+      };
+    });
+  }
+
   return (
     <div>
       <div
@@ -194,7 +203,7 @@ function EntryInput(props) {
                       {props.createMode ? (
                         <DoneIcon fontSize="large" sx={{ color: "white" }} />
                       ) : (
-                        <EditIcon fontSize="medium" sx={{ color: "white" }} />
+                        <EditIcon fontSize="large" sx={{ color: "white" }} />
                       )}
                     </IconButton>
                   </div>
@@ -256,6 +265,7 @@ function EntryInput(props) {
         setEnv={setEnv}
         createMode={props.createMode}
         entryData={entryData}
+        switchVisibility={switchVisibility}
       />
       {setDimensions()}
     </div>
