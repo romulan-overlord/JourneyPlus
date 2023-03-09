@@ -23,7 +23,7 @@ function Users(props) {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
+        // console.log("Users: " + data);
         setUserList(data.users);
       });
   }
@@ -42,12 +42,14 @@ function Users(props) {
         </div>
         <div className="card-body">
           {userList.length !== 0
-            ? userList.map((user) => {
+            ? userList.map((user, index) => {
                 return (
                   <SingleUser
                     user={user}
-                    follow={"follow"}
+                    follow={"Follow"}
                     currentUser={props.currentUser}
+                    updateNetwork={props.updateNetwork}
+                    key={index}
                   />
                 );
               })

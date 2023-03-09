@@ -69,6 +69,8 @@ const userSchema = new mongoose.Schema({
   entries: [entrySchema],
   following: [String],
   followers: [String],
+  privatePosts: 0,
+  publicPosts: 0,
 });
 
 const Users = mongoose.model("user", userSchema);
@@ -164,15 +166,24 @@ app.post("/submit-entry", (req, res) => {
     if (results) {
       for (let i = 0; i < results.entries.length; i++) {
         if (results.entries[i].entryID === req.body.entry.entryID) {
+          if (results.entries[i].private === true)
+            results.privatePosts = results.privatePosts - 1;
+          else results.publicPosts = results.publicPosts - 1;
           deleteEntry(results.entries[i]);
           results.entries.splice(i, 1);
           newEntry = reduceEntry(req.body.entry);
+          if (newEntry.private === true)
+            results.privatePosts = results.privatePosts + 1;
+          else results.publicPosts = results.publicPosts + 1;
           results.entries.push(newEntry);
         }
       }
       if (newEntry === null) {
         req.body.entry.entryID = uniqid();
         newEntry = reduceEntry(req.body.entry);
+        if (newEntry.private === true)
+          results.privatePosts = results.privatePosts + 1;
+        else results.publicPosts = results.publicPosts + 1;
         results.entries.push(newEntry);
       }
       results.save();
@@ -188,6 +199,9 @@ app.post("/removeEntry", (req, res) => {
     if (results) {
       for (let i = 0; i < results.entries.length; i++) {
         if (results.entries[i].entryID === req.body.entryID) {
+          if (results.entries[i].private === true)
+            results.privatePosts = results.privatePosts - 1;
+          else results.publicPosts = results.publicPosts - 1;
           deleteEntry(results.entries[i]);
           results.entries.splice(i, 1);
           break;
@@ -235,6 +249,8 @@ app.post("/signUp", (req, res) => {
                   email: req.body.email,
                   picture: req.body.picture,
                   password: hashedPassword,
+                  privatePosts: 0,
+                  publicPosts: 0,
                 });
                 await newUser.save();
                 Network.findOne({}, (err, data) => {
@@ -385,10 +401,6 @@ app.post("/getFullData", (req, res) => {
       // console.log(entry);
       // console.log(sizeof(entry) + "    " + req.body.size);
       let timeout = (n) => {
-
-
-
-        
         setTimeout(() => {
           if (sizeof(entry) >= req.body.size - 1000) myResolve();
           // else if(count >= 20) myResolve();
@@ -414,24 +426,26 @@ app.post("/fetchUsers", (req, res) => {
       Users.findOne({ username: result.users[i] }, async (err, user) => {
         if (err) throw err;
         // console.log(user);
-        userArray.push({
-          username: user.username,
-          picture: user.picture,
-          firstName: user.firstName,
-          lastName: user.lastName,
-        });
+        if (user.username !== req.body.username) {
+          userArray.push({
+            username: user.username,
+            picture: user.picture,
+            firstName: user.firstName,
+            lastName: user.lastName,
+          });
+        }
       });
     }
     let readyPromise = new Promise(function (resolve, reject) {
       let timeout = (n) => {
-        // console.log("in timeout: ");
+        console.log(req.body.following);
         setTimeout(() => {
-          if (userArray.length === (result.userCount)) {
+          if (userArray.length === result.userCount - 1) {
             userArray = userArray.filter((n) => {
-              console.log("checking: " + n)
+              console.log("checking: " + n.username);
               return !req.body.following.includes(n.username);
             });
-            console.log(userArray);
+            // console.log(userArray);
             res.send({ users: userArray });
             resolve();
           } else timeout(n);
@@ -439,9 +453,7 @@ app.post("/fetchUsers", (req, res) => {
       };
       timeout(50);
     });
-    readyPromise.then(() => {
-      console.log("UwU");
-    });
+    readyPromise.then(() => {});
   });
 });
 
@@ -541,24 +553,52 @@ app.post("/follow", (req, res) => {
 
 app.post("/unfollow", (req, res) => {
   console.log(req.body);
-  Users.findOne(
-    { username: req.body.username, cookieID: req.body.cookieID },
-    (err, user) => {
+  Users.findOne({ username: req.body.username }, (err, user) => {
+    if (err) throw err;
+    let index = user.following.indexOf(req.body.unfollow);
+    user.following.splice(index, 1);
+    user.save();
+    Users.findOne({ username: req.body.unfollow }, (err, user) => {
       if (err) throw err;
-      let index = user.following.indexOf(req.body.unfollow);
-      user.following.splice(index, 1);
+      let index = user.followers.indexOf(req.body.username);
+      user.followers.splice(index, 1);
+      // user.followers.push(req.body.username);
+      // user.followers = [...new Set(user.followers)];
       user.save();
-      Users.findOne({ username: req.body.unfollow }, (err, user) => {
-        if (err) throw err;
-        let index = user.followers.indexOf(req.body.username);
-        user.followers.splice(index, 1);
-        // user.followers.push(req.body.username);
-        // user.followers = [...new Set(user.followers)];
-        user.save();
-        res.send({ status: true });
-      });
-    }
-  );
+      res.send({ status: true });
+    });
+  });
+});
+
+app.post("/getFeed", (req, res) => {
+  console.log(req.body);
+  const feedArr = [];
+  let feedCount = 0;
+  for (let i = 0; i < req.body.following.length; i++) {
+    Users.findOne({ username: req.body.following[i] }, (err, user) => {
+      if (err) throw err;
+      feedCount = feedCount + user.publicPosts;
+      for (let j = 0; j < user.entries.length; j++) {
+        if (user.entries[j].private === false) {
+          feedArr.push(user.entries[j]);
+        }
+      }
+    });
+  }
+  let readyPromise = new Promise(function (resolve, reject) {
+    let timeout = (n) => {
+      // console.log("in timeout: ");
+      setTimeout(() => {
+        if (feedArr.length === feedCount) resolve();
+        else timeout(n);
+      }, n);
+    };
+    timeout(50);
+  });
+  readyPromise.then(() => {
+    res.send({ feed: feedArr });
+  });
+  // res.send({ mess: "helo" });
 });
 
 //------------------------------------------------------------- Weather API --------------------------------------------------------------------

@@ -16,38 +16,40 @@ function Card(props) {
     isBkgAud: false,
   });
 
-  function checkMedia() {
-    let tempBool = true;
-    // console.log(props.entry.media.image.length);
-    const isMedia = () => {
-      if (
-        props.entry.media.image.length === 0 &&
-        props.entry.media.video.length === 0 &&
-        props.entry.media.audio.length === 0
-      )
-        tempBool = false;
-      else tempBool = true;
-      setFlags((prev) => {
-        return {
-          ...prev,
-          isMedia: tempBool,
-        };
-      });
+  // const [showCard, setShowCard] = useState(true);
 
-      if (
-        props.entry.backgroundAudio === "" ||
-        props.entry.backgroundAudio === undefined
-      )
-        tempBool = false;
-      tempBool = true;
-      setFlags((prev) => {
-        return {
-          ...prev,
-          isBkgAud: tempBool,
-        };
-      });
-    };
-  }
+  // function checkMedia() {
+  //   let tempBool = true;
+  //   // console.log(props.entry.media.image.length);
+  //   const isMedia = () => {
+  //     if (
+  //       props.entry.media.image.length === 0 &&
+  //       props.entry.media.video.length === 0 &&
+  //       props.entry.media.audio.length === 0
+  //     )
+  //       tempBool = false;
+  //     else tempBool = true;
+  //     setFlags((prev) => {
+  //       return {
+  //         ...prev,
+  //         isMedia: tempBool,
+  //       };
+  //     });
+
+  //     if (
+  //       props.entry.backgroundAudio === "" ||
+  //       props.entry.backgroundAudio === undefined
+  //     )
+  //       tempBool = false;
+  //     tempBool = true;
+  //     setFlags((prev) => {
+  //       return {
+  //         ...prev,
+  //         isBkgAud: tempBool,
+  //       };
+  //     });
+  //   };
+  // }
 
   useEffect(() => {
     const id = "#c" + props.index;
@@ -61,7 +63,8 @@ function Card(props) {
       $(id).css("background-image", "url(" + imageUrl + ")");
     }
     if (checkFlags === true) {
-      checkMedia();
+      // console.log("in check");
+      // checkMedia();
       setCheck(false);
     }
   });
@@ -79,52 +82,54 @@ function Card(props) {
             key={props.index}
           >
             <div className="card-menu">
-              <div className="dropdown card-dropdown">
-                <a
-                  className="btn btn-sm  bkg-btn"
-                  href="#"
-                  role="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  <MoreVertIcon
-                    className="date-p"
-                    fontSize="small"
-                  ></MoreVertIcon>
-                </a>
-                <ul className="dropdown-menu px-2">
-                  <li
-                    className="card-menu-item"
-                    onClick={() => {
-                      props.openEntry(props.entry, false);
-                    }}
+              {!props.isFeed ? (
+                <div className="dropdown card-dropdown">
+                  <a
+                    className="btn btn-sm  bkg-btn"
+                    href="#"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
                   >
-                    View
-                  </li>
-                  <li
-                    className="card-menu-item"
-                    onClick={() => {
-                      props.openEntry(props.entry, true);
-                    }}
-                  >
-                    Edit
-                  </li>
-                  <li
-                    className="card-menu-item"
-                    onClick={() => {
-                      props.deleteEntry(props.entry.entryID);
-                    }}
-                  >
-                    Delete
-                  </li>
-                </ul>
-              </div>
+                    <MoreVertIcon
+                      className="date-p"
+                      fontSize="small"
+                    ></MoreVertIcon>
+                  </a>
+                  <ul className="dropdown-menu px-2">
+                    <li
+                      className="card-menu-item"
+                      onClick={() => {
+                        props.openEntry(props.entry, false, props.isFeed);
+                      }}
+                    >
+                      View
+                    </li>
+                    <li
+                      className="card-menu-item"
+                      onClick={() => {
+                        props.openEntry(props.entry, true, props.isFeed);
+                      }}
+                    >
+                      Edit
+                    </li>
+                    <li
+                      className="card-menu-item"
+                      onClick={() => {
+                        props.deleteEntry(props.entry.entryID);
+                      }}
+                    >
+                      Delete
+                    </li>
+                  </ul>
+                </div>
+              ) : null}
             </div>
             <div
               className="card-body"
               key={props.index}
               onClick={() => {
-                props.openEntry(props.entry, false);
+                props.openEntry(props.entry, false, props.isFeed);
               }}
             >
               <h3 className="main-page-card-title">{props.entry.title}</h3>

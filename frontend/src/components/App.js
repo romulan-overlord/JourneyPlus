@@ -16,7 +16,7 @@ function App() {
   const [checkCookies, setCheckCookies] = useState(true);
   const [compose, setCompose] = useState(false);
   const [createMode, setCreateMode] = useState(true);
-  const [displayPrivate, setPrivate] = useState(true);
+  const [display, setDisplay] = useState("Private");
   const [passedEntry, setPassedEntry] = useState({
     entryID: "",
     title: "",
@@ -62,8 +62,7 @@ function App() {
   }
 
   function setVisibility(visibility) {
-    console.log("setting visibility: " + visibility);
-    setPrivate(visibility);
+    setDisplay(visibility);
   }
 
   function invertCompose() {
@@ -81,7 +80,7 @@ function App() {
     });
   }
 
-  function openEntry(entry, bool) {
+  function openEntry(entry, bool, isFeed) {
     fetch(expressIP + "/getFullData", {
       method: "POST",
       headers: {
@@ -251,7 +250,7 @@ function App() {
           invertCompose={invertCompose}
           logOut={logOut}
           invertProfilePage={invertProfilePage}
-          private={displayPrivate}
+          display={display}
           setVisibility={setVisibility}
         />
       ) : null}
@@ -270,7 +269,7 @@ function App() {
             currentUser={currentUser}
             openEntry={openEntry}
             deleteEntry={deleteEntry}
-            private={displayPrivate}
+            display={display}
           />
         ) : (
           <ProfilePage currentUser={currentUser} logOut={logOut} updateNetwork={updateNetwork}/>
