@@ -42,16 +42,16 @@ const commentSchema = {
   author: String,
   comment: String,
   likes: Number,
-  reply: [] //help
-}
+};
 
 const feedNetworkSchema = {
   entryID: String,
   likes: Number,
-  comments: [commentSchema]
-}
+  likedBy: [String],
+  comments: [commentSchema],
+};
 
-const feedNetwork = mongoose.model("feedNetwork", feedNetworkSchema);
+const FeedNetwork = mongoose.model("feedNetwork", feedNetworkSchema);
 
 const entrySchema = {
   entryID: String,
@@ -189,7 +189,16 @@ app.post("/submit-entry", (req, res) => {
           newEntry = reduceEntry(req.body.entry);
           if (newEntry.private === true)
             results.privatePosts = results.privatePosts + 1;
-          else results.publicPosts = results.publicPosts + 1;
+          else {
+            results.publicPosts = results.publicPosts + 1;
+            const feed = new FeedNetwork({
+              entryID: newEntry.entryID,
+              likes: 0,
+              likedBy: [],
+              comments: [],
+            });
+            feed.save();
+          }
           results.entries.push(newEntry);
         }
       }
@@ -198,7 +207,15 @@ app.post("/submit-entry", (req, res) => {
         newEntry = reduceEntry(req.body.entry);
         if (newEntry.private === true)
           results.privatePosts = results.privatePosts + 1;
-        else results.publicPosts = results.publicPosts + 1;
+        else {
+          results.publicPosts = results.publicPosts + 1;
+          const feed = new FeedNetwork({
+            entryID: newEntry.entryID,
+            likes: 0,
+            comments: [],
+          });
+          feed.save();
+        }
         results.entries.push(newEntry);
       }
       results.save();
@@ -622,6 +639,42 @@ app.post("/getFeed", (req, res) => {
     res.send({ feed: feedArr });
   });
   // res.send({ mess: "helo" });
+});
+
+app.post("/getLikes", (req, res) => {
+  console.log(req.body);
+  FeedNetwork.findOne({ entryID: req.body.entryID }, (err, data) => {
+    if (err) throw err;
+    if (data) {
+      res.send(data);
+    }
+  });
+  // res.send({ hey: "bro" });
+});
+
+app.post("/like", (req, res) => {
+  FeedNetwork.findOne({ entryID: req.body.entryID }, (err, data) => {
+    if (err) console.log("error finding feedNetwork on like");
+    if (data) {
+      data.likes = data.likes + 1;
+      data.likedBy.push(req.body.likedBy);
+      data.save();
+      res.send({ message: "success" });
+    }
+  });
+});
+
+app.post("/unlike", (req, res) => {
+  FeedNetwork.findOne({ entryID: req.body.entryID }, (err, data) => {
+    if (err) console.log("error finding feedNetwork on unlike");
+    if (data) {
+      data.likes = data.likes - 1;
+      let index = data.likedBy.indexOf(req.body.unlikedBy);
+      data.likedBy.splice(index, 1);
+      data.save();
+      res.send({ message: "success" });
+    }
+  });
 });
 
 //------------------------------------------------------------- Weather API --------------------------------------------------------------------

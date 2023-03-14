@@ -64,6 +64,10 @@ function MainPage(props) {
                 <FeedPost
                   feed={feed}
                   index={index}
+                  currentUser={{
+                    username: props.currentUser.username,
+                    cookieID: props.currentUser.cookieID
+                  }}
                   key={index}
                   invertCompose={props.invertCompose}
                   openEntry={props.openEntry}

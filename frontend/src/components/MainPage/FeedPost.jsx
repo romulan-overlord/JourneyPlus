@@ -3,11 +3,95 @@ import React, { useState, useEffect } from "react";
 import Avatar from "@mui/material/Avatar";
 import Stack from "@mui/material/Stack";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
 import MapsUgcOutlinedIcon from "@mui/icons-material/MapsUgcOutlined";
 import ReplyOutlinedIcon from "@mui/icons-material/ReplyOutlined";
 import Card from "./Card";
+import { expressIP } from "../../settings";
 
 function FeedPost(props) {
+  const [likes, setLikes] = useState({});
+  const [ready, setReady] = useState(true);
+  const [liked, setLiked] = useState(false);
+
+  useEffect(() => {
+    if (ready) {
+      fetchDetails();
+      setReady(false);
+    }
+  });
+
+  function fetchDetails() {
+    fetch(expressIP + "/getLikes", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ entryID: props.feed.entry.entryID }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // console.log(data);
+        setLikes(data);
+        setLiked(data.likedBy.includes(props.currentUser.username));
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }
+
+  function handleLike() {
+    fetch(expressIP + "/like", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        entryID: props.feed.entry.entryID,
+        likedBy: props.currentUser.username,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setLikes((prev) => {
+          return {
+            ...prev,
+            likes: prev.likes + 1,
+          };
+        });
+        setLiked(true);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }
+
+  function handleUnlike() {
+    fetch(expressIP + "/unlike", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        entryID: props.feed.entry.entryID,
+        unlikedBy: props.currentUser.username,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setLikes((prev) => {
+          return {
+            ...prev,
+            likes: prev.likes - 1,
+          };
+        });
+        setLiked(false);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }
+
   return (
     <section
       className="px-0"
@@ -45,7 +129,14 @@ function FeedPost(props) {
                   />
                   <div className="p-2">
                     <Stack direction="row" spacing={1.5}>
-                      <FavoriteBorderIcon />
+                      {liked ? (
+                        <FavoriteOutlinedIcon
+                          sx={{ color: "#C21010" }}
+                          onClick={handleUnlike}
+                        />
+                      ) : (
+                        <FavoriteBorderIcon onClick={handleLike} />
+                      )}
                       <MapsUgcOutlinedIcon />
                       <ReplyOutlinedIcon />
                     </Stack>
