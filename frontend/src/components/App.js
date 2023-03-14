@@ -16,6 +16,7 @@ function App() {
   const [checkCookies, setCheckCookies] = useState(true);
   const [compose, setCompose] = useState(false);
   const [createMode, setCreateMode] = useState(true);
+  const [feedMode, setFeedMode] = useState(false);
   const [display, setDisplay] = useState("Private");
   const [passedEntry, setPassedEntry] = useState({
     entryID: "",
@@ -80,7 +81,7 @@ function App() {
     });
   }
 
-  function openEntry(entry, bool, isFeed) {
+  function openEntry(entry, bool) {
     fetch(expressIP + "/getFullData", {
       method: "POST",
       headers: {
@@ -263,6 +264,7 @@ function App() {
             createMode={createMode}
             invertCreateMode={invertCreateMode}
             exitEntry={exitEntry}
+            feedMode={display === "Feed" ? true : false}
           />
         ) : !profilePage ? (
           <MainPage

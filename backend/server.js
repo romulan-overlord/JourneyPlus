@@ -38,6 +38,21 @@ const mediaWarehouseSchema = {
 
 const MediaWarehouse = mongoose.model("mediaWarehouse", mediaWarehouseSchema);
 
+const commentSchema = {
+  author: String,
+  comment: String,
+  likes: Number,
+  reply: [] //help
+}
+
+const feedNetworkSchema = {
+  entryID: String,
+  likes: Number,
+  comments: [commentSchema]
+}
+
+const feedNetwork = mongoose.model("feedNetwork", feedNetworkSchema);
+
 const entrySchema = {
   entryID: String,
   size: Number,
@@ -580,7 +595,15 @@ app.post("/getFeed", (req, res) => {
       feedCount = feedCount + user.publicPosts;
       for (let j = 0; j < user.entries.length; j++) {
         if (user.entries[j].private === false) {
-          feedArr.push(user.entries[j]);
+          feedArr.push({
+            creator: {
+              username: user.username,
+              firstName: user.firstName,
+              lastName: user.lastName,
+              picture: user.picture,
+            },
+            entry: user.entries[j],
+          });
         }
       }
     });

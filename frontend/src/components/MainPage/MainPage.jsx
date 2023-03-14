@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { expressIP } from "../../settings";
 import Card from "./Card";
+import FeedPost from "./FeedPost";
 
 function MainPage(props) {
   const [userReady, setUserReady] = useState(false);
@@ -58,10 +59,10 @@ function MainPage(props) {
                 />
               );
             })
-          : feedList.map((entry, index) => {
+          : feedList.map((feed, index) => {
               return (
-                <Card
-                  entry={entry}
+                <FeedPost
+                  feed={feed}
                   index={index}
                   key={index}
                   invertCompose={props.invertCompose}

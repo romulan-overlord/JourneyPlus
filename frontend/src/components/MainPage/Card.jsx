@@ -73,11 +73,15 @@ function Card(props) {
     <>
       {props.entry.private === props.private ? (
         <div
-          className="card-container px-3 pb-2 col-lg-4 col-md-6"
+          className={
+            props.isFeed
+              ? "card-container col-12"
+              : "card-container px-3 pb-2 col-lg-4 col-md-6"
+          }
           key={props.index}
         >
           <div
-            className="card h-100 card-red"
+            className={props.isFeed ? "card my-card h-100" : "card my-card h-100 card-red"}
             id={"c" + props.index}
             key={props.index}
           >
@@ -100,7 +104,7 @@ function Card(props) {
                     <li
                       className="card-menu-item"
                       onClick={() => {
-                        props.openEntry(props.entry, false, props.isFeed);
+                        props.openEntry(props.entry, false);
                       }}
                     >
                       View
@@ -108,7 +112,7 @@ function Card(props) {
                     <li
                       className="card-menu-item"
                       onClick={() => {
-                        props.openEntry(props.entry, true, props.isFeed);
+                        props.openEntry(props.entry, true);
                       }}
                     >
                       Edit
@@ -129,7 +133,7 @@ function Card(props) {
               className="card-body"
               key={props.index}
               onClick={() => {
-                props.openEntry(props.entry, false, props.isFeed);
+                props.openEntry(props.entry, false);
               }}
             >
               <h3 className="main-page-card-title">{props.entry.title}</h3>
