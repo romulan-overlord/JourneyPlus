@@ -13,10 +13,12 @@ function Following(props) {
     }
   });
 
-  function updateNetwork(user) {
-    let newArr = followingList;
-    newArr.splice(followingList.indexOf(user), 1)
-    props.updateNetwork(newArr);
+  function getUsernameArray(arr) {
+    const retArr = [];
+    for (let i = 0; i < arr.length; i++) {
+      retArr.push(arr[i].username);
+    }
+    return retArr;
   }
 
   function fetchFollowing() {
@@ -32,9 +34,9 @@ function Following(props) {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
+        // console.log(data);
         setFollowingList(data.following);
-        updateNetwork(data.following);
+        props.updateNetwork({ following: getUsernameArray(data.following) });
         //setUserList(data.users);
       });
   }
@@ -53,13 +55,14 @@ function Following(props) {
         </div>
         <div className="card-body">
           {followingList.length !== 0
-            ? followingList.map((follower) => {
+            ? followingList.map((follower, index) => {
                 return (
                   <SingleUser
                     user={follower}
                     follow={"Unfollow"}
                     currentUser={props.currentUser}
-                    updateNetwork={updateNetwork}
+                    updateNetwork={props.updateNetwork}
+                    key={index}
                   />
                 );
               })

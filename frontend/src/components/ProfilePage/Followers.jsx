@@ -25,23 +25,31 @@ function Followers(props) {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
+        // console.log(data);
         setFollowerList(data.followers);
         //setUserList(data.users);
       });
   }
+
+  function updateFollowers(followers){
+    setFollowerList(followers)
+  }
+
   return (
     <div className="container">
       <div className="card">
         <div className="card-header-profile">Followers</div>
         <div className="card-body">
           {followerList.length !== 0
-            ? followerList.map((follower) => {
+            ? followerList.map((follower, index) => {
                 return (
                   <SingleUser
                     user={follower}
                     follow={"Remove"}
                     currentUser={props.currentUser}
+                    updateNetwork={props.updateNetwork}
+                    updateFollowers={updateFollowers}
+                    key={index}
                   />
                 );
               })

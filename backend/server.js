@@ -38,6 +38,21 @@ const mediaWarehouseSchema = {
 
 const MediaWarehouse = mongoose.model("mediaWarehouse", mediaWarehouseSchema);
 
+const commentSchema = {
+  author: String,
+  comment: String,
+  likes: Number,
+};
+
+const feedNetworkSchema = {
+  entryID: String,
+  likes: Number,
+  likedBy: [String],
+  comments: [commentSchema],
+};
+
+const FeedNetwork = mongoose.model("feedNetwork", feedNetworkSchema);
+
 const entrySchema = {
   entryID: String,
   size: Number,
@@ -69,6 +84,8 @@ const userSchema = new mongoose.Schema({
   entries: [entrySchema],
   following: [String],
   followers: [String],
+  privatePosts: 0,
+  publicPosts: 0,
 });
 
 const Users = mongoose.model("user", userSchema);
@@ -177,15 +194,41 @@ app.post("/submit-entry", (req, res) => {
     if (results) {
       for (let i = 0; i < results.entries.length; i++) {
         if (results.entries[i].entryID === req.body.entry.entryID) {
+          if (results.entries[i].private === true)
+            results.privatePosts = results.privatePosts - 1;
+          else results.publicPosts = results.publicPosts - 1;
           deleteEntry(results.entries[i]);
           results.entries.splice(i, 1);
           newEntry = reduceEntry(req.body.entry);
+          if (newEntry.private === true)
+            results.privatePosts = results.privatePosts + 1;
+          else {
+            results.publicPosts = results.publicPosts + 1;
+            const feed = new FeedNetwork({
+              entryID: newEntry.entryID,
+              likes: 0,
+              likedBy: [],
+              comments: [],
+            });
+            feed.save();
+          }
           results.entries.push(newEntry);
         }
       }
       if (newEntry === null) {
         req.body.entry.entryID = uniqid();
         newEntry = reduceEntry(req.body.entry);
+        if (newEntry.private === true)
+          results.privatePosts = results.privatePosts + 1;
+        else {
+          results.publicPosts = results.publicPosts + 1;
+          const feed = new FeedNetwork({
+            entryID: newEntry.entryID,
+            likes: 0,
+            comments: [],
+          });
+          feed.save();
+        }
         results.entries.push(newEntry);
       }
       results.save();
@@ -201,6 +244,9 @@ app.post("/removeEntry", (req, res) => {
     if (results) {
       for (let i = 0; i < results.entries.length; i++) {
         if (results.entries[i].entryID === req.body.entryID) {
+          if (results.entries[i].private === true)
+            results.privatePosts = results.privatePosts - 1;
+          else results.publicPosts = results.publicPosts - 1;
           deleteEntry(results.entries[i]);
           results.entries.splice(i, 1);
           break;
@@ -248,6 +294,8 @@ app.post("/signUp", (req, res) => {
                   email: req.body.email,
                   picture: req.body.picture,
                   password: hashedPassword,
+                  privatePosts: 0,
+                  publicPosts: 0,
                 });
                 await newUser.save();
                 Network.findOne({}, (err, data) => {
@@ -463,24 +511,26 @@ app.post("/fetchUsers", (req, res) => {
       Users.findOne({ username: result.users[i] }, async (err, user) => {
         if (err) throw err;
         // console.log(user);
-        userArray.push({
-          username: user.username,
-          picture: user.picture,
-          firstName: user.firstName,
-          lastName: user.lastName,
-        });
+        if (user.username !== req.body.username) {
+          userArray.push({
+            username: user.username,
+            picture: user.picture,
+            firstName: user.firstName,
+            lastName: user.lastName,
+          });
+        }
       });
     }
     let readyPromise = new Promise(function (resolve, reject) {
       let timeout = (n) => {
-        // console.log("in timeout: ");
+        console.log(req.body.following);
         setTimeout(() => {
-          if (userArray.length === result.userCount) {
+          if (userArray.length === result.userCount - 1) {
             userArray = userArray.filter((n) => {
-              console.log("checking: " + n);
+              console.log("checking: " + n.username);
               return !req.body.following.includes(n.username);
             });
-            console.log(userArray);
+            // console.log(userArray);
             res.send({ users: userArray });
             resolve();
           } else timeout(n);
@@ -488,9 +538,7 @@ app.post("/fetchUsers", (req, res) => {
       };
       timeout(50);
     });
-    readyPromise.then(() => {
-      console.log("UwU");
-    });
+    readyPromise.then(() => {});
   });
 });
 
@@ -590,24 +638,171 @@ app.post("/follow", (req, res) => {
 
 app.post("/unfollow", (req, res) => {
   console.log(req.body);
-  Users.findOne(
-    { username: req.body.username, cookieID: req.body.cookieID },
-    (err, user) => {
+  Users.findOne({ username: req.body.username }, (err, user) => {
+    if (err) throw err;
+    let index = user.following.indexOf(req.body.unfollow);
+    user.following.splice(index, 1);
+    user.save();
+    Users.findOne({ username: req.body.unfollow }, (err, user) => {
       if (err) throw err;
-      let index = user.following.indexOf(req.body.unfollow);
-      user.following.splice(index, 1);
+      let index = user.followers.indexOf(req.body.username);
+      user.followers.splice(index, 1);
+      // user.followers.push(req.body.username);
+      // user.followers = [...new Set(user.followers)];
       user.save();
-      Users.findOne({ username: req.body.unfollow }, (err, user) => {
+      res.send({ status: true });
+    });
+  });
+});
+
+app.post("/getFeed", (req, res) => {
+  console.log(req.body);
+  const feedArr = [];
+  let feedCount = 0;
+  for (let i = 0; i < req.body.following.length; i++) {
+    Users.findOne({ username: req.body.following[i] }, (err, user) => {
+      if (err) throw err;
+      feedCount = feedCount + user.publicPosts;
+      for (let j = 0; j < user.entries.length; j++) {
+        if (user.entries[j].private === false) {
+          feedArr.push({
+            creator: {
+              username: user.username,
+              firstName: user.firstName,
+              lastName: user.lastName,
+              picture: user.picture,
+            },
+            entry: user.entries[j],
+          });
+        }
+      }
+    });
+  }
+  let readyPromise = new Promise(function (resolve, reject) {
+    let timeout = (n) => {
+      // console.log("in timeout: ");
+      setTimeout(() => {
+        if (feedArr.length === feedCount) resolve();
+        else timeout(n);
+      }, n);
+    };
+    timeout(50);
+  });
+  readyPromise.then(() => {
+    res.send({ feed: feedArr });
+  });
+  // res.send({ mess: "helo" });
+});
+
+app.post("/getLikes", (req, res) => {
+  console.log(req.body);
+  FeedNetwork.findOne({ entryID: req.body.entryID }, (err, data) => {
+    if (err) throw err;
+    if (data) {
+      res.send(data);
+    }
+  });
+  // res.send({ hey: "bro" });
+});
+
+app.post("/like", (req, res) => {
+  FeedNetwork.findOne({ entryID: req.body.entryID }, (err, data) => {
+    if (err) console.log("error finding feedNetwork on like");
+    if (data) {
+      data.likes = data.likes + 1;
+      data.likedBy.push(req.body.likedBy);
+      data.save();
+      res.send({ message: "success" });
+    }
+  });
+});
+
+app.post("/unlike", (req, res) => {
+  FeedNetwork.findOne({ entryID: req.body.entryID }, (err, data) => {
+    if (err) console.log("error finding feedNetwork on unlike");
+    if (data) {
+      data.likes = data.likes - 1;
+      let index = data.likedBy.indexOf(req.body.unlikedBy);
+      data.likedBy.splice(index, 1);
+      data.save();
+      res.send({ message: "success" });
+    }
+  });
+});
+
+app.post("/fetchUsersForProfile", (req, res) => {
+  console.log(req.body);
+  let userArray = [];
+  Network.findOne({}, async (err, result) => {
+    if (err) throw err;
+    for (let i = 0; i < result.userCount; i++) {
+      Users.findOne({ username: result.users[i] }, async (err, user) => {
         if (err) throw err;
-        let index = user.followers.indexOf(req.body.username);
-        user.followers.splice(index, 1);
-        // user.followers.push(req.body.username);
-        // user.followers = [...new Set(user.followers)];
-        user.save();
-        res.send({ status: true });
+        userArray.push({
+          username: user.username,
+          email: user.email,
+        });
       });
     }
-  );
+    let readyPromise = new Promise(function (resolve, reject) {
+      let timeout = (n) => {
+        setTimeout(() => {
+          if (userArray.length === result.userCount) {
+            userArray = userArray.filter((n) => {
+              console.log("checking: " + n);
+              return !req.body.username.includes(n.username);
+            });
+            console.log(userArray);
+            res.send({ users: userArray });
+            resolve();
+          } else timeout(n);
+        }, n);
+      };
+      timeout(50);
+    });
+    readyPromise.then(() => {
+      console.log("UwU");
+    });
+  });
+});
+
+app.post("/editProfile", (req, res) => {
+  console.log(req.body);
+  console.log(req.body.newFirstName);
+  console.log(typeof req.body.newFirstName);
+  // Users.findOne({ username: req.body.oldUsername }, async (err, user) => {
+  //   if (err) throw err;
+  //   if (user) {
+  //     if (req.body.newUsername !== undefined) user.username = req.body.newUsername;
+  //     if (req.body.newfirstName !== undefined)
+  //       user.firstName = req.body.newFirstName;
+  //     if (req.body.newLastName.length !== undefined)
+  //       user.lastName = req.body.newLastName;
+  //     if (req.body.email.length !== undefined) user.email = req.body.email;
+
+  //     user.save();
+  //   }
+  // });
+});
+
+app.post("/updatePicture", (req, res) => {
+  Users.findOne({ username: req.body.username }, (err, user) => {
+    if (err) {
+      console.log("error in update picture");
+      throw err;
+    }
+    MediaWarehouse.deleteOne({ id: user.picture })
+      .then(function () {
+        console.log("Data deleted"); // Success
+      })
+      .catch(function (error) {
+        console.log(error); // Failure
+      });
+    user.picture = req.body.picture;
+    user = reduceUser(user);
+    user.save();
+    res.send({ message: "success" });
+  });
 });
 
 app.post("/fetchUsersForProfile", (req, res) => {

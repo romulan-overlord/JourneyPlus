@@ -199,13 +199,13 @@ function EntryInput(props) {
                     ></input>
                   </div>
                   <div className="container-fluid col-sm-1 mx-auto">
-                    <IconButton className="mx-auto" type="submit">
+                    { props.feedMode !== true ? (<IconButton className="mx-auto" type="submit">
                       {props.createMode ? (
                         <DoneIcon fontSize="large" sx={{ color: "white" }} />
                       ) : (
                         <EditIcon fontSize="large" sx={{ color: "white" }} />
                       )}
-                    </IconButton>
+                    </IconButton>) : null}
                   </div>
                 </div>
               </div>

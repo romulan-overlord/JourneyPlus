@@ -20,14 +20,16 @@ function SingleUser(props) {
       .then((data) => {
         console.log(data);
         setFollow("Unfollow");
-        props.updateNetwork();
+        props.updateNetwork({
+          following: [...props.currentUser.following, props.user.username],
+        });
       })
       .catch((error) => {
         console.error("Error:", error);
       });
   }
 
-  function handleUnfollow(){
+  function handleUnfollow() {
     fetch(expressIP + "/unfollow", {
       method: "POST",
       headers: {
@@ -41,9 +43,42 @@ function SingleUser(props) {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
-        setFollow("follow");
-        props.updateNetwork(props.user.username);
+        // console.log(data);
+        setFollow("Follow");
+        let myFollowing = props.currentUser.following;
+        let index = myFollowing.indexOf(props.user.username);
+        myFollowing.splice(index, 1);
+        props.updateNetwork({
+          following: myFollowing,
+        });
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }
+
+  function handleRemove() {
+    fetch(expressIP + "/unfollow", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: props.user.username,
+        unfollow: props.currentUser.username,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // console.log(data);
+        setFollow("");
+        let myFollowers= props.currentUser.followers;
+        let index = myFollowers.indexOf(props.user.username);
+        myFollowers.splice(index, 1);
+        props.updateNetwork({
+          followers: myFollowers,
+        });
+        props.updateFollowers(myFollowers);
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -61,23 +96,31 @@ function SingleUser(props) {
         <h5 className="mb-1">{props.user.firstName}</h5>
         <p className="mb-0 font-13">{props.user.username}</p>
       </div>
-      {isFollow==="follow" ? (
+      {isFollow === "Follow" ? (
         <button
           className="btn btn-primary unfollow-button"
           type="button"
           onClick={handleFollow}
         >
-          Follow
+          {isFollow}
         </button>
-      ) : (
+      ) : isFollow === "Unfollow" ? (
         <button
           className="btn btn-danger unfollow-button"
           type="button"
           onClick={handleUnfollow}
         >
-          {props.follow}
+          {isFollow}
         </button>
-      )}
+      ) : isFollow === "Remove" ? (
+        <button
+          className="btn btn-danger unfollow-button"
+          type="button"
+          onClick={handleRemove}
+        >
+          {isFollow}
+        </button>
+      ) : null}
     </div>
   );
 }

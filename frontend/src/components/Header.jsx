@@ -3,14 +3,14 @@ import $ from "jquery";
 
 import { Avatar } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import { Button } from "@mui/material";
-import MapsUgcIcon from "@mui/icons-material/MapsUgc";
-import Tooltip from "@mui/material/Tooltip";
-import ProfilePage from "./ProfilePage/ProfilePage";
+// import InputLabel from "@mui/material/InputLabel";
+// import MenuItem from "@mui/material/MenuItem";
+// import FormControl from "@mui/material/FormControl";
+// import Select from "@mui/material/Select";
+// import { Button } from "@mui/material";
+// import MapsUgcIcon from "@mui/icons-material/MapsUgc";
+// import Tooltip from "@mui/material/Tooltip";
+// import ProfilePage from "./ProfilePage/ProfilePage";
 
 function Header(props) {
   return (
@@ -49,12 +49,12 @@ function Header(props) {
                         role="button"
                         data-bs-toggle="dropdown"
                       >
-                        {props.private ? "Private" : "Public"}
+                        {props.display}
                       </a>
                       <ul className="dropdown-menu">
                         <li
                           onClick={() => {
-                            props.setVisibility(true);
+                            props.setVisibility("Private");
                           }}
                         >
                           <a className="dropdown-item" href="#">
@@ -63,11 +63,20 @@ function Header(props) {
                         </li>
                         <li
                           onClick={() => {
-                            props.setVisibility(false);
+                            props.setVisibility("Public");
                           }}
                         >
                           <a className="dropdown-item" href="#">
                             Public
+                          </a>
+                        </li>
+                        <li
+                          onClick={() => {
+                            props.setVisibility("Feed");
+                          }}
+                        >
+                          <a className="dropdown-item" href="#">
+                            Feed
                           </a>
                         </li>
                       </ul>

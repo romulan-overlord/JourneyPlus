@@ -78,7 +78,10 @@ function ProfilePage(props) {
           currentUser={{
             username: props.currentUser.username,
             cookieID: props.currentUser.cookieID,
+            following: props.currentUser.following,
+            followers: props.currentUser.followers,
           }}
+          updateNetwork={props.updateNetwork}
         />
       ) : null}
       {isFollowing ? (
@@ -89,7 +92,9 @@ function ProfilePage(props) {
               username: props.currentUser.username,
               cookieID: props.currentUser.cookieID,
               following: props.currentUser.following,
+              followers: props.currentUser.followers,
             }}
+            updateNetwork={props.updateNetwork}
           />
         ) : (
           <Following
@@ -97,8 +102,10 @@ function ProfilePage(props) {
             currentUser={{
               username: props.currentUser.username,
               cookieID: props.currentUser.cookieID,
+              following: props.currentUser.following,
+              followers: props.currentUser.followers,
             }}
-            updateNetwork = {props.updateNetwork}
+            updateNetwork={props.updateNetwork}
           />
         )
       ) : null}
