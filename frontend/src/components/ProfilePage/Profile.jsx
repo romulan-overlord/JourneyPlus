@@ -54,7 +54,12 @@ function Profile(props) {
       body: JSON.stringify(requestData),
     })
       .then((response) => response.json())
-      .then((data) => {})
+      .then((data) => {
+        console.log("NewUser: " + data.update);
+        props.updateUserDetails(data.update);
+        setIsEdited(true);
+
+      })
       .catch((error) => {
         console.error("Error:", error);
       });
@@ -95,55 +100,60 @@ function Profile(props) {
     }
   }
 
-  function containsSpecialChars(str) {
-    const specialChars = /[@]/;
-    return specialChars.test(str);
+  function ValidateEmail(inputText) {
+    var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (inputText.match(mailformat)) {
+      return true;
+    } else {
+      return false;
+    }
   }
-
+  // event.target.value === allUsers[i].email &&
   function handleEmailChange(event) {
     for (let i = 0; i < allUsers.length; i++) {
-      if (event.target.value === allUsers[i].email) {
-        setValidEmail("invalid");
-        return;
-      } else if (
-        event.target.value !== allUsers[i].email &&
-        containsSpecialChars(event.target.value)
-      ) {
-        setValidEmail("valid");
-      }
-      if (event.target.value === "") {
-        setValidEmail("");
+      if(ValidateEmail(event.target.value) === true){
+        if(event.target.value === allUsers[i].email){
+          setValidEmail("taken");
+        }else{
+          setValidEmail("valid");
+        }
+      }else{
+        if (event.target.value === "") {
+          setValidEmail("");
+        }else{
+           setValidEmail("invalid");
+        }
       }
     }
   }
 
   function handlePictureChange(event) {
-        console.log(event.target.files);
-        const pic = event.target.files;
-        var reader = new FileReader();
-        reader.readAsDataURL(event.target.files[0]);
-        reader.onload = function () {
-          props.updatePicture(reader.result);
-          fetch(expressIP + "/updatePicture", {
-            method: "POST", // or 'PUT'
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              username: props.currentUser.username,
-              picture: reader.result,
-            }),
-          })
-            .then((response) => response.json())
-            .then((data) => {
-              console.log("Success:", data);
-            })
-            .catch((error) => {
-              console.error("Error:", error);
-            });
-        }
-        // setFile(URL.createObjectURL(e.target.files[0]));
-    }
+    console.log(event.target.files);
+    const pic = event.target.files;
+    var reader = new FileReader();
+    reader.readAsDataURL(event.target.files[0]);
+    reader.onload = function () {
+      props.updatePicture(reader.result);
+      fetch(expressIP + "/updatePicture", {
+        method: "POST", // or 'PUT'
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: props.currentUser.username,
+          picture: reader.result,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Success:", data);
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    };
+    // setFile(URL.createObjectURL(e.target.files[0]));
+  }
 
   // console.log(file.Filelist[0].File.name);
 
@@ -176,7 +186,9 @@ function Profile(props) {
                 onChange={handlePictureChange}
               />
 
-              <label className="uploadImage" htmlFor="uploadPicture">Upload Image</label>
+              <label className="uploadImage" htmlFor="uploadPicture">
+                Upload Image
+              </label>
             </span>
             {/* <h5 className="my-3">
                   {props.currentUser.firstName} {props.currentUser.lastName}
@@ -189,14 +201,14 @@ function Profile(props) {
                 <People fontSize="large" />
                 <br />
                 <h5>Followers</h5>
-                <h6>30</h6>
+                <h6>{props.currentUser.followers.length}</h6>
               </div>
 
               <div className="col">
                 <PersonAdd fontSize="large" />
                 <br />
                 <h5>Following</h5>
-                <h6>30</h6>
+                <h6>{props.currentUser.following.length}</h6>
               </div>
             </div>
             <button
@@ -286,8 +298,6 @@ function Profile(props) {
                       id="inputUsername"
                       type="text"
                       placeholder="Enter your username"
-                      // value={props.currentUser.username}
-                      //   value="username"
                     ></input>
                   </div>
                 ) : validUsername === "valid" ? (
@@ -308,7 +318,7 @@ function Profile(props) {
                       // value={props.currentUser.username}
                       //   value="username"
                     ></input>
-                    <div class="valid-feedback">Valid Username!</div>
+                    <div className="valid-feedback">Valid Username!</div>
                   </div>
                 ) : validUsername === "invalid" ? (
                   <div className="mb-3">
@@ -328,7 +338,9 @@ function Profile(props) {
                       // value={props.currentUser.username}
                       //   value="username"
                     ></input>
-                    <div class="invalid-feedback">Username already exists!</div>
+                    <div className="invalid-feedback">
+                      Username already exists!
+                    </div>
                   </div>
                 ) : null}
 
@@ -374,8 +386,6 @@ function Profile(props) {
                       id="inputEmailAddress"
                       type="email"
                       placeholder="Enter your email address"
-                      // value={props.currentUser.username}
-                      //   value="username"
                     ></input>
                   </div>
                 ) : validEmail === "valid" ? (
@@ -390,8 +400,6 @@ function Profile(props) {
                       id="inputEmailAddress"
                       type="email"
                       placeholder="Enter your email address"
-                      // value={props.currentUser.username}
-                      //   value="username"
                     ></input>
                     <div class="valid-feedback">Valid Email Address!</div>
                   </div>
@@ -407,10 +415,25 @@ function Profile(props) {
                       id="inputEmailAddress"
                       type="email"
                       placeholder="Enter your email address"
-                      // value={props.currentUser.username}
-                      //   value="username"
                     ></input>
-                    <div class="invalid-feedback">Email already taken!</div>
+                    <div className="invalid-feedback">
+                      Invalid Email Address!
+                    </div>
+                  </div>
+                ) : validEmail === "taken" ? (
+                  <div className="mb-3">
+                    <label className="small mb-1">
+                      <h6>Email address</h6>
+                    </label>
+                    <input
+                      onChange={handleEmailChange}
+                      name="email"
+                      className="form-control is-invalid"
+                      id="inputEmailAddress"
+                      type="email"
+                      placeholder="Enter your email address"
+                    ></input>
+                    <div className="invalid-feedback">Email already taken!</div>
                   </div>
                 ) : null}
                 {/* <!-- Save changes button--> */}
@@ -448,20 +471,3 @@ function Profile(props) {
 
 export default Profile;
 
-
-
-    // const [file, setFile] = useState();
-    // function handleChange(e) {
-    //     console.log(e.target.files);
-    //     setFile(URL.createObjectURL(e.target.files[0]));
-    // }
-  
-    // return (
-    //     <div className="App">
-    //         <h2>Add Image:</h2>
-    //         <input type="file" onChange={handleChange} />
-    //         <img src={file} />
-  
-    //     </div>
-  
-    // );

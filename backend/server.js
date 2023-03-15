@@ -749,10 +749,10 @@ app.post("/fetchUsersForProfile", (req, res) => {
         setTimeout(() => {
           if (userArray.length === result.userCount) {
             userArray = userArray.filter((n) => {
-              console.log("checking: " + n);
+              // console.log("checking: " + n);
               return !req.body.username.includes(n.username);
             });
-            console.log(userArray);
+            // console.log(userArray);
             res.send({ users: userArray });
             resolve();
           } else timeout(n);
@@ -761,28 +761,9 @@ app.post("/fetchUsersForProfile", (req, res) => {
       timeout(50);
     });
     readyPromise.then(() => {
-      console.log("UwU");
+      // console.log("UwU");
     });
   });
-});
-
-app.post("/editProfile", (req, res) => {
-  console.log(req.body);
-  console.log(req.body.newFirstName);
-  console.log(typeof req.body.newFirstName);
-  // Users.findOne({ username: req.body.oldUsername }, async (err, user) => {
-  //   if (err) throw err;
-  //   if (user) {
-  //     if (req.body.newUsername !== undefined) user.username = req.body.newUsername;
-  //     if (req.body.newfirstName !== undefined)
-  //       user.firstName = req.body.newFirstName;
-  //     if (req.body.newLastName.length !== undefined)
-  //       user.lastName = req.body.newLastName;
-  //     if (req.body.email.length !== undefined) user.email = req.body.email;
-
-  //     user.save();
-  //   }
-  // });
 });
 
 app.post("/updatePicture", (req, res) => {
@@ -805,80 +786,51 @@ app.post("/updatePicture", (req, res) => {
   });
 });
 
-app.post("/fetchUsersForProfile", (req, res) => {
-  console.log(req.body);
-  let userArray = [];
-  Network.findOne({}, async (err, result) => {
+app.post("/editProfile", (req, res) => {
+  // console.log(req.body);
+  // console.log(typeof req.body.newFirstName);
+  Users.findOne({ username: req.body.oldUsername }, async (err, user) => {
     if (err) throw err;
-    for (let i = 0; i < result.userCount; i++) {
-      Users.findOne({ username: result.users[i] }, async (err, user) => {
-        if (err) throw err;
-        userArray.push({
-          username: user.username,
-          email: user.email,
-        });
-      });
-    }
-    let readyPromise = new Promise(function (resolve, reject) {
-      let timeout = (n) => {
-        setTimeout(() => {
-          if (userArray.length === result.userCount) {
-            userArray = userArray.filter((n) => {
-              console.log("checking: " + n);
-              return !req.body.username.includes(n.username);
-            });
-            console.log(userArray);
-            res.send({ users: userArray });
-            resolve();
-          } else timeout(n);
-        }, n);
-      };
-      timeout(50);
-    });
-    readyPromise.then(() => {
-      console.log("UwU");
-    });
-  });
-});
-
-app.post("/editProfile", (req, res) => {
-  console.log(req.body);
-  console.log(req.body.newFirstName);
-  console.log(typeof req.body.newFirstName);
-  // Users.findOne({ username: req.body.oldUsername }, async (err, user) => {
-  //   if (err) throw err;
-  //   if (user) {
-  //     if (req.body.newUsername !== undefined) user.username = req.body.newUsername;
-  //     if (req.body.newfirstName !== undefined)
-  //       user.firstName = req.body.newFirstName;
-  //     if (req.body.newLastName.length !== undefined)
-  //       user.lastName = req.body.newLastName;
-  //     if (req.body.email.length !== undefined) user.email = req.body.email;
-
-  //     user.save();
-  //   }
-  // });
-});
-
-app.post("/updatePicture", (req, res) => {
-  Users.findOne({ username: req.body.username }, (err, user) => {
-    if (err) {
-      console.log("error in update picture");
-      throw err;
-    }
-    MediaWarehouse.deleteOne({ id: user.picture })
-      .then(function () {
-        console.log("Data deleted"); // Success
+    if (user) {
+      let returnObj = {};
+      if (req.body.newUsername) {
+        returnObj.username = req.body.newUsername;
+        user.username = req.body.newUsername;
+        console.log("New Username :" + user.username);
+      }
+      if (req.body.newFirstName){
+        returnObj.firstName = req.body.newFirstName;
+        user.firstName = req.body.newFirstName;
+        console.log("New FirstName:" + user.firstName);
+      }
+        
+      if (req.body.newLastName) {
+        returnObj.lastName = req.body.newLastName;
+        user.lastName = req.body.newLastName;
+        console.log("New LastName:" + user.lastName);
+      }
+        
+      if (req.body.email) {
+        returnObj.email = req.body.email;
+        user.email = req.body.email;
+        console.log("New EMail:" + user.email);
+      }
+      console.log(returnObj);
+      user.save();
+      Network.findOne({}, (err, network) => {
+        if(err){
+          console.log("Couldn't update Username in network");
+          throw err;
+        }
+        let index = network.users.indexOf(req.body.oldUsername);
+        network.users[index] = req.body.newUsername;
+        network.save();
       })
-      .catch(function (error) {
-        console.log(error); // Failure
-      });
-    user.picture = req.body.picture;
-    user = reduceUser(user);
-    user.save();
-    res.send({ message: "success" });
+      res.send({update: returnObj});
+    }
   });
 });
+
 
 //------------------------------------------------------------- Weather API --------------------------------------------------------------------
 
