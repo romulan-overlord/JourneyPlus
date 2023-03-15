@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { expressIP } from "../../settings";
+import { Avatar } from "@mui/material";
 
 function SingleUser(props) {
   const [isFollow, setFollow] = useState(props.follow);
@@ -87,11 +88,12 @@ function SingleUser(props) {
 
   return (
     <div className="d-flex align-items-center pb-1" id="tooltips-container">
-      <img
-        src="{props.user.picture}"
+      <Avatar src={props.user.picture} />
+      {/* <img
+        src={props.user.picture}
         className="rounded-circle img-fluid avatar-md img-thumbnail bg-transparent"
         alt=""
-      ></img>
+      ></img> */}
       <div className="w-100 ms-3">
         <h5 className="mb-1">{props.user.firstName}</h5>
         <p className="mb-0 font-13">{props.user.username}</p>

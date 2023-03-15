@@ -8,6 +8,7 @@ import MapsUgcOutlinedIcon from "@mui/icons-material/MapsUgcOutlined";
 import ReplyOutlinedIcon from "@mui/icons-material/ReplyOutlined";
 import Card from "./Card";
 import { expressIP } from "../../settings";
+import Comment from "./Comment";
 
 function FeedPost(props) {
   const [likes, setLikes] = useState({});
@@ -145,6 +146,9 @@ function FeedPost(props) {
                   {/* <p className="mt-3 mb-0 lead feed-title">{props.feed.entry.title}</p>
                   <p className="mt-1 mb-4 pb-2">{props.feed.entry.content}</p> */}
                 </div>
+              </div>
+              <div className="card-footer">
+                <Comment />
               </div>
               {/* <div
                 className="card-footer py-3 border-0"

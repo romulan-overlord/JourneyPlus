@@ -23,7 +23,7 @@ function Users(props) {
     })
       .then((response) => response.json())
       .then((data) => {
-        // console.log("Users: " + data);
+        console.log("Users: " + data);
         setUserList(data.users);
       });
   }
