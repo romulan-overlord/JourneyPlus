@@ -80,6 +80,19 @@ const networkSchema = new mongoose.Schema({
 
 const Network = mongoose.model("network", networkSchema);
 
+function reduceUser(user) {
+  const newUser = new Users(user);
+  if (newUser.picture.length > 0) {
+    const pictureWare = new MediaWarehouse({
+      id: uniqid(),
+      data: newUser.picture,
+    });
+    newUser.picture = pictureWare.id;
+    pictureWare.save();
+  }
+  return newUser;
+}
+
 function reduceEntry(entry) {
   entry.size = sizeof(entry);
   // console.log(req.body);
@@ -275,10 +288,31 @@ app.post("/login", (req, res) => {
                 //the typed in password and the password saved in the database matches
                 foundUser.cookieID = req.body.cookieID; //The user is assigned a cookie
                 foundUser.save();
-                res.send({
-                  success: "802", //The user is redirected to the main page
-                  user: foundUser,
-                });
+                if (foundUser.picture.length < 2) {
+                  console.log("no picture");
+                  res.send({
+                    success: "802", //The user is redirected to the main page
+                    user: foundUser,
+                  });
+                } else {
+                  console.log("fetching picture");
+                  MediaWarehouse.findOne(
+                    { id: foundUser.picture },
+                    (err, picture) => {
+                      if (err) {
+                        console.log(
+                          "error while fetching user profile picture"
+                        );
+                        throw err;
+                      }
+                      foundUser.picture = picture.data;
+                      res.send({
+                        success: "802", //The user is redirected to the main page
+                        user: foundUser,
+                      });
+                    }
+                  );
+                }
               } else {
                 res.send({
                   success: "801", //The entered password is incorrect
@@ -306,10 +340,29 @@ app.post("/auto-login", (req, res) => {
       else {
         if (foundUser) {
           if (foundUser.cookieID === req.body.cookieID) {
-            res.send({
-              success: "802",
-              user: foundUser,
-            });
+            if (foundUser.picture.length < 2) {
+              console.log("no picture");
+              res.send({
+                success: "802", //The user is redirected to the main page
+                user: foundUser,
+              });
+            } else {
+              console.log("fetching picture in auto");
+              MediaWarehouse.findOne(
+                { id: foundUser.picture },
+                (err, picture) => {
+                  if (err) {
+                    console.log("error while fetching user profile picture");
+                    throw err;
+                  }
+                  foundUser.picture = picture.data;
+                  res.send({
+                    success: "802", //The user is redirected to the main page
+                    user: foundUser,
+                  });
+                }
+              );
+            }
           }
         } else if (!foundUser) {
           res.send({
@@ -385,10 +438,6 @@ app.post("/getFullData", (req, res) => {
       // console.log(entry);
       // console.log(sizeof(entry) + "    " + req.body.size);
       let timeout = (n) => {
-
-
-
-        
         setTimeout(() => {
           if (sizeof(entry) >= req.body.size - 1000) myResolve();
           // else if(count >= 20) myResolve();
@@ -426,9 +475,9 @@ app.post("/fetchUsers", (req, res) => {
       let timeout = (n) => {
         // console.log("in timeout: ");
         setTimeout(() => {
-          if (userArray.length === (result.userCount)) {
+          if (userArray.length === result.userCount) {
             userArray = userArray.filter((n) => {
-              console.log("checking: " + n)
+              console.log("checking: " + n);
               return !req.body.following.includes(n.username);
             });
             console.log(userArray);
@@ -559,6 +608,81 @@ app.post("/unfollow", (req, res) => {
       });
     }
   );
+});
+
+app.post("/fetchUsersForProfile", (req, res) => {
+  console.log(req.body);
+  let userArray = [];
+  Network.findOne({}, async (err, result) => {
+    if (err) throw err;
+    for (let i = 0; i < result.userCount; i++) {
+      Users.findOne({ username: result.users[i] }, async (err, user) => {
+        if (err) throw err;
+        userArray.push({
+          username: user.username,
+          email: user.email,
+        });
+      });
+    }
+    let readyPromise = new Promise(function (resolve, reject) {
+      let timeout = (n) => {
+        setTimeout(() => {
+          if (userArray.length === result.userCount) {
+            userArray = userArray.filter((n) => {
+              console.log("checking: " + n);
+              return !req.body.username.includes(n.username);
+            });
+            console.log(userArray);
+            res.send({ users: userArray });
+            resolve();
+          } else timeout(n);
+        }, n);
+      };
+      timeout(50);
+    });
+    readyPromise.then(() => {
+      console.log("UwU");
+    });
+  });
+});
+
+app.post("/editProfile", (req, res) => {
+  console.log(req.body);
+  console.log(req.body.newFirstName);
+  console.log(typeof req.body.newFirstName);
+  // Users.findOne({ username: req.body.oldUsername }, async (err, user) => {
+  //   if (err) throw err;
+  //   if (user) {
+  //     if (req.body.newUsername !== undefined) user.username = req.body.newUsername;
+  //     if (req.body.newfirstName !== undefined)
+  //       user.firstName = req.body.newFirstName;
+  //     if (req.body.newLastName.length !== undefined)
+  //       user.lastName = req.body.newLastName;
+  //     if (req.body.email.length !== undefined) user.email = req.body.email;
+
+  //     user.save();
+  //   }
+  // });
+});
+
+app.post("/updatePicture", (req, res) => {
+  Users.findOne({ username: req.body.username }, (err, user) => {
+    if (err) {
+      console.log("error in update picture");
+      throw err;
+    }
+    MediaWarehouse.deleteOne({ id: user.picture })
+      .then(function () {
+        console.log("Data deleted"); // Success
+      })
+      .catch(function (error) {
+        console.log(error); // Failure
+      });
+    user.picture = req.body.picture;
+    user = reduceUser(user);
+    user.save();
+    res.send({ message: "success" });
+  });
 });
 
 //------------------------------------------------------------- Weather API --------------------------------------------------------------------

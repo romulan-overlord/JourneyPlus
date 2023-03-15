@@ -71,7 +71,7 @@ function ProfilePage(props) {
       </nav>
       <hr className="mt-0 mb-4"></hr>
       {isProfile ? (
-        <Profile currentUser={props.currentUser} logOut={props.logOut} />
+        <Profile updatePicture={props.updatePicture} currentUser={props.currentUser} logOut={props.logOut} />
       ) : null}
       {isFollowers ? (
         <Followers

@@ -217,6 +217,12 @@ function App() {
     });
   }
 
+  function updatePicture(picture) {
+    setCurrentUser((prev) => {
+      return { ...prev, picture: picture };
+    });
+  }
+
   // checking for cookies
   if (checkCookies === true && cookies.userIsSaved === "true") {
     setCheckCookies(false);
@@ -244,6 +250,9 @@ function App() {
       });
   }
 
+  // console.log(currentUser);
+  // console.log(typeof(currentUser.picture));
+
   return (
     <div className="App height-100">
       {!compose ? (
@@ -253,6 +262,7 @@ function App() {
           invertProfilePage={invertProfilePage}
           private={displayPrivate}
           setVisibility={setVisibility}
+          picture={currentUser === undefined ? "" : currentUser.picture}
         />
       ) : null}
       {isLoggedIn ? (
@@ -273,7 +283,12 @@ function App() {
             private={displayPrivate}
           />
         ) : (
-          <ProfilePage currentUser={currentUser} logOut={logOut} updateNetwork={updateNetwork}/>
+          <ProfilePage
+            currentUser={currentUser}
+            logOut={logOut}
+            updateNetwork={updateNetwork}
+            updatePicture={updatePicture}
+          />
         )
       ) : isSignedUp ? (
         <Login

@@ -75,9 +75,9 @@ function Header(props) {
                   </td>
                   <td>
                     <a className="nav-link" href="#">
-                      <Avatar onClick={props.invertProfilePage}>
+                      <Avatar src={props.picture} onClick={props.invertProfilePage}>
                         {/* props.logOut  */}
-                        <PersonIcon />
+                        {/* <PersonIcon /> */}
                       </Avatar>
                     </a>
                   </td>

@@ -10,7 +10,6 @@ function SignUp(props) {
   const [isUID, setUid] = useState(true);
   const [isEmail, setEmail] =useState(true);
   const [Pwd, setPwd] = useState("");
-  console.log(Pwd);
   function invertUid() {
     setUid((prev) => {
       return !prev;

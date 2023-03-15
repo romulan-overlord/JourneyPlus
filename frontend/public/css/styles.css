@@ -471,6 +471,30 @@ body {
   margin-right: 1rem;
 }
 
+/*Profile Picture*/
+.profile-picture{
+  display: inline-block;
+}
+
+.uploadImage{
+    display: inline-block;
+    line-height: 2.2em;
+    padding: 0 0.62em;
+    border: 1px solid #666;
+    border-radius: 0.25em;
+    background-image: linear-gradient( to bottom, #fff, #ccc );
+    font-family: "Montserrat";
+    font-size: 0.9em;
+ }
+
+.uploadImage:hover {
+    border-color: #3c7fb1;
+    background-image: linear-gradient( to bottom, #fff, #a9dbf6 );
+ }
+
+.uploadImage:focus {
+    padding: 0  0.56em 0 0.68em;
+ }
 /* Followers */
 .rounded-circle {
     border-radius: 50%!important;
