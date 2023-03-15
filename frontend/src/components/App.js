@@ -182,6 +182,17 @@ function App() {
     });
   }
 
+  function updateUserDetails(update) {
+    console.log("updating user details: " + update.username);
+    setCurrentUser((prev) => {
+      return {
+        ...prev,
+        ...update,
+      };
+    });
+    if (update.username) setCookies("username", update.username);
+  }
+
   function updateNetwork(update) {
     setCurrentUser((prev) => {
       return {
@@ -285,6 +296,7 @@ function App() {
           />
         ) : (
           <ProfilePage
+            updateUserDetails={updateUserDetails}
             currentUser={currentUser}
             logOut={logOut}
             updateNetwork={updateNetwork}
