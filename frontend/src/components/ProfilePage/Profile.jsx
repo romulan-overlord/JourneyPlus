@@ -43,7 +43,7 @@ function Profile(props) {
       oldUsername: props.currentUser.username,
       newFirstName: data.get("firstName"),
       newLastName: data.get("lastName"),
-      newUsername: data.get("username"),
+      // newUsername: data.get("username"),
       email: data.get("email"),
     };
     fetch(expressIP + "/editProfile", {
@@ -83,22 +83,22 @@ function Profile(props) {
       });
   }
 
-  function handleUsernameChange(event) {
-    // console.log(event.target.value);
-    for (let i = 0; i < allUsers.length; i++) {
-      // console.log("checking against: " + allUsers[i].username);
-      // console.log(event.target.value === allUsers[i].username);
-      if (event.target.value === allUsers[i].username) {
-        setValidUsername("invalid");
-        return;
-      } else if (event.target.value !== allUsers[i].username) {
-        setValidUsername("valid");
-      }
-      if (event.target.value === "") {
-        setValidUsername("");
-      }
-    }
-  }
+  // function handleUsernameChange(event) {
+  //   // console.log(event.target.value);
+  //   for (let i = 0; i < allUsers.length; i++) {
+  //     // console.log("checking against: " + allUsers[i].username);
+  //     // console.log(event.target.value === allUsers[i].username);
+  //     if (event.target.value === allUsers[i].username) {
+  //       setValidUsername("invalid");
+  //       return;
+  //     } else if (event.target.value !== allUsers[i].username) {
+  //       setValidUsername("valid");
+  //     }
+  //     if (event.target.value === "") {
+  //       setValidUsername("");
+  //     }
+  //   }
+  // }
 
   function ValidateEmail(inputText) {
     var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -283,66 +283,69 @@ function Profile(props) {
             ) : (
               <form onSubmit={handleSubmit} method="POST">
                 {/* <!-- Form Group (username)--> */}
-                {validUsername === "" ? (
-                  <div className="mb-3">
-                    <label className="small mb-1">
-                      <h6>
-                        Username (how your name will appear to other users on
-                        the site)
-                      </h6>
-                    </label>
-                    <input
-                      onChange={handleUsernameChange}
-                      name="username"
-                      className="form-control"
-                      id="inputUsername"
-                      type="text"
-                      placeholder="Enter your username"
-                    ></input>
-                  </div>
-                ) : validUsername === "valid" ? (
-                  <div className="mb-3">
-                    <label className="small mb-1">
-                      <h6>
-                        Username (how your name will appear to other users on
-                        the site)
-                      </h6>
-                    </label>
-                    <input
-                      onChange={handleUsernameChange}
-                      name="username"
-                      className="form-control is-valid"
-                      id="inputUsername"
-                      type="text"
-                      placeholder="Enter your username"
-                      // value={props.currentUser.username}
-                      //   value="username"
-                    ></input>
-                    <div className="valid-feedback">Valid Username!</div>
-                  </div>
-                ) : validUsername === "invalid" ? (
-                  <div className="mb-3">
-                    <label className="small mb-1">
-                      <h6>
-                        Username (how your name will appear to other users on
-                        the site)
-                      </h6>
-                    </label>
-                    <input
-                      onChange={handleUsernameChange}
-                      name="username"
-                      className="form-control is-invalid"
-                      id="inputUsername"
-                      type="text"
-                      placeholder="Enter your username"
-                      // value={props.currentUser.username}
-                      //   value="username"
-                    ></input>
-                    <div className="invalid-feedback">
-                      Username already exists!
-                    </div>
-                  </div>
-                ) : null}
+                <div className="mb-3">
+                  <label className="small mb-1">
+                    <h6>
+                      Username (how your name will appear to other users on the
+                      site)
+                    </h6>
+                  </label>
+                  <input
+                    // onChange={handleUsernameChange}
+                    name="username"
+                    className="form-control"
+                    id="inputUsername"
+                    type="text"
+                    placeholder={props.currentUser.username}
+                    disabled
+                    // value={props.currentUser.username}
+                  ></input>
+                </div>
+                {/* {validUsername === "" ? (
+                  
+                // ) : validUsername === "valid" ? (
+                //   <div className="mb-3">
+                //     <label className="small mb-1">
+                //       <h6>
+                //         Username (how your name will appear to other users on
+                //         the site)
+                //       </h6>
+                //     </label>
+                //     <input
+                //       onChange={handleUsernameChange}
+                //       name="username"
+                //       className="form-control is-valid"
+                //       id="inputUsername"
+                //       type="text"
+                //       placeholder="Enter your username"
+                //       // value={props.currentUser.username}
+                //       //   value="username"
+                //     ></input>
+                //     <div className="valid-feedback">Valid Username!</div>
+                //   </div>
+                // ) : validUsername === "invalid" ? (
+                //   <div className="mb-3">
+                //     <label className="small mb-1">
+                //       <h6>
+                //         Username (how your name will appear to other users on
+                //         the site)
+                //       </h6>
+                //     </label>
+                //     <input
+                //       onChange={handleUsernameChange}
+                //       name="username"
+                //       className="form-control is-invalid"
+                //       id="inputUsername"
+                //       type="text"
+                //       placeholder="Enter your username"
+                //       // value={props.currentUser.username}
+                //       //   value="username"
+                //     ></input>
+                //     <div className="invalid-feedback">
+                //       Username already exists!
+                //     </div>
+                //   </div>
+                // ) : null} */}
 
                 {/* <!-- Form Row--> */}
                 <div className="row gx-3 mb-3">

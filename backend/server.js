@@ -837,11 +837,11 @@ app.post("/editProfile", (req, res) => {
     if (err) throw err;
     if (user) {
       let returnObj = {};
-      if (req.body.newUsername) {
-        returnObj.username = req.body.newUsername;
-        user.username = req.body.newUsername;
-        console.log("New Username :" + user.username);
-      }
+      // if (req.body.newUsername) {
+      //   returnObj.username = req.body.newUsername;
+      //   user.username = req.body.newUsername;
+      //   console.log("New Username :" + user.username);
+      // }
       if (req.body.newFirstName){
         returnObj.firstName = req.body.newFirstName;
         user.firstName = req.body.newFirstName;
@@ -857,19 +857,19 @@ app.post("/editProfile", (req, res) => {
       if (req.body.email) {
         returnObj.email = req.body.email;
         user.email = req.body.email;
-        console.log("New EMail:" + user.email);
+        console.log("New Email:" + user.email);
       }
       console.log(returnObj);
       user.save();
-      Network.findOne({}, (err, network) => {
-        if(err){
-          console.log("Couldn't update Username in network");
-          throw err;
-        }
-        let index = network.users.indexOf(req.body.oldUsername);
-        network.users[index] = req.body.newUsername;
-        network.save();
-      })
+      // Network.findOne({}, (err, network) => {
+      //   if(err){
+      //     console.log("Couldn't update Username in network");
+      //     throw err;
+      //   }
+      //   let index = network.users.indexOf(req.body.oldUsername);
+      //   network.users[index] = req.body.newUsername;
+      //   network.save();
+      // })
       res.send({update: returnObj});
     }
   });
