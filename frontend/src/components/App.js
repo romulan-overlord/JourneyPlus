@@ -183,14 +183,13 @@ function App() {
   }
 
   function updateUserDetails(update) {
-    console.log("updating user details: " + update.username);
     setCurrentUser((prev) => {
       return {
         ...prev,
         ...update,
       };
     });
-    if (update.username) setCookies("username", update.username);
+    // if (update.username) setCookies("username", update.username);
   }
 
   function updateNetwork(update) {
