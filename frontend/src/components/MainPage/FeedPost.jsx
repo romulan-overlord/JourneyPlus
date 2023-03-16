@@ -9,11 +9,13 @@ import ReplyOutlinedIcon from "@mui/icons-material/ReplyOutlined";
 import Card from "./Card";
 import { expressIP } from "../../settings";
 import Comment from "./Comment";
+import NewComment from "./NewComment";
 
 function FeedPost(props) {
   const [likes, setLikes] = useState({});
   const [ready, setReady] = useState(true);
   const [liked, setLiked] = useState(false);
+  const [isComment, setComment] = useState(false);
 
   useEffect(() => {
     if (ready) {
@@ -21,6 +23,10 @@ function FeedPost(props) {
       setReady(false);
     }
   });
+
+  function toggleComments() {
+    setComment((prev) => !prev);
+  }
 
   function fetchDetails() {
     fetch(expressIP + "/getLikes", {
@@ -138,8 +144,9 @@ function FeedPost(props) {
                       ) : (
                         <FavoriteBorderIcon onClick={handleLike} />
                       )}
-                      <MapsUgcOutlinedIcon />
+                      <MapsUgcOutlinedIcon onClick={toggleComments} />
                       <ReplyOutlinedIcon />
+                      <p>{likes.likes + " likes"}</p>
                     </Stack>
                   </div>
 
@@ -148,45 +155,13 @@ function FeedPost(props) {
                 </div>
               </div>
               <div className="card-footer">
-                <Comment />
+                {isComment ? (
+                  <>
+                    <NewComment currentUser={props.currentUser}/>
+                    <Comment />
+                  </>
+                ) : null}
               </div>
-              {/* <div
-                className="card-footer py-3 border-0"
-                style={{ backgroundColor: "#f8f9fa" }}
-              >
-                <div className="d-flex flex-start w-100">
-                  <img
-                    className="rounded-circle shadow-1-strong me-3"
-                    src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(19).webp"
-                    alt="avatar"
-                    width={40}
-                    height={40}
-                  />
-                  <div className="form-outline w-100">
-                    <textarea
-                      className="form-control"
-                      id="textAreaExample"
-                      rows={4}
-                      style={{ background: "#fff" }}
-                      defaultValue={""}
-                    />
-                    <label className="form-label" htmlFor="textAreaExample">
-                      Message
-                    </label>
-                  </div>
-                </div>
-                <div className="float-end mt-2 pt-1">
-                  <button type="button" className="btn btn-primary btn-sm">
-                    Post comment
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-outline-primary btn-sm"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div> */}
             </div>
           </div>
         </div>

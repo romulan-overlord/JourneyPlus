@@ -66,7 +66,8 @@ function MainPage(props) {
                   index={index}
                   currentUser={{
                     username: props.currentUser.username,
-                    cookieID: props.currentUser.cookieID
+                    cookieID: props.currentUser.cookieID,
+                    picture: props.currentUser.picture,
                   }}
                   key={index}
                   invertCompose={props.invertCompose}
