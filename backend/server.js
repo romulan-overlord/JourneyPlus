@@ -39,7 +39,9 @@ const mediaWarehouseSchema = {
 const MediaWarehouse = mongoose.model("mediaWarehouse", mediaWarehouseSchema);
 
 const commentSchema = {
-  author: String,
+  commentID: String,
+  commentor: String,
+  commentorPic: String,
   comment: String,
   likes: Number,
 };
@@ -161,6 +163,13 @@ function reduceEntry(entry) {
 
 function deleteEntry(mainEntry) {
   const entry = mainEntry;
+  FeedNetwork.deleteOne({ entryID: entry.entryID })
+    .then(function () {
+      console.log("Data deleted"); // Success
+    })
+    .catch(function (error) {
+      console.log(error); // Failure
+    });
   MediaWarehouse.deleteOne({ id: entry.backgroundAudio })
     .then(function () {
       console.log("Data deleted"); // Success
@@ -774,6 +783,47 @@ app.post("/unlike", (req, res) => {
   });
 });
 
+// uplaod to mediawarehopuse func make
+
+app.post("/postComment", (req, res) => {
+  FeedNetwork.findOne({ entryID: req.body.post }, (err, data) => {
+    if (err) {
+      console.log("Error in posting comment");
+      throw err;
+    }
+    data.comments.push({
+      commentID: uniqid(),
+      commentor: req.body.commentor,
+      commentorPic: req.body.commentorPic,
+      comment: req.body.comment,
+      likes: 0,
+    });
+    data.save();
+    res.send({ update: data });
+  });
+});
+
+app.post("/deleteComment", (req, res) => {
+  console.log("deleting comment");
+  FeedNetwork.findOne({ entryID: req.body.entryID }, (err, data) => {
+    if (err) {
+      console.log("Error in deleting comment");
+      throw err;
+    }
+    let index = -1;
+    for (let i = 0; i < data.comments.length; i++) {
+      if (data.comments[i].commentID === req.body.commentID) {
+        index = i;
+        break;
+      }
+    }
+    if (index === -1) res.send({ data: "error" });
+    data.comments.splice(index, 1);
+    data.save();
+    res.send({ data: data });
+  });
+});
+
 app.post("/fetchUsersForProfile", (req, res) => {
   // console.log(req.body);
   let userArray = [];
@@ -842,18 +892,18 @@ app.post("/editProfile", (req, res) => {
       //   user.username = req.body.newUsername;
       //   console.log("New Username :" + user.username);
       // }
-      if (req.body.newFirstName){
+      if (req.body.newFirstName) {
         returnObj.firstName = req.body.newFirstName;
         user.firstName = req.body.newFirstName;
         console.log("New FirstName:" + user.firstName);
       }
-        
+
       if (req.body.newLastName) {
         returnObj.lastName = req.body.newLastName;
         user.lastName = req.body.newLastName;
         console.log("New LastName:" + user.lastName);
       }
-        
+
       if (req.body.email) {
         returnObj.email = req.body.email;
         user.email = req.body.email;
@@ -870,11 +920,10 @@ app.post("/editProfile", (req, res) => {
       //   network.users[index] = req.body.newUsername;
       //   network.save();
       // })
-      res.send({update: returnObj});
+      res.send({ update: returnObj });
     }
   });
 });
-
 
 //------------------------------------------------------------- Weather API --------------------------------------------------------------------
 

@@ -24,6 +24,10 @@ function FeedPost(props) {
     }
   });
 
+  function updateComments(update) {
+    setLikes(update);
+  }
+
   function toggleComments() {
     setComment((prev) => !prev);
   }
@@ -157,8 +161,25 @@ function FeedPost(props) {
               <div className="card-footer">
                 {isComment ? (
                   <>
-                    <NewComment currentUser={props.currentUser}/>
-                    <Comment />
+                    <NewComment
+                      currentUser={props.currentUser}
+                      post={props.feed.entry.entryID}
+                      updateComments={updateComments}
+                    />
+                    {likes.comments.map((comment) => {
+                      return (
+                        <Comment
+                          editable={
+                            props.currentUser.username === comment.commentor
+                              ? true
+                              : false
+                          }
+                          comment={comment}
+                          post={props.feed.entry.entryID}
+                          updateComments={updateComments}
+                        />
+                      );
+                    })}
                   </>
                 ) : null}
               </div>
