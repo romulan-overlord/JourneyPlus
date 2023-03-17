@@ -457,9 +457,15 @@ function Profile(props) {
                     >
                       Cancel
                     </button>
-                    <button className="btn btn-primary" type="submit">
-                      Save changes
-                    </button>
+                    {validEmail === "taken" || validEmail === "invalid" ? (
+                      <button className="btn btn-primary" type="submit" disabled>
+                        Save changes
+                      </button>
+                    ) : (
+                      <button className="btn btn-primary" type="submit">
+                        Save changes
+                      </button>
+                    )}
                   </div>
                 )}
               </form>
