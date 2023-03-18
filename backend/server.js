@@ -44,6 +44,7 @@ const commentSchema = {
   commentorPic: String,
   comment: String,
   likes: Number,
+  likedBy: [String],
 };
 
 const feedNetworkSchema = {
@@ -820,6 +821,43 @@ app.post("/deleteComment", (req, res) => {
     if (index === -1) res.send({ data: "error" });
     data.comments.splice(index, 1);
     data.save();
+    res.send({ data: data });
+  });
+});
+
+app.post("/likeComment", (req, res) => {
+  FeedNetwork.findOne({ entryID: req.body.entryID }, (err, data) => {
+    if (err) {
+      console.log("error liking comment");
+      throw err;
+    }
+    for (let i = 0; i < data.comments.length; i++) {
+      if (data.comments[i].commentID === req.body.commentID) {
+        data.comments[i].likes += 1;
+        data.comments[i].likedBy.push(req.body.likedBy);
+        data.save();
+        break;
+      }
+    }
+    res.send({ data: data });
+  });
+});
+
+app.post("/unlikeComment", (req, res) => {
+  FeedNetwork.findOne({ entryID: req.body.entryID }, (err, data) => {
+    if (err) {
+      console.log("error unliking comment");
+      throw err;
+    }
+    for (let i = 0; i < data.comments.length; i++) {
+      if (data.comments[i].commentID === req.body.commentID) {
+        data.comments[i].likes -= 1;
+        data.comments[i].likedBy.splice(
+          data.comments[i].likedBy.indexOf(req.body.likedBy), 1);
+        data.save();
+        break;
+      }
+    }
     res.send({ data: data });
   });
 });

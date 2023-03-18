@@ -176,6 +176,7 @@ function FeedPost(props) {
                           }
                           comment={comment}
                           post={props.feed.entry.entryID}
+                          currentUser = {props.currentUser.username}
                           updateComments={updateComments}
                         />
                       );
