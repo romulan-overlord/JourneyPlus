@@ -279,6 +279,7 @@ function App() {
           invertProfilePage={invertProfilePage}
           display={display}
           setVisibility={setVisibility}
+          currentUser={currentUser}
           picture={currentUser === undefined ? "" : currentUser.picture}
         />
       ) : null}

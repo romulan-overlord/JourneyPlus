@@ -151,10 +151,24 @@ function Profile(props) {
           console.error("Error:", error);
         });
     };
-    // setFile(URL.createObjectURL(e.target.files[0]));
   }
 
-  // console.log(file.Filelist[0].File.name);
+  function handleDeleteClick(event){
+    fetch(expressIP + "/deleteUser", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: props.currentUser.username,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+      });
+  }
+
 
   return (
     <div className="row details-container">
@@ -212,7 +226,7 @@ function Profile(props) {
                 <h6>{props.currentUser.following.length}</h6>
               </div>
             </div>
-            {props.selfProfile ? (
+            <div className="mx-auto">
               <button
                 onClick={props.logOut}
                 type="button"
@@ -220,7 +234,15 @@ function Profile(props) {
               >
                 Log Out
               </button>
-            ) : null}
+
+              <button
+                onClick={handleDeleteClick}
+                type="submit"
+                className="btn btn-danger mx-2"
+              >
+                Delete Account
+              </button>
+            </div>
           </div>
         </div>
       </div>
