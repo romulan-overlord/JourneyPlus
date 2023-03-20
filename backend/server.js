@@ -47,6 +47,8 @@ const commentSchema = {
   likedBy: [String],
 };
 
+const Comment = mongoose.model("comment", commentSchema);
+
 const feedNetworkSchema = {
   entryID: String,
   likes: Number,
@@ -996,7 +998,19 @@ function deleteFromWarehouse(id) {
 
   MediaWarehouse.deleteOne({ id: id })
     .then(function () {
-      console.log("Successfully deleted");
+      console.log("Successfully deleted media");
+      return true;
+    })
+    .catch(function (error) {
+      console.log(error);
+      return false;
+    });
+}
+
+function deleteFromComment(id) {
+  Comment.deleteOne({ commentID: id })
+    .then(function () {
+      console.log("Successfully deleted comment");
       return true;
     })
     .catch(function (error) {
@@ -1035,13 +1049,24 @@ app.post("/deleteUser", (req, res) => {
       }
 
       for (let i = 0; i < user.entries.length; i++) {
-        FeedNetwork.deleteOne({ entryID: user.entries[i].entryID })
-          .then(function () {
-            console.log("Successfully deleted feed.");
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
+        FeedNetwork.findOne(
+          { entryID: user.entries[i].entryID },
+          (err, feed) => {
+            if (err) throw err;
+            if (feed) {
+              if (feed.comments.length > 0) {
+                deleteFromComment(feed.comments);
+              }
+              FeedNetwork.deleteOne({ entryID: feed })
+                .then(function () {
+                  console.log("Successfully deleted feed.");
+                })
+                .catch(function (error) {
+                  console.log(error);
+                });
+            }
+          }
+        );
 
         for (let j = 0; j < user.entries[i].image.length; j++) {
           deleteFromWarehouse(user.entries[i].image[j]);
