@@ -723,6 +723,9 @@ app.post("/getFeed", (req, res) => {
                   firstName: user.firstName,
                   lastName: user.lastName,
                   picture: tempPic,
+                  email: user.email,
+                  following: user.following,
+                  followers: user.followers
                 },
                 entry: user.entries[j],
               });
@@ -747,6 +750,10 @@ app.post("/getFeed", (req, res) => {
   });
   // res.send({ mess: "helo" });
 });
+
+// app.post("getUserFeed", (req, res) => {
+//   const feedArr = [;]
+// })
 
 app.post("/getLikes", (req, res) => {
   // console.log(req.body);

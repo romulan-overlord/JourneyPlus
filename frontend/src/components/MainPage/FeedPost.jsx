@@ -103,6 +103,10 @@ function FeedPost(props) {
       });
   }
 
+  function openUserProfile(){
+    props.getForeignUser(props.feed.creator)
+  }
+
   return (
     <section
       className="px-0"
@@ -116,7 +120,7 @@ function FeedPost(props) {
                 <div className="d-flex flex-start align-items-center">
                   <Avatar src={props.feed.creator.picture} className="me-2" />
                   <div>
-                    <h6 className="fw-bold text-primary mb-1">
+                    <h6 onClick={openUserProfile} className="fw-bold text-primary mb-1">
                       {props.feed.creator.firstName +
                         " " +
                         props.feed.creator.lastName}

@@ -121,6 +121,7 @@ function Comment(props) {
               ) : (
                 <FavoriteBorderIcon fontSize="small" onClick={likeComment} />
               )}
+              <p className="small text-muted ms-1 mb-0">{props.comment.likes}</p>
               {/* <p className="small text-muted mb-0">Upvote?</p>
               <i
                 className="far fa-thumbs-up mx-2 fa-xs text-black"
