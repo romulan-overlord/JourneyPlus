@@ -237,7 +237,7 @@ function Profile(props) {
 
               <button
                 onClick={handleDeleteClick}
-                type="submit"
+                type="button"
                 className="btn btn-danger mx-2"
               >
                 Delete Account

@@ -1021,35 +1021,38 @@ function deleteFromComment(id) {
 
 app.post("/deleteUser", (req, res) => {
   console.log("Inside deleteUser");
-  Users.findOne({ username: req.body.username }, (err, user) => {
+  console.log(req.body);
+  Users.findOneAndDelete({ username: req.body.username }, (err, t_user) => {
+    const user = t_user;
     if (err) throw err;
     if (user) {
       if (user.picture.length > 0) deleteFromWarehouse(user.picture);
 
-      for (let i = 0; i < user.following.length; i++) {
-        Users.findOne({ username: user.following[i] }, (err, followingUser) => {
-          if (err) throw err;
-          if (followingUser) {
-            let index = followingUser.followers.indexOf(req.body.username);
-            followingUser.followers.splice(index, 1);
-            followingUser.save();
-          }
-        });
-      }
-
-      for (let i = 0; i < user.followers.length; i++) {
-        Users.findOne({ username: user.followers[i] }, (err, followerUser) => {
-          if (err) throw err;
-          if (followerUser) {
-            let index = followerUser.following.indexOf(req.body.username);
-            followerUser.following.splice(index, 1);
-            follower.save();
-          }
-        });
-      }
+      Network.findOne({}, async (err, result) => {
+        console.log("Inside Network");
+        if (err) throw err;
+        let index = result.users.indexOf(req.body.username);
+        result.users.splice(index, 1);
+        result.userCount--;
+        for (let i = 0; i < result.users.length; i++) {
+          Users.findOne({ username: result.users[i] }, (err, user) => {
+            if (err) throw err;
+            if (user.followers.includes(req.body.username)) {
+              let index = user.followers.indexOf(req.body.username);
+              user.followers.splice(index, 1);
+            }
+            if (user.following.includes(req.body.username)) {
+              let index = user.following.indexOf(req.body.username);
+              user.following.splice(index, 1);
+            }
+            user.save();
+          });
+        }
+        result.save();
+      });
 
       for (let i = 0; i < user.entries.length; i++) {
-        FeedNetwork.findOne(
+        FeedNetwork.findOneAndDelete(
           { entryID: user.entries[i].entryID },
           (err, feed) => {
             if (err) throw err;
@@ -1057,51 +1060,30 @@ app.post("/deleteUser", (req, res) => {
               if (feed.comments.length > 0) {
                 deleteFromComment(feed.comments);
               }
-              FeedNetwork.deleteOne({ entryID: feed })
-                .then(function () {
-                  console.log("Successfully deleted feed.");
-                })
-                .catch(function (error) {
-                  console.log(error);
-                });
             }
           }
         );
 
-        for (let j = 0; j < user.entries[i].image.length; j++) {
-          deleteFromWarehouse(user.entries[i].image[j]);
+        for (let j = 0; j < user.entries[i].media.image.length; j++) {
+          deleteFromWarehouse(user.entries[i].media.image[j]);
         }
-        for (let k = 0; k < user.entries[i].video.length; k++) {
-          deleteFromWarehouse(user.entries[i].video[k]);
+        for (let k = 0; k < user.entries[i].media.video.length; k++) {
+          deleteFromWarehouse(user.entries[i].media.video[k]);
         }
-        for (let l = 0; l < user.entries[i].audio.length; l++) {
-          deleteFromWarehouse(user.entries[i].audio[l]);
+        for (let l = 0; l < user.entries[i].media.audio.length; l++) {
+          deleteFromWarehouse(user.entries[i].media.audio[l]);
         }
-        if (user.backgroundAudio.length > 0)
+        if (user.entries[i].backgroundAudio.length > 0)
           deleteFromWarehouse(user.backgroundAudio);
+
+        console.log("Account succesfully deleted");
 
         // deleteEntry(user.entries[i]);
         // user.entries.splice(i, 1);
       }
     }
   });
-  Users.deleteOne({ username: req.body.username })
-    .then(function () {
-      console.log("Successfully deleted User");
-      Network.findOne({}, async (err, result) => {
-        console.log("Inside Network");
-        if (err) throw err;
-        let index = result.users.indexOf(req.body.username);
-        result.users.splice(index, 1);
-        result.userCount--;
-        result.save();
-      });
-    })
-    .catch(function (error) {
-      console.log(err);
-    });
 
-  console.log("Account succesfully deleted");
   // res.send({mesage: "success"});
 });
 
@@ -1138,5 +1120,38 @@ app.post("/deleteUser", (req, res) => {
 // });
 
 app.listen(8000, () => {
+  // cleanup();
   console.log(`Server is running on port 8000.`);
 });
+
+function cleanup() {
+  MediaWarehouse.deleteMany({})
+    .then(() => {
+      console.log("users deleted");
+    })
+    .catch(function (error) {
+      console.log(error); // Failure
+    });
+  Network.deleteMany({})
+    .then(() => {
+      console.log("users deleted");
+      Network.create({ users: [], userCount: 0 });
+    })
+    .catch(function (error) {
+      console.log(error); // Failure
+    });
+  Users.deleteMany({})
+    .then(() => {
+      console.log("users deleted");
+    })
+    .catch(function (error) {
+      console.log(error); // Failure
+    });
+  FeedNetwork.deleteMany({})
+    .then(() => {
+      console.log("users deleted");
+    })
+    .catch(function (error) {
+      console.log(error); // Failure
+    });
+}
