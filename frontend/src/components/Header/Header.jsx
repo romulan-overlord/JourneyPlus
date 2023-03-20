@@ -37,6 +37,7 @@ function Header(props) {
             ) : (
               <HeaderForMainPage
                 invertProfilePage={props.invertProfilePage}
+                
                 invertCompose={props.invertCompose}
                 picture={
                   props.currentUser === undefined

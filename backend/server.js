@@ -67,6 +67,7 @@ const entrySchema = {
     icon: String,
   },
   private: Boolean,
+  time: String,
 };
 
 const Entry = mongoose.model("entry", entrySchema);
@@ -842,18 +843,18 @@ app.post("/editProfile", (req, res) => {
       //   user.username = req.body.newUsername;
       //   console.log("New Username :" + user.username);
       // }
-      if (req.body.newFirstName){
+      if (req.body.newFirstName) {
         returnObj.firstName = req.body.newFirstName;
         user.firstName = req.body.newFirstName;
         console.log("New FirstName:" + user.firstName);
       }
-        
+
       if (req.body.newLastName) {
         returnObj.lastName = req.body.newLastName;
         user.lastName = req.body.newLastName;
         console.log("New LastName:" + user.lastName);
       }
-        
+
       if (req.body.email) {
         returnObj.email = req.body.email;
         user.email = req.body.email;
@@ -870,11 +871,110 @@ app.post("/editProfile", (req, res) => {
       //   network.users[index] = req.body.newUsername;
       //   network.save();
       // })
-      res.send({update: returnObj});
+      res.send({ update: returnObj });
     }
   });
 });
 
+function uploadToWarehouse(data) {
+  //takes data, uploads to warehouse, returns its id
+  const newMedia = new MediaWarehouse({
+    id: uniqid(),
+    data: data,
+  });
+  newMedia.save();
+  return newMedia.id;
+}
+
+function deleteFromWarehouse(id) {
+  // takes id, query waehouse, delete.
+  // return success or failure bool
+
+  MediaWarehouse.deleteOne({ id: id })
+    .then(function () {
+      console.log("Successfully deleted");
+      return true;
+    })
+    .catch(function (error) {
+      console.log(error);
+      return false;
+    });
+}
+
+app.post("/deleteUser", (req, res) => {
+  console.log("Inside deleteUser");
+  Users.findOne({ username: req.body.username }, (err, user) => {
+    if (err) throw err;
+    if (user) {
+      if (user.picture.length > 0) deleteFromWarehouse(user.picture);
+
+      for(let i = 0; i < user.following.length; i++){
+        Users.findOne({username: user.following[i]}, (err, followingUser) => {
+          if(err) throw err;
+          if(followingUser){
+            let index = followingUser.followers.indexOf(req.body.username);
+            followingUser.followers.splice(index, 1);
+            followingUser.save();
+          }
+        })
+      }
+
+      for(let i = 0; i < user.followers.length; i++){
+        Users.findOne({username: user.followers[i]}, (err, followerUser) => {
+          if(err) throw err;
+          if(followerUser){
+            let index = followerUser.following.indexOf(req.body.username);
+            followerUser.following.splice(index, 1);
+            follower.save();
+          }
+        })
+      }
+
+      for (let i = 0; i < user.entries.length; i++) {
+        FeedNetwork.deleteOne({ entryID: user.entries[i].entryID })
+          .then(function () {
+            console.log("Successfully deleted feed.");
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+
+        for (let j = 0; j < user.entries[i].image.length; j++) {
+          deleteFromWarehouse(user.entries[i].image[j]);
+        }
+        for (let k = 0; k < user.entries[i].video.length; k++) {
+          deleteFromWarehouse(user.entries[i].video[k]);
+        }
+        for (let l = 0; l < user.entries[i].audio.length; l++) {
+          deleteFromWarehouse(user.entries[i].audio[l]);
+        }
+        if (user.backgroundAudio.length > 0)
+          deleteFromWarehouse(user.backgroundAudio);
+
+        // deleteEntry(user.entries[i]);
+        // user.entries.splice(i, 1);
+      }
+    }
+  });
+  Users.deleteOne({ username: req.body.username })
+    .then(function () {
+      console.log("Successfully deleted User");
+      Network.findOne({}, async (err, result) => {
+        console.log("Inside Network");
+        if (err) throw err;
+        let index = result.users.indexOf(req.body.username);
+        result.users.splice(index, 1);
+        result.userCount--;
+        result.save();
+      });
+    })
+    .catch(function (error) {
+      console.log(err);
+    });
+
+  console.log("Account succesfully deleted");
+  // res.send({mesage: "success"});
+});
 
 //------------------------------------------------------------- Weather API --------------------------------------------------------------------
 

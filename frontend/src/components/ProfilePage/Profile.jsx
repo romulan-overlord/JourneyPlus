@@ -152,10 +152,24 @@ function Profile(props) {
           console.error("Error:", error);
         });
     };
-    // setFile(URL.createObjectURL(e.target.files[0]));
   }
 
-  // console.log(file.Filelist[0].File.name);
+  function handleDeleteClick(event){
+    fetch(expressIP + "/deleteUser", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: props.currentUser.username,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+      });
+  }
+
 
   return (
     <div className="row details-container">
@@ -211,13 +225,23 @@ function Profile(props) {
                 <h6>{props.currentUser.following.length}</h6>
               </div>
             </div>
-            <button
-              onClick={props.logOut}
-              type="button"
-              className="btn btn-danger"
-            >
-              Log Out
-            </button>
+            <div className="mx-auto">
+              <button
+                onClick={props.logOut}
+                type="button"
+                className="btn btn-danger"
+              >
+                Log Out
+              </button>
+
+              <button
+                onClick={handleDeleteClick}
+                type="submit"
+                className="btn btn-danger mx-2"
+              >
+                Delete Account
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -458,7 +482,11 @@ function Profile(props) {
                       Cancel
                     </button>
                     {validEmail === "taken" || validEmail === "invalid" ? (
-                      <button className="btn btn-primary" type="submit" disabled>
+                      <button
+                        className="btn btn-primary"
+                        type="submit"
+                        disabled
+                      >
                         Save changes
                       </button>
                     ) : (
