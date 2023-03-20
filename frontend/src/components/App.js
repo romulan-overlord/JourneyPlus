@@ -3,7 +3,7 @@ import { useCookies } from "react-cookie";
 import { expressIP } from "../settings";
 
 import EntryInput from "./EntryInput/EntryInput";
-import Header from "./Header";
+import Header from "./Header/Header";
 import SignUp from "./SignUp";
 import Login from "./Login";
 import MainPage from "./MainPage/MainPage";
@@ -273,8 +273,9 @@ function App() {
     <div className="App height-100">
       {!compose ? (
         <Header
+          isLoggedIn={isLoggedIn}
+          profilePage={profilePage}
           invertCompose={invertCompose}
-          logOut={logOut}
           invertProfilePage={invertProfilePage}
           display={display}
           setVisibility={setVisibility}
