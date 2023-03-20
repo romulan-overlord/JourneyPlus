@@ -104,12 +104,7 @@ const Network = mongoose.model("network", networkSchema);
 function reduceUser(user) {
   const newUser = new Users(user);
   if (newUser.picture.length > 0) {
-    const pictureWare = new MediaWarehouse({
-      id: uniqid(),
-      data: newUser.picture,
-    });
-    newUser.picture = pictureWare.id;
-    pictureWare.save();
+    newUser.picture = uploadToWarehouse(newUser.picture);
   }
   return newUser;
 }
@@ -594,26 +589,19 @@ app.post("/fetchFollowers", (req, res) => {
             console.log("error fetching follower");
             throw err;
           }
-          console.log("found follower: " + follower.username);
-          if (follower.picture.length > 2) {
-            MediaWarehouse.findOne({ id: follower.picture }, (err, data) => {
-              if (err) {
-                console.log("error in getting picture.");
-                throw err;
-              }
-              let tempPic = "";
-              if (data) tempPic = data.data;
-
-              followerArray.push({
-                username: follower.username,
-                picture: tempPic,
-                firstName: follower.firstName,
-                lastName: follower.lastName,
-              });
-
-              console.log("push success: " + followerArray.length);
+          MediaWarehouse.findOne({ id: follower.picture }, (err, result) => {
+            if (err) {
+              console.log("error finding data in mediawarehouse");
+              throw err;
+            }
+            followerArray.push({
+              username: follower.username,
+              picture: result ? result.data : "",
+              firstName: follower.firstName,
+              lastName: follower.lastName,
             });
-          }
+          });
+          console.log("push success: " + followerArray.length);
         });
       }
       let readyPromise = new Promise(function (resolve, reject) {
@@ -627,7 +615,7 @@ app.post("/fetchFollowers", (req, res) => {
             } else timeout(n);
           }, n);
         };
-        timeout(1000);
+        timeout(50);
       });
       readyPromise.then(() => {});
     }
@@ -647,22 +635,18 @@ app.post("/fetchFollowing", (req, res) => {
       for (let i = 0; i < user.following.length; i++) {
         Users.findOne({ username: user.following[i] }, (err, following) => {
           if (err) throw err;
-          if (following.picture.length > 2) {
-            MediaWarehouse.findOne({ id: following.picture }, (err, data) => {
-              if (err) {
-                console.log("error in getting picture.");
-                throw err;
-              }
-              let tempPic = "";
-              if (data) tempPic = data.data;
-              followingArray.push({
-                username: following.username,
-                picture: tempPic,
-                firstName: following.firstName,
-                lastName: following.lastName,
-              });
+          MediaWarehouse.findOne({ id: following.picture }, (err, result) => {
+            if (err) {
+              console.log("error finding data in mediawarehouse");
+              throw err;
+            }
+            followingArray.push({
+              username: following.username,
+              picture: result ? result.data : "",
+              firstName: following.firstName,
+              lastName: following.lastName,
             });
-          }
+          });
         });
       }
       let readyPromise = new Promise(function (resolve, reject) {
@@ -1028,26 +1012,26 @@ app.post("/deleteUser", (req, res) => {
     if (user) {
       if (user.picture.length > 0) deleteFromWarehouse(user.picture);
 
-      for(let i = 0; i < user.following.length; i++){
-        Users.findOne({username: user.following[i]}, (err, followingUser) => {
-          if(err) throw err;
-          if(followingUser){
+      for (let i = 0; i < user.following.length; i++) {
+        Users.findOne({ username: user.following[i] }, (err, followingUser) => {
+          if (err) throw err;
+          if (followingUser) {
             let index = followingUser.followers.indexOf(req.body.username);
             followingUser.followers.splice(index, 1);
             followingUser.save();
           }
-        })
+        });
       }
 
-      for(let i = 0; i < user.followers.length; i++){
-        Users.findOne({username: user.followers[i]}, (err, followerUser) => {
-          if(err) throw err;
-          if(followerUser){
+      for (let i = 0; i < user.followers.length; i++) {
+        Users.findOne({ username: user.followers[i] }, (err, followerUser) => {
+          if (err) throw err;
+          if (followerUser) {
             let index = followerUser.following.indexOf(req.body.username);
             followerUser.following.splice(index, 1);
             follower.save();
           }
-        })
+        });
       }
 
       for (let i = 0; i < user.entries.length; i++) {
