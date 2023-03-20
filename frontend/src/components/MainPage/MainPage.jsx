@@ -69,6 +69,7 @@ function MainPage(props) {
                     cookieID: props.currentUser.cookieID,
                     picture: props.currentUser.picture,
                   }}
+                  getForeignUser={props.getForeignUser}
                   key={index}
                   invertCompose={props.invertCompose}
                   openEntry={props.openEntry}

@@ -9,12 +9,14 @@ function ProfilePage(props) {
   const [isProfile, setIsProfile] = useState(true);
   const [isFollowers, setFollowers] = useState(false);
   const [isFollowing, setFollowing] = useState(false);
+  const [isPosts, setPosts] = useState(false);
   const [isUsers, setUsers] = useState(false);
 
   function openProfile(event) {
     setIsProfile(true);
     setFollowers(false);
     setFollowing(false);
+    setPosts(false);
   }
 
   function openFollowers(event) {
@@ -27,6 +29,13 @@ function ProfilePage(props) {
     setIsProfile(false);
     setFollowers(false);
     setFollowing(true);
+  }
+
+  function openPosts(event) {
+    setIsProfile(false);
+    setFollowers(false);
+    setFollowing(false);
+    setPosts(true);
   }
 
   function invertUsers(event) {
@@ -54,24 +63,43 @@ function ProfilePage(props) {
         >
           Profile
         </a>
-        <a
-          className={isFollowers ? "nav-link active" : "nav-link"}
-          href="#"
-          onClick={openFollowers}
-        >
-          Followers
-        </a>
-        <a
-          className={isFollowing ? "nav-link active" : "nav-link"}
-          href="#"
-          onClick={openFollowing}
-        >
-          Following
-        </a>
+        {props.selfProfile ? (
+          <>
+            {" "}
+            <a
+              className={isFollowers ? "nav-link active" : "nav-link"}
+              href="#"
+              onClick={openFollowers}
+            >
+              Followers
+            </a>
+            <a
+              className={isFollowing ? "nav-link active" : "nav-link"}
+              href="#"
+              onClick={openFollowing}
+            >
+              Following
+            </a>
+          </>
+        ) : (
+          <a
+            className={isPosts ? "nav-link active" : "nav-link"}
+            href="#"
+            onClick={openPosts}
+          >
+            Posts
+          </a>
+        )}
       </nav>
       <hr className="mt-0 mb-4"></hr>
       {isProfile ? (
-        <Profile updateUserDetails={props.updateUserDetails} updatePicture={props.updatePicture} currentUser={props.currentUser} logOut={props.logOut} />
+        <Profile
+          updateUserDetails={props.updateUserDetails}
+          updatePicture={props.updatePicture}
+          currentUser={props.currentUser}
+          logOut={props.logOut}
+          selfProfile={props.selfProfile}
+        />
       ) : null}
       {isFollowers ? (
         <Followers
@@ -109,6 +137,7 @@ function ProfilePage(props) {
           />
         )
       ) : null}
+      {isPosts ? null : null}
     </div>
   );
 }

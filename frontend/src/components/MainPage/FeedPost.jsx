@@ -24,6 +24,10 @@ function FeedPost(props) {
     }
   });
 
+  function updateComments(update) {
+    setLikes(update);
+  }
+
   function toggleComments() {
     setComment((prev) => !prev);
   }
@@ -99,6 +103,10 @@ function FeedPost(props) {
       });
   }
 
+  function openUserProfile(){
+    props.getForeignUser(props.feed.creator)
+  }
+
   return (
     <section
       className="px-0"
@@ -112,7 +120,7 @@ function FeedPost(props) {
                 <div className="d-flex flex-start align-items-center">
                   <Avatar src={props.feed.creator.picture} className="me-2" />
                   <div>
-                    <h6 className="fw-bold text-primary mb-1">
+                    <h6 onClick={openUserProfile} className="fw-bold text-primary mb-1">
                       {props.feed.creator.firstName +
                         " " +
                         props.feed.creator.lastName}
@@ -157,8 +165,26 @@ function FeedPost(props) {
               <div className="card-footer">
                 {isComment ? (
                   <>
-                    <NewComment currentUser={props.currentUser}/>
-                    <Comment />
+                    <NewComment
+                      currentUser={props.currentUser}
+                      post={props.feed.entry.entryID}
+                      updateComments={updateComments}
+                    />
+                    {likes.comments.map((comment) => {
+                      return (
+                        <Comment
+                          editable={
+                            props.currentUser.username === comment.commentor
+                              ? true
+                              : false
+                          }
+                          comment={comment}
+                          post={props.feed.entry.entryID}
+                          currentUser = {props.currentUser.username}
+                          updateComments={updateComments}
+                        />
+                      );
+                    })}
                   </>
                 ) : null}
               </div>

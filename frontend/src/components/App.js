@@ -16,8 +16,12 @@ function App() {
   const [checkCookies, setCheckCookies] = useState(true);
   const [compose, setCompose] = useState(false);
   const [createMode, setCreateMode] = useState(true);
-  const [feedMode, setFeedMode] = useState(false);
   const [display, setDisplay] = useState("Private");
+  const [profilePage, setProfilePage] = useState(false);
+  //useState to toggle display of another user's profile
+  const [selfProfile, setSelfProfile] = useState(true);
+  //useState to store details of foreignUser
+  const [foreignUser, setForeignUser] = useState({});
   const [passedEntry, setPassedEntry] = useState({
     entryID: "",
     title: "",
@@ -47,8 +51,6 @@ function App() {
     "username",
     "password",
   ]);
-
-  const [profilePage, setProfilePage] = useState(false);
 
   function invertProfilePage(event) {
     setProfilePage((prev) => {
@@ -233,6 +235,13 @@ function App() {
     });
   }
 
+  function getForeignUser(user){
+    console.log("getting foreign user");
+    setProfilePage( prev => !prev)
+    setSelfProfile(false);
+    setForeignUser(user);
+  }
+
   // checking for cookies
   if (checkCookies === true && cookies.userIsSaved === "true") {
     setCheckCookies(false);
@@ -259,9 +268,6 @@ function App() {
         console.error("Error:", error);
       });
   }
-
-  // console.log(currentUser);
-  // console.log(typeof(currentUser.picture));
 
   return (
     <div className="App height-100">
@@ -294,14 +300,16 @@ function App() {
             openEntry={openEntry}
             deleteEntry={deleteEntry}
             display={display}
+            getForeignUser={getForeignUser}
           />
         ) : (
           <ProfilePage
             updateUserDetails={updateUserDetails}
-            currentUser={currentUser}
+            currentUser={selfProfile ? currentUser: foreignUser}
             logOut={logOut}
             updateNetwork={updateNetwork}
             updatePicture={updatePicture}
+            selfProfile = {selfProfile}
           />
         )
       ) : isSignedUp ? (

@@ -58,7 +58,6 @@ function Profile(props) {
         console.log("NewUser: " + data.update);
         props.updateUserDetails(data.update);
         setIsEdited(true);
-
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -111,17 +110,17 @@ function Profile(props) {
   // event.target.value === allUsers[i].email &&
   function handleEmailChange(event) {
     for (let i = 0; i < allUsers.length; i++) {
-      if(ValidateEmail(event.target.value) === true){
-        if(event.target.value === allUsers[i].email){
+      if (ValidateEmail(event.target.value) === true) {
+        if (event.target.value === allUsers[i].email) {
           setValidEmail("taken");
-        }else{
+        } else {
           setValidEmail("valid");
         }
-      }else{
+      } else {
         if (event.target.value === "") {
           setValidEmail("");
-        }else{
-           setValidEmail("invalid");
+        } else {
+          setValidEmail("invalid");
         }
       }
     }
@@ -192,18 +191,20 @@ function Profile(props) {
             {/* <!-- Profile picture help block--> */}
             <div className="small font-italic text-muted mb-4"></div>
             {/* <!-- Profile picture upload button--> */}
-            <span>
-              <input
-                id="uploadPicture"
-                className="noDisplay"
-                type="file"
-                onChange={handlePictureChange}
-              />
+            {props.selfProfile ? (
+              <span>
+                <input
+                  id="uploadPicture"
+                  className="noDisplay"
+                  type="file"
+                  onChange={handlePictureChange}
+                />
 
-              <label className="uploadImage" htmlFor="uploadPicture">
-                Upload Image
-              </label>
-            </span>
+                <label className="uploadImage" htmlFor="uploadPicture">
+                  Upload Image
+                </label>
+              </span>
+            ) : null}
             {/* <h5 className="my-3">
                   {props.currentUser.firstName} {props.currentUser.lastName}
                 </h5>
@@ -507,4 +508,3 @@ function Profile(props) {
 }
 
 export default Profile;
-

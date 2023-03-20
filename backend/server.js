@@ -39,9 +39,12 @@ const mediaWarehouseSchema = {
 const MediaWarehouse = mongoose.model("mediaWarehouse", mediaWarehouseSchema);
 
 const commentSchema = {
-  author: String,
+  commentID: String,
+  commentor: String,
+  commentorPic: String,
   comment: String,
   likes: Number,
+  likedBy: [String],
 };
 
 const feedNetworkSchema = {
@@ -162,6 +165,13 @@ function reduceEntry(entry) {
 
 function deleteEntry(mainEntry) {
   const entry = mainEntry;
+  FeedNetwork.deleteOne({ entryID: entry.entryID })
+    .then(function () {
+      console.log("Data deleted"); // Success
+    })
+    .catch(function (error) {
+      console.log(error); // Failure
+    });
   MediaWarehouse.deleteOne({ id: entry.backgroundAudio })
     .then(function () {
       console.log("Data deleted"); // Success
@@ -714,6 +724,9 @@ app.post("/getFeed", (req, res) => {
                   firstName: user.firstName,
                   lastName: user.lastName,
                   picture: tempPic,
+                  email: user.email,
+                  following: user.following,
+                  followers: user.followers
                 },
                 entry: user.entries[j],
               });
@@ -738,6 +751,10 @@ app.post("/getFeed", (req, res) => {
   });
   // res.send({ mess: "helo" });
 });
+
+// app.post("getUserFeed", (req, res) => {
+//   const feedArr = [;]
+// })
 
 app.post("/getLikes", (req, res) => {
   // console.log(req.body);
@@ -772,6 +789,84 @@ app.post("/unlike", (req, res) => {
       data.save();
       res.send({ message: "success" });
     }
+  });
+});
+
+// uplaod to mediawarehopuse func make
+
+app.post("/postComment", (req, res) => {
+  FeedNetwork.findOne({ entryID: req.body.post }, (err, data) => {
+    if (err) {
+      console.log("Error in posting comment");
+      throw err;
+    }
+    data.comments.push({
+      commentID: uniqid(),
+      commentor: req.body.commentor,
+      commentorPic: req.body.commentorPic,
+      comment: req.body.comment,
+      likes: 0,
+    });
+    data.save();
+    res.send({ update: data });
+  });
+});
+
+app.post("/deleteComment", (req, res) => {
+  console.log("deleting comment");
+  FeedNetwork.findOne({ entryID: req.body.entryID }, (err, data) => {
+    if (err) {
+      console.log("Error in deleting comment");
+      throw err;
+    }
+    let index = -1;
+    for (let i = 0; i < data.comments.length; i++) {
+      if (data.comments[i].commentID === req.body.commentID) {
+        index = i;
+        break;
+      }
+    }
+    if (index === -1) res.send({ data: "error" });
+    data.comments.splice(index, 1);
+    data.save();
+    res.send({ data: data });
+  });
+});
+
+app.post("/likeComment", (req, res) => {
+  FeedNetwork.findOne({ entryID: req.body.entryID }, (err, data) => {
+    if (err) {
+      console.log("error liking comment");
+      throw err;
+    }
+    for (let i = 0; i < data.comments.length; i++) {
+      if (data.comments[i].commentID === req.body.commentID) {
+        data.comments[i].likes += 1;
+        data.comments[i].likedBy.push(req.body.likedBy);
+        data.save();
+        break;
+      }
+    }
+    res.send({ data: data });
+  });
+});
+
+app.post("/unlikeComment", (req, res) => {
+  FeedNetwork.findOne({ entryID: req.body.entryID }, (err, data) => {
+    if (err) {
+      console.log("error unliking comment");
+      throw err;
+    }
+    for (let i = 0; i < data.comments.length; i++) {
+      if (data.comments[i].commentID === req.body.commentID) {
+        data.comments[i].likes -= 1;
+        data.comments[i].likedBy.splice(
+          data.comments[i].likedBy.indexOf(req.body.likedBy), 1);
+        data.save();
+        break;
+      }
+    }
+    res.send({ data: data });
   });
 });
 
