@@ -38,11 +38,7 @@ function Header(props) {
               <HeaderForMainPage
                 invertProfilePage={props.invertProfilePage}
                 invertCompose={props.invertCompose}
-                picture={
-                  props.currentUser === undefined
-                    ? ""
-                    : props.currentUser.picture
-                }
+                picture={props.picture}
                 display={props.display}
                 setVisibility={props.setVisibility}
               />

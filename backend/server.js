@@ -515,13 +515,13 @@ app.post("/getFullData", (req, res) => {
 
 app.post("/fetchUsers", (req, res) => {
   let userArray = [];
-  // console.log("fetchUsers called");
+  console.log("fetchUsers called");
   Network.findOne({}, async (err, result) => {
     if (err) throw err;
     for (let i = 0; i < result.userCount; i++) {
       Users.findOne({ username: result.users[i] }, async (err, user) => {
         if (err) throw err;
-        // console.log(user);
+        console.log("user found: " + user.username);
         if (user.username !== req.body.username) {
           if (user.picture.length > 2) {
             MediaWarehouse.findOne({ id: user.picture }, (err, data) => {
@@ -529,6 +529,7 @@ app.post("/fetchUsers", (req, res) => {
                 console.log("error in getting picture.");
                 throw err;
               }
+              console.log("got user picture");
               let tempPic = "";
               if (data) tempPic = data.data;
               userArray.push({
@@ -537,6 +538,14 @@ app.post("/fetchUsers", (req, res) => {
                 firstName: user.firstName,
                 lastName: user.lastName,
               });
+              console.log("user push success: " + user.username);
+            });
+          } else {
+            userArray.push({
+              username: user.username,
+              picture: "",
+              firstName: user.firstName,
+              lastName: user.lastName,
             });
           }
         }
@@ -551,7 +560,7 @@ app.post("/fetchUsers", (req, res) => {
               // console.log("checking: " + n.username);
               return !req.body.following.includes(n.username);
             });
-            // console.log(userArray);
+            console.log("responding users");
             res.send({ users: userArray });
             resolve();
           } else timeout(n);
@@ -565,16 +574,26 @@ app.post("/fetchUsers", (req, res) => {
 
 app.post("/fetchFollowers", (req, res) => {
   const followerArray = [];
+  console.log("fetching followers: ");
+  console.log(req.body);
   Users.findOne(
     {
       username: req.body.username,
       cookieID: req.body.cookieID,
     },
     async (err, user) => {
-      if (err) throw err;
+      if (err) {
+        console.log("error finding main user");
+        throw err;
+      }
+      console.log("found main user: " + req.body.username);
       for (let i = 0; i < user.followers.length; i++) {
         Users.findOne({ username: user.followers[i] }, (err, follower) => {
-          if (err) throw err;
+          if (err) {
+            console.log("error fetching follower");
+            throw err;
+          }
+          console.log("found follower: " + follower.username);
           if (follower.picture.length > 2) {
             MediaWarehouse.findOne({ id: follower.picture }, (err, data) => {
               if (err) {
@@ -590,23 +609,26 @@ app.post("/fetchFollowers", (req, res) => {
                 firstName: follower.firstName,
                 lastName: follower.lastName,
               });
+
+              console.log("push success: " + followerArray.length);
             });
           }
         });
       }
       let readyPromise = new Promise(function (resolve, reject) {
         let timeout = (n) => {
-          // console.log("in timeout: ");
+          console.log("in timeout: ");
           setTimeout(() => {
-            if (followerArray.length === user.followers.length) resolve();
-            else timeout(n);
+            if (followerArray.length === user.followers.length) {
+              console.log("responding");
+              res.send({ followers: followerArray });
+              resolve();
+            } else timeout(n);
           }, n);
         };
-        timeout(50);
+        timeout(1000);
       });
-      readyPromise.then(() => {
-        res.send({ followers: followerArray });
-      });
+      readyPromise.then(() => {});
     }
   );
 });
@@ -654,6 +676,7 @@ app.post("/fetchFollowing", (req, res) => {
       });
       readyPromise.then(() => {
         // console.log(followingArray);
+        console.log("responding following");
         res.send({ following: followingArray });
       });
     }
@@ -725,7 +748,7 @@ app.post("/getFeed", (req, res) => {
                   picture: tempPic,
                   email: user.email,
                   following: user.following,
-                  followers: user.followers
+                  followers: user.followers,
                 },
                 entry: user.entries[j],
               });
@@ -860,7 +883,9 @@ app.post("/unlikeComment", (req, res) => {
       if (data.comments[i].commentID === req.body.commentID) {
         data.comments[i].likes -= 1;
         data.comments[i].likedBy.splice(
-          data.comments[i].likedBy.indexOf(req.body.likedBy), 1);
+          data.comments[i].likedBy.indexOf(req.body.likedBy),
+          1
+        );
         data.save();
         break;
       }

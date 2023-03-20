@@ -7,12 +7,13 @@ function Followers(props) {
   const [check, setCheck] = useState(true);
   useEffect(() => {
     if (followerList.length === 0 && check) {
-      fetchFollowers();
       setCheck(false);
+      fetchFollowers();
     }
   });
 
   function fetchFollowers() {
+    console.log("fetching followers");
     fetch(expressIP + "/fetchFollowers", {
       method: "POST",
       headers: {
@@ -25,7 +26,7 @@ function Followers(props) {
     })
       .then((response) => response.json())
       .then((data) => {
-        // console.log(data);
+        console.log(data);
         setFollowerList(data.followers);
         //setUserList(data.users);
       });
