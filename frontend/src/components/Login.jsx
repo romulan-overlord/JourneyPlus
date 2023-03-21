@@ -1,23 +1,39 @@
-import React, {useState} from "react";
-import uniqid from 'uniqid';
+import React, { useState } from "react";
+import uniqid from "uniqid";
 import { expressIP } from "../settings";
 import Link from "@mui/material/Link";
+import { InputAdornment, IconButton } from "@mui/material";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 function Login(props) {
+  const [IslogUid, setLogUid] = useState(true);
+  const [IsPwd, setPwd] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
+  const [toggleRememberMe, setRememberMe] = useState(false);
 
-  const[IslogUid, setLogUid] = useState(true);
-  const[IsPwd, setPwd] = useState(true);
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
 
-  function invertLogUid(){
-    setLogUid((prev) =>{
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+
+  function invertLogUid() {
+    setLogUid((prev) => {
       return !prev;
     });
   }
 
-  function invertPwd(){
+  function invertPwd() {
     setPwd((prev) => {
       return !prev;
     });
+  }
+
+  function invertRememberMe(){
+    setRememberMe((prev) => {
+      return !prev;
+    })
   }
 
   function handleSubmitLogin(event) {
@@ -26,26 +42,30 @@ function Login(props) {
     const requestData = {
       username: data.get("username"),
       password: data.get("password"),
-      cookieID: uniqid()
+      cookieID: uniqid(),
     };
     fetch(expressIP + "/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      mode: 'cors',
+      mode: "cors",
       body: JSON.stringify(requestData),
     })
       .then((response) => response.json())
       .then((data) => {
-        if(data.success === "800"){
+        if (data.success === "800") {
           invertLogUid();
           invertPwd();
-        }else if(data.success === "801"){
+        } else if (data.success === "801") {
           invertPwd();
-        }else if(data.success === "802"){
-          props.updateCurrentUser(data.user);
-          props.invertLoggedIn();
+        } else if (data.success === "802") {
+          if(toggleRememberMe === true){
+            props.updateCurrentUser(data.user);
+            props.invertLoggedIn();
+          }else{
+            props.invertLoggedIn();
+          }
         }
       })
       .catch((error) => {
@@ -107,7 +127,7 @@ function Login(props) {
                       {IsPwd ? (
                         <div className="input-group flex-nowrap set-colour outline-dark margin-between-input">
                           <input
-                            type="password"
+                            type={showPassword ? "text" : "password"}
                             name="password"
                             className="form-control"
                             placeholder="Password"
@@ -115,23 +135,66 @@ function Login(props) {
                             aria-describedby="addon-wrapping"
                             required
                           ></input>
+                          <div class="input-group-text">
+                            <InputAdornment className="visibility-icon">
+                              <IconButton
+                                aria-label="toggle password visibility"
+                                onClick={handleClickShowPassword}
+                                onMouseDown={handleMouseDownPassword}
+                                edge="end"
+                              >
+                                {showPassword ? (
+                                  <VisibilityOffIcon />
+                                ) : (
+                                  <VisibilityIcon />
+                                )}
+                              </IconButton>
+                            </InputAdornment>
+                          </div>
                         </div>
                       ) : (
                         <div className="margin-between-input">
                           <input
                             onChange={invertPwd}
-                            type="password"
+                            type={showPassword ? "text" : "password"}
                             name="password"
                             className="form-control is-invalid"
                             aria-describedby="validationServer03Feedback"
                             required
                           ></input>
+                          <div class="input-group-text">
+                            <InputAdornment className="visibility-icon">
+                              <IconButton
+                                aria-label="toggle password visibility"
+                                onClick={handleClickShowPassword}
+                                onMouseDown={handleMouseDownPassword}
+                                edge="end"
+                              >
+                                {showPassword ? (
+                                  <VisibilityOffIcon />
+                                ) : (
+                                  <VisibilityIcon />
+                                )}
+                              </IconButton>
+                            </InputAdornment>
+                          </div>
 
                           <div className="invalid-feedback">
                             Invalid Password
                           </div>
                         </div>
                       )}
+                    </div>
+                    <div class="form-check mb-2 mr-sm-2">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        id="inlineFormCheck"
+                        onClick={invertRememberMe}
+                      ></input>
+                      <label className="form-check-label" for="inlineFormCheck">
+                        Remember me
+                      </label>
                     </div>
                     <div className="text-center">
                       <button
