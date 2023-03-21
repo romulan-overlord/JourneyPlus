@@ -4,6 +4,7 @@ import Followers from "./Followers";
 import Following from "./Following";
 import Loading from "./Loading";
 import Users from "./Users";
+import UserFeed from "./UserFeed";
 
 function ProfilePage(props) {
   const [isProfile, setIsProfile] = useState(true);
@@ -96,7 +97,7 @@ function ProfilePage(props) {
         <Profile
           updateUserDetails={props.updateUserDetails}
           updatePicture={props.updatePicture}
-          currentUser={props.currentUser}
+          currentUser={props.selfProfile ? props.currentUser : props.foreignUser}
           logOut={props.logOut}
           selfProfile={props.selfProfile}
         />
@@ -137,7 +138,15 @@ function ProfilePage(props) {
           />
         )
       ) : null}
-      {isPosts ? null : null}
+      {isPosts ? (
+        <UserFeed
+          foreignUser= {props.foreignUser}
+          currentUser={props.currentUser}
+          openEntry={props.openEntry}
+          getForeignUser={props.getForeignUser}
+          openProfile={openProfile}
+        />
+      ) : null}
     </div>
   );
 }

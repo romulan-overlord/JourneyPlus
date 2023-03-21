@@ -761,9 +761,55 @@ app.post("/getFeed", (req, res) => {
   // res.send({ mess: "helo" });
 });
 
-// app.post("getUserFeed", (req, res) => {
-//   const feedArr = [;]
-// })
+app.post("/getUserFeed", (req, res) => {
+  const feedArr = [];
+  let feedReady = false;
+  Users.findOne({ username: req.body.username }, (err, user) => {
+    if (err) {
+      console.log("error finding foreign user");
+      throw err;
+    }
+    feedCount = user.publicPosts;
+    for (let i = 0; i < user.entries.length; i++) {
+      if (user.entries[i].private === false) {
+        feedArr.push({
+          creator: {
+            username: user.username,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            picture: user.picture,
+            email: user.email,
+            following: user.following,
+            followers: user.followers,
+          },
+          entry: user.entries[i],
+        });
+      }
+    }
+    MediaWarehouse.findOne({ id: user.picture }, (err, data) => {
+      if (err) {
+        console.log("error in getting picture.");
+        throw err;
+      }
+      for (let i = 0; i < feedArr.length; i++) {
+        feedArr[i].creator.picture = data.data;
+      }
+      feedReady = true;
+    });
+  });
+  let readyPromise = new Promise(function (resolve, reject) {
+    let timeout = (n) => {
+      setTimeout(() => {
+        if (feedReady) resolve();
+        else timeout(n);
+      }, n);
+    };
+    timeout(50);
+  });
+  readyPromise.then(() => {
+    res.send({ feed: feedArr });
+  });
+});
 
 app.post("/getLikes", (req, res) => {
   // console.log(req.body);

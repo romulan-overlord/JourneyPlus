@@ -153,7 +153,7 @@ function Profile(props) {
     };
   }
 
-  function handleDeleteClick(event){
+  function handleDeleteClick(event) {
     fetch(expressIP + "/deleteUser", {
       method: "POST",
       headers: {
@@ -168,7 +168,6 @@ function Profile(props) {
         console.log(data);
       });
   }
-
 
   return (
     <div className="row details-container">
@@ -226,23 +225,25 @@ function Profile(props) {
                 <h6>{props.currentUser.following.length}</h6>
               </div>
             </div>
-            <div className="mx-auto">
-              <button
-                onClick={props.logOut}
-                type="button"
-                className="btn btn-danger"
-              >
-                Log Out
-              </button>
+            {props.selfProfile ? (
+              <div className="mx-auto">
+                <button
+                  onClick={props.logOut}
+                  type="button"
+                  className="btn btn-danger"
+                >
+                  Log Out
+                </button>
 
-              <button
-                onClick={handleDeleteClick}
-                type="button"
-                className="btn btn-danger mx-2"
-              >
-                Delete Account
-              </button>
-            </div>
+                <button
+                  onClick={handleDeleteClick}
+                  type="button"
+                  className="btn btn-danger mx-2"
+                >
+                  Delete Account
+                </button>
+              </div>
+            ) : null}
           </div>
         </div>
       </div>
@@ -291,19 +292,21 @@ function Profile(props) {
                 <ColoredLine color="gray" />
 
                 {/* <!-- Save changes button--> */}
-                {isEdited ? (
-                  <button
-                    onClick={invertIsEdited}
-                    className="btn btn-primary"
-                    type="button"
-                  >
-                    Edit
-                  </button>
-                ) : (
-                  <button className="btn btn-primary" type="button">
-                    Save changes
-                  </button>
-                )}
+                {props.selfProfile ? (
+                  isEdited ? (
+                    <button
+                      onClick={invertIsEdited}
+                      className="btn btn-primary"
+                      type="button"
+                    >
+                      Edit
+                    </button>
+                  ) : (
+                    <button className="btn btn-primary" type="button">
+                      Save changes
+                    </button>
+                  )
+                ) : null}
               </div>
             ) : (
               <form onSubmit={handleSubmit} method="POST">

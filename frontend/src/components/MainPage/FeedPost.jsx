@@ -23,7 +23,7 @@ function FeedPost(props) {
       setReady(false);
     }
   });
-
+ 
   function updateComments(update) {
     setLikes(update);
   }
@@ -103,14 +103,15 @@ function FeedPost(props) {
       });
   }
 
-  function openUserProfile(){
-    props.getForeignUser(props.feed.creator)
+  function openUserProfile() {
+    if (props.openProfile) props.openProfile();
+    else props.getForeignUser(props.feed.creator);
   }
 
   return (
     <section
       className="px-0"
-      style={{ backgroundColor: "rgba(200,200,200,0.5)" }}
+      // style={{ backgroundColor: "rgba(200,200,200,0.5)" }}
     >
       <div className="container mb-5">
         <div className="row d-flex justify-content-center">
@@ -120,7 +121,10 @@ function FeedPost(props) {
                 <div className="d-flex flex-start align-items-center">
                   <Avatar src={props.feed.creator.picture} className="me-2" />
                   <div>
-                    <h6 onClick={openUserProfile} className="fw-bold text-primary mb-1">
+                    <h6
+                      onClick={openUserProfile}
+                      className="fw-bold text-primary mb-1"
+                    >
                       {props.feed.creator.firstName +
                         " " +
                         props.feed.creator.lastName}
@@ -136,7 +140,7 @@ function FeedPost(props) {
                     entry={props.feed.entry}
                     index={props.index}
                     // key={index}
-                    invertCompose={props.invertCompose}
+
                     openEntry={props.openEntry}
                     deleteEntry={props.deleteEntry}
                     private={props.private}
@@ -180,7 +184,7 @@ function FeedPost(props) {
                           }
                           comment={comment}
                           post={props.feed.entry.entryID}
-                          currentUser = {props.currentUser.username}
+                          currentUser={props.currentUser.username}
                           updateComments={updateComments}
                         />
                       );

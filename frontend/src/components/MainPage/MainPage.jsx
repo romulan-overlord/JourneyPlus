@@ -71,7 +71,6 @@ function MainPage(props) {
                   }}
                   getForeignUser={props.getForeignUser}
                   key={index}
-                  invertCompose={props.invertCompose}
                   openEntry={props.openEntry}
                   deleteEntry={props.deleteEntry}
                   private={props.display === "Private" ? true : false}

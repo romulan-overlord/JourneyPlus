@@ -56,6 +56,7 @@ function App() {
     setProfilePage((prev) => {
       return !prev;
     });
+    setSelfProfile(true);
   }
 
   function invertIsSignedUp(event) {
@@ -305,10 +306,13 @@ function App() {
         ) : (
           <ProfilePage
             updateUserDetails={updateUserDetails}
-            currentUser={selfProfile ? currentUser: foreignUser}
+            currentUser={currentUser}
+            foreignUser={foreignUser}
             logOut={logOut}
             updateNetwork={updateNetwork}
             updatePicture={updatePicture}
+            openEntry={openEntry}
+            getForeignUser={getForeignUser}
             selfProfile = {selfProfile}
           />
         )
