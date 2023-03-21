@@ -1,28 +1,38 @@
 import { teal } from "@mui/material/colors";
 import { textAlign } from "@mui/system";
-import React, {useState} from "react";
+import React, { useState } from "react";
 import Link from "@mui/material/Link";
 import PasswordStrengthBar from "react-password-strength-bar";
 import { expressIP } from "../settings";
+import { InputAdornment, IconButton } from "@mui/material";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 function SignUp(props) {
-
   const [isUID, setUid] = useState(true);
-  const [isEmail, setEmail] =useState(true);
+  const [isEmail, setEmail] = useState(true);
   const [Pwd, setPwd] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+
   function invertUid() {
     setUid((prev) => {
       return !prev;
     });
   }
 
-  function invertEmail(){
+  function invertEmail() {
     setEmail((prev) => {
       return !prev;
     });
   }
 
-  function handleChange(event){
+  function handleChange(event) {
     setPwd(event.target.value);
   }
 
@@ -174,7 +184,7 @@ function SignUp(props) {
                       <div className="input-group flex-nowrap set-colour outline-dark margin-between-input">
                         <input
                           onChange={handleChange}
-                          type="password"
+                          type={showPassword ? "text" : "password"}
                           name="password"
                           className="form-control"
                           placeholder="Password"
@@ -182,6 +192,22 @@ function SignUp(props) {
                           aria-describedby="addon-wrapping"
                           required
                         ></input>
+                        <div class="input-group-text">
+                          <InputAdornment className="visibility-icon">
+                            <IconButton
+                              aria-label="toggle password visibility"
+                              onClick={handleClickShowPassword}
+                              onMouseDown={handleMouseDownPassword}
+                              edge="end"
+                            >
+                              {showPassword ? (
+                                <VisibilityOffIcon />
+                              ) : (
+                                <VisibilityIcon />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        </div>
                       </div>
                     </div>
                     <PasswordStrengthBar

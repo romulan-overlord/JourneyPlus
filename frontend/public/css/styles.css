@@ -130,6 +130,9 @@ body {
   height: 100%;
 }
 
+.visibility-icon{
+  margin-right: 10px;
+}
 /* Navbar */
 
 .navbar-container {

@@ -1166,7 +1166,7 @@ app.post("/deleteUser", (req, res) => {
 // });
 
 app.listen(8000, () => {
-  // cleanup();
+  //cleanup();
   console.log(`Server is running on port 8000.`);
 });
 
