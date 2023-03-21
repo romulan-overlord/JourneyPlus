@@ -30,10 +30,10 @@ function Login(props) {
     });
   }
 
-  function invertRememberMe(){
+  function invertRememberMe() {
     setRememberMe((prev) => {
       return !prev;
-    })
+    });
   }
 
   function handleSubmitLogin(event) {
@@ -60,12 +60,8 @@ function Login(props) {
         } else if (data.success === "801") {
           invertPwd();
         } else if (data.success === "802") {
-          if(toggleRememberMe === true){
-            props.updateCurrentUser(data.user);
-            props.invertLoggedIn();
-          }else{
-            props.invertLoggedIn();
-          }
+          props.updateCurrentUser(data.user, toggleRememberMe);
+          props.invertLoggedIn();
         }
       })
       .catch((error) => {

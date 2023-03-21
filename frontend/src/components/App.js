@@ -171,12 +171,14 @@ function App() {
     });
   }
 
-  function updateCurrentUser(user) {
+  function updateCurrentUser(user, remember) {
     let doResolve = false;
     return new Promise((resolve, reject) => {
-      setCookies("userIsSaved", true);
-      setCookies("username", user.username);
-      setCookies("cookieID", user.cookieID);
+      if (remember) {
+        setCookies("userIsSaved", true);
+        setCookies("username", user.username);
+        setCookies("cookieID", user.cookieID);
+      }
       setCurrentUser(() => {
         doResolve = true;
         return { ...user };
@@ -236,9 +238,9 @@ function App() {
     });
   }
 
-  function getForeignUser(user){
+  function getForeignUser(user) {
     console.log("getting foreign user");
-    setProfilePage( prev => !prev)
+    setProfilePage((prev) => !prev);
     setSelfProfile(false);
     setForeignUser(user);
   }
@@ -313,7 +315,7 @@ function App() {
             updatePicture={updatePicture}
             openEntry={openEntry}
             getForeignUser={getForeignUser}
-            selfProfile = {selfProfile}
+            selfProfile={selfProfile}
           />
         )
       ) : isSignedUp ? (
