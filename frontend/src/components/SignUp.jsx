@@ -176,7 +176,7 @@ function SignUp(props) {
                             required
                           ></input>
 
-                          <div class="invalid-feedback">
+                          <div className="invalid-feedback">
                             Email already taken.
                           </div>
                         </div>
@@ -192,8 +192,8 @@ function SignUp(props) {
                           aria-describedby="addon-wrapping"
                           required
                         ></input>
-                        <div class="input-group-text">
-                          <InputAdornment className="visibility-icon">
+                        <div className="input-group-text">
+                          <InputAdornment className="visibility-icon" position="start">
                             <IconButton
                               aria-label="toggle password visibility"
                               onClick={handleClickShowPassword}

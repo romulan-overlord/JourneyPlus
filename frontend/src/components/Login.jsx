@@ -131,7 +131,7 @@ function Login(props) {
                             aria-describedby="addon-wrapping"
                             required
                           ></input>
-                          <div class="input-group-text">
+                          <div className="input-group-text">
                             <InputAdornment className="visibility-icon">
                               <IconButton
                                 aria-label="toggle password visibility"
@@ -158,8 +158,11 @@ function Login(props) {
                             aria-describedby="validationServer03Feedback"
                             required
                           ></input>
-                          <div class="input-group-text">
-                            <InputAdornment className="visibility-icon">
+                          <div className="input-group-text">
+                            <InputAdornment
+                              className="visibility-icon"
+                              position="start"
+                            >
                               <IconButton
                                 aria-label="toggle password visibility"
                                 onClick={handleClickShowPassword}
@@ -181,14 +184,17 @@ function Login(props) {
                         </div>
                       )}
                     </div>
-                    <div class="form-check mb-2 mr-sm-2">
+                    <div className="form-check mb-2 mr-sm-2">
                       <input
-                        class="form-check-input"
+                        className="form-check-input"
                         type="checkbox"
                         id="inlineFormCheck"
                         onClick={invertRememberMe}
                       ></input>
-                      <label className="form-check-label" for="inlineFormCheck">
+                      <label
+                        className="form-check-label"
+                        htmlFor="inlineFormCheck"
+                      >
                         Remember me
                       </label>
                     </div>

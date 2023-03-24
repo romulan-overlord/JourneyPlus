@@ -12,6 +12,7 @@ function Profile(props) {
   const [validUsername, setValidUsername] = useState("");
   const [validEmail, setValidEmail] = useState("");
   const [file, setFile] = useState(props.currentUser.picture);
+  const [IsDeletePwd, setDeletePwd] = useState(true);
 
   const ColoredLine = ({ color }) => (
     <hr
@@ -32,6 +33,12 @@ function Profile(props) {
 
   function invertIsEdited(event) {
     setIsEdited((prev) => {
+      return !prev;
+    });
+  }
+
+  function invertPwd() {
+    setDeletePwd((prev) => {
       return !prev;
     });
   }
@@ -154,20 +161,31 @@ function Profile(props) {
   }
 
   function handleDeleteClick(event) {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const requestData = {
+      username: props.currentUser.username,
+      password: data.get("deletePassword"),
+    };
     fetch(expressIP + "/deleteUser", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        username: props.currentUser.username,
-      }),
+      body: JSON.stringify(
+        requestData),
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
+        if(data.success === "failure"){
+          invertPwd();
+        }
       });
   }
+
+  $("#myModal").on("shown.bs.modal", function () {
+    $("#myInput").trigger("focus");
+  });
 
   return (
     <div className="row details-container">
@@ -226,22 +244,97 @@ function Profile(props) {
               </div>
             </div>
             {props.selfProfile ? (
-              <div className="mx-auto">
-                <button
-                  onClick={props.logOut}
-                  type="button"
-                  className="btn btn-danger"
-                >
-                  Log Out
-                </button>
+              <div>
+                <div className="mx-auto">
+                  <button
+                    onClick={props.logOut}
+                    type="button"
+                    className="btn btn-danger"
+                  >
+                    Log Out
+                  </button>
 
-                <button
-                  onClick={handleDeleteClick}
-                  type="button"
-                  className="btn btn-danger mx-2"
-                >
-                  Delete Account
-                </button>
+                  <button
+                    //onClick={handleDeleteClick}
+                    type="button"
+                    className="btn btn-danger mx-2"
+                    data-bs-toggle="modal"
+                    data-bs-target="#exampleModal"
+                  >
+                    Delete Account
+                  </button>
+
+                  <div
+                    class="modal fade"
+                    id="exampleModal"
+                    tabindex="-1"
+                    aria-labelledby="exampleModalLabel"
+                    aria-hidden="true"
+                  >
+                    <div class="modal-dialog modal-dialog-centered">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h1 class="modal-title fs-5" id="exampleModalLabel">
+                            Kindly Enter Your Password
+                          </h1>
+                          <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                          ></button>
+                        </div>
+                        <form onSubmit={handleDeleteClick} method="POST">
+                          <div class="modal-body">
+                            {IsDeletePwd ? (
+                              <div className="mb-3">
+                                <input
+                                  // onChange={handleEmailChange}
+                                  className="form-control"
+                                  name="deletePassword"
+                                  id="inputPassword"
+                                  type="password"
+                                  placeholder="Enter your password"
+                                  required
+                                ></input>
+                              </div>
+                            ) : (
+                              <div className="mb-3">
+                                <input
+                                  // onChange={handleEmailChange}
+                                  onChange={invertPwd}
+                                  className="form-control is-invalid"
+                                  aria-describedby="validationServer03Feedback"
+                                  name="deletePassword"
+                                  id="inputPassword"
+                                  type="password"
+                                  placeholder="Enter your password"
+                                  required
+                                ></input>
+                                <div className="invalid-feedback">
+                                  Invalid Password
+                                </div>
+                              </div>
+                            )}
+                       
+                          </div>
+                          <div class="modal-footer">
+                            <button
+                              type="button"
+                              class="btn btn-secondary"
+                              data-bs-dismiss="modal"
+                            >
+                              Close
+                            </button>
+                            <button type="submit" class="btn btn-danger">
+                              Delete
+                            </button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             ) : null}
           </div>

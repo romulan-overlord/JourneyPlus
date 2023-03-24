@@ -229,9 +229,11 @@ export default function Footer(props) {
               <span
                 className="date-p"
                 onClick={toggleVisibility}
+                // data-bs-toggle="modal"
+                // data-bs-target="#visibilityModal"
                 data-toggle="tooltip"
                 data-placement="top"
-                title={"This post is " +( isPrivate ? "private" : "public")}
+                title={"This post is " + (isPrivate ? "private" : "public")}
               >
                 {isPrivate ? (
                   <VisibilityOffOutlinedIcon fontSize="small" />

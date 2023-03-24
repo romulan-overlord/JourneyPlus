@@ -1068,67 +1068,112 @@ function deleteFromComment(id) {
 app.post("/deleteUser", (req, res) => {
   console.log("Inside deleteUser");
   console.log(req.body);
-  Users.findOneAndDelete({ username: req.body.username }, (err, t_user) => {
-    const user = t_user;
+  Users.findOne({ username: req.body.username }, (err, user) => {
     if (err) throw err;
     if (user) {
-      if (user.picture.length > 0) deleteFromWarehouse(user.picture);
+      bcrypt.compare(
+        //this function compares the entered password with the password saved in the database
+        req.body.password,
+        user.password,
+        function (err, result) {
+          if (result === true) {
+            Users.findOneAndDelete(
+              { username: req.body.username },
+              (err, t_user) => {
+                const user = t_user;
+                console.log("User:" + user);
+                if (err) throw err;
+                if (user) {
+                  if (user.picture.length > 0)
+                    deleteFromWarehouse(user.picture);
 
-      Network.findOne({}, async (err, result) => {
-        console.log("Inside Network");
-        if (err) throw err;
-        let index = result.users.indexOf(req.body.username);
-        result.users.splice(index, 1);
-        result.userCount--;
-        for (let i = 0; i < result.users.length; i++) {
-          Users.findOne({ username: result.users[i] }, (err, user) => {
-            if (err) throw err;
-            if (user.followers.includes(req.body.username)) {
-              let index = user.followers.indexOf(req.body.username);
-              user.followers.splice(index, 1);
-            }
-            if (user.following.includes(req.body.username)) {
-              let index = user.following.indexOf(req.body.username);
-              user.following.splice(index, 1);
-            }
-            user.save();
-          });
-        }
-        result.save();
-      });
+                  Network.findOne({}, async (err, result) => {
+                    console.log("Inside Network");
+                    if (err) throw err;
+                    let index = result.users.indexOf(req.body.username);
+                    result.users.splice(index, 1);
+                    result.userCount--;
+                    for (let i = 0; i < result.users.length; i++) {
+                      Users.findOne(
+                        { username: result.users[i] },
+                        (err, user) => {
+                          if (err) throw err;
+                          if (user.followers.includes(req.body.username)) {
+                            let index = user.followers.indexOf(
+                              req.body.username
+                            );
+                            user.followers.splice(index, 1);
+                          }
+                          if (user.following.includes(req.body.username)) {
+                            let index = user.following.indexOf(
+                              req.body.username
+                            );
+                            user.following.splice(index, 1);
+                          }
+                          user.save();
+                        }
+                      );
+                    }
+                    result.save();
+                  });
 
-      for (let i = 0; i < user.entries.length; i++) {
-        FeedNetwork.findOneAndDelete(
-          { entryID: user.entries[i].entryID },
-          (err, feed) => {
-            if (err) throw err;
-            if (feed) {
-              if (feed.comments.length > 0) {
-                deleteFromComment(feed.comments);
+                  for (let i = 0; i < user.entries.length; i++) {
+                    FeedNetwork.findOneAndDelete(
+                      { entryID: user.entries[i].entryID },
+                      (err, feed) => {
+                        if (err) throw err;
+                        if (feed) {
+                          if (feed.comments.length > 0) {
+                            deleteFromComment(feed.comments);
+                          }
+                        }
+                      }
+                    );
+
+                    for (
+                      let j = 0;
+                      j < user.entries[i].media.image.length;
+                      j++
+                    ) {
+                      deleteFromWarehouse(user.entries[i].media.image[j]);
+                    }
+                    for (
+                      let k = 0;
+                      k < user.entries[i].media.video.length;
+                      k++
+                    ) {
+                      deleteFromWarehouse(user.entries[i].media.video[k]);
+                    }
+                    for (
+                      let l = 0;
+                      l < user.entries[i].media.audio.length;
+                      l++
+                    ) {
+                      deleteFromWarehouse(user.entries[i].media.audio[l]);
+                    }
+                    if (user.entries[i].backgroundAudio.length > 0)
+                      deleteFromWarehouse(user.backgroundAudio);
+
+                    console.log("Account succesfully deleted");
+                    res.send({
+                      success: "sucess"
+                    })
+                    // deleteEntry(user.entries[i]);
+                    // user.entries.splice(i, 1);
+                  }
+                }
               }
-            }
+            );
+          } else {
+             res.send({
+               success: "failure", //The entered password is incorrect
+             });
           }
-        );
-
-        for (let j = 0; j < user.entries[i].media.image.length; j++) {
-          deleteFromWarehouse(user.entries[i].media.image[j]);
         }
-        for (let k = 0; k < user.entries[i].media.video.length; k++) {
-          deleteFromWarehouse(user.entries[i].media.video[k]);
-        }
-        for (let l = 0; l < user.entries[i].media.audio.length; l++) {
-          deleteFromWarehouse(user.entries[i].media.audio[l]);
-        }
-        if (user.entries[i].backgroundAudio.length > 0)
-          deleteFromWarehouse(user.backgroundAudio);
-
-        console.log("Account succesfully deleted");
-
-        // deleteEntry(user.entries[i]);
-        // user.entries.splice(i, 1);
-      }
+      );
     }
   });
+  
 
   // res.send({mesage: "success"});
 });
