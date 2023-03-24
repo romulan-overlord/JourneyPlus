@@ -10,12 +10,14 @@ import Card from "./Card";
 import { expressIP } from "../../settings";
 import Comment from "./Comment";
 import NewComment from "./NewComment";
+import SingleUser from "./../ProfilePage/SingleUser";
 
 function FeedPost(props) {
   const [likes, setLikes] = useState({});
   const [ready, setReady] = useState(true);
   const [liked, setLiked] = useState(false);
   const [isComment, setComment] = useState(false);
+  const [likerList, setLikerList] = useState([]);
 
   useEffect(() => {
     if (ready) {
@@ -23,7 +25,7 @@ function FeedPost(props) {
       setReady(false);
     }
   });
- 
+
   function updateComments(update) {
     setLikes(update);
   }
@@ -51,6 +53,24 @@ function FeedPost(props) {
       });
   }
 
+  function fetchLikers(list) {
+    fetch(expressIP + "/fetchLikers", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ list: list }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        setLikerList(data.list);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }
+
   function handleLike() {
     fetch(expressIP + "/like", {
       method: "POST",
@@ -65,9 +85,11 @@ function FeedPost(props) {
       .then((response) => response.json())
       .then((data) => {
         setLikes((prev) => {
+          prev.likedBy.push(props.currentUser.username);
           return {
             ...prev,
             likes: prev.likes + 1,
+            likedBy: [...new Set(prev.likedBy)],
           };
         });
         setLiked(true);
@@ -91,6 +113,9 @@ function FeedPost(props) {
       .then((response) => response.json())
       .then((data) => {
         setLikes((prev) => {
+          const index = prev.likedBy.indexOf(props.currentUser.username);
+          console.log("found unliker : " + index);
+          prev.likedBy.splice(index, 1);
           return {
             ...prev,
             likes: prev.likes - 1,
@@ -113,6 +138,29 @@ function FeedPost(props) {
       className="px-0"
       // style={{ backgroundColor: "rgba(200,200,200,0.5)" }}
     >
+      {/* Modal */}
+      <div class="modal fade" id="likeList" tabindex="-1">
+        <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title" id="exampleModalLabel">
+                Liked by
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="modal-body">
+              {likerList.map((user) => {
+                return <SingleUser user={user} />;
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
       <div className="container mb-5">
         <div className="row d-flex justify-content-center">
           <div className="col-md-12 col-lg-10 col-xl-8">
@@ -140,11 +188,11 @@ function FeedPost(props) {
                     entry={props.feed.entry}
                     index={props.index}
                     // key={index}
-
+                    inFeedPost={true}
                     openEntry={props.openEntry}
                     deleteEntry={props.deleteEntry}
                     private={props.private}
-                    isFeed={true}
+                    isFeed={props.isFeed}
                   />
                   <div className="p-2">
                     <Stack direction="row" spacing={1.5}>
@@ -158,7 +206,15 @@ function FeedPost(props) {
                       )}
                       <MapsUgcOutlinedIcon onClick={toggleComments} />
                       <ReplyOutlinedIcon />
-                      <p>{likes.likes + " likes"}</p>
+                      <p
+                        onClick={() => {
+                          fetchLikers(likes.likedBy);
+                        }}
+                        data-bs-toggle="modal"
+                        data-bs-target="#likeList"
+                      >
+                        {likes.likes + (likes.likes === 1 ? " like" : " likes")}
+                      </p>
                     </Stack>
                   </div>
 
@@ -186,6 +242,7 @@ function FeedPost(props) {
                           post={props.feed.entry.entryID}
                           currentUser={props.currentUser.username}
                           updateComments={updateComments}
+                          fetchLikers={fetchLikers}
                         />
                       );
                     })}

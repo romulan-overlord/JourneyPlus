@@ -46,18 +46,51 @@ function MainPage(props) {
       {userReady
         ? props.display !== "Feed"
           ? props.currentUser.entries.map((entry, index) => {
-              return (
-                <Card
-                  entry={entry}
-                  index={index}
-                  key={index}
-                  invertCompose={props.invertCompose}
-                  openEntry={props.openEntry}
-                  deleteEntry={props.deleteEntry}
-                  private={props.display === "Private" ? true : false}
-                  isFeed={false}
-                />
-              );
+              if (props.display === "Private")
+                return (
+                  <Card
+                    entry={entry}
+                    index={index}
+                    key={index}
+                    invertCompose={props.invertCompose}
+                    openEntry={props.openEntry}
+                    deleteEntry={props.deleteEntry}
+                    private={true}
+                    isFeed={false}
+                    inFeedpost={false}
+                  />
+                );
+              if (props.display === "Public" && entry.private === false) {
+                const feed = {
+                  creator: {
+                    username: props.currentUser.username,
+                    firstName: props.currentUser.firstName,
+                    lastName: props.currentUser.lastName,
+                    picture: props.currentUser.picture,
+                    email: props.currentUser.email,
+                    following: props.currentUser.following,
+                    followers: props.currentUser.followers,
+                  },
+                  entry: entry,
+                };
+                return (
+                  <FeedPost
+                    feed={feed}
+                    index={index}
+                    currentUser={{
+                      username: props.currentUser.username,
+                      cookieID: props.currentUser.cookieID,
+                      picture: props.currentUser.picture,
+                    }}
+                    getForeignUser={props.getForeignUser}
+                    key={index}
+                    openEntry={props.openEntry}
+                    deleteEntry={props.deleteEntry}
+                    private={false}
+                    isFeed={false}
+                  />
+                );
+              }
             })
           : feedList.map((feed, index) => {
               return (

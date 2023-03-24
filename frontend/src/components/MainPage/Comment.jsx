@@ -6,7 +6,9 @@ import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
 import { expressIP } from "../../settings";
 
 function Comment(props) {
-  const [liked, setLiked] = useState(props.comment.likedBy.includes(props.currentUser));
+  const [liked, setLiked] = useState(
+    props.comment.likedBy.includes(props.currentUser)
+  );
 
   function deleteComment() {
     fetch(expressIP + "/deleteComment", {
@@ -44,7 +46,7 @@ function Comment(props) {
       .then((response) => response.json())
       .then((data) => {
         setLiked(true);
-        props.updateComments(data.data)
+        props.updateComments(data.data);
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -66,7 +68,7 @@ function Comment(props) {
       .then((response) => response.json())
       .then((data) => {
         setLiked(false);
-        props.updateComments(data.data)
+        props.updateComments(data.data);
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -121,7 +123,16 @@ function Comment(props) {
               ) : (
                 <FavoriteBorderIcon fontSize="small" onClick={likeComment} />
               )}
-              <p className="small text-muted ms-1 mb-0">{props.comment.likes}</p>
+              <p
+                className="small text-muted ms-1 mb-0"
+                onClick={() => {
+                  props.fetchLikers(props.comment.likedBy);
+                }}
+                data-bs-toggle="modal"
+                data-bs-target="#likeList"
+              >
+                {props.comment.likes}
+              </p>
               {/* <p className="small text-muted mb-0">Upvote?</p>
               <i
                 className="far fa-thumbs-up mx-2 fa-xs text-black"

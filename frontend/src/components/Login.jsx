@@ -191,6 +191,7 @@ function Login(props) {
                       <label className="form-check-label" for="inlineFormCheck">
                         Remember me
                       </label>
+                      <a>Forgot password?</a>
                     </div>
                     <div className="text-center">
                       <button
