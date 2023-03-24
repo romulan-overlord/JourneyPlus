@@ -74,7 +74,7 @@ function Card(props) {
       {props.entry.private === props.private ? (
         <div
           className={
-            props.isFeed
+            props.inFeedPost
               ? "card-container col-12"
               : "card-container px-3 pb-2 col-lg-4 col-md-6"
           }

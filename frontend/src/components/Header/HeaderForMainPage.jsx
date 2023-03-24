@@ -19,7 +19,7 @@ export default function HeaderForMainPage(props){
               <td className="table_data">
                 <li className="nav-item dropdown">
                   <a
-                    className="nav-link"
+                    className="nav-link active view-mode"
                     href="#"
                     role="button"
                     data-bs-toggle="dropdown"

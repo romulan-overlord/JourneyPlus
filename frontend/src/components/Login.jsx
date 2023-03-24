@@ -197,6 +197,7 @@ function Login(props) {
                       >
                         Remember me
                       </label>
+                      <a>Forgot password?</a>
                     </div>
                     <div className="text-center">
                       <button

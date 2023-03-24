@@ -4,10 +4,10 @@ const uniqid = require("uniqid");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const sizeof = require("object-sizeof");
-const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt"); //Used to hash passwords
 const saltRounds = 10; //Hashes the password 10 times which further enhances the security
 const https = require("https");
+const send = require("./mailSender");
 const app = express();
 
 app.use(
@@ -313,6 +313,15 @@ app.post("/signUp", (req, res) => {
                   data.save();
                 });
                 console.log("User Created");
+                send(
+                  req.body.email,
+                  "SignUp Confirmation",
+                  "Congratulations on successfully signing up on this Journey with us."
+                )
+                  .then((messageId) =>
+                    console.log("Message sent successfully:", messageId)
+                  )
+                  .catch((err) => console.error(err));
                 res.send({
                   success: "999", //The user has been successfully signed up and saved in the database
                 });
@@ -509,6 +518,58 @@ app.post("/getFullData", (req, res) => {
     });
   }
   getData();
+});
+
+function getUsers(list) {
+  let userArray = [];
+  for (let i = 0; i < list.length; i++) {
+    Users.findOne({ username: list[i] }, async (err, user) => {
+      if (err) throw err;
+      // console.log("user found: " + user.username);
+      if (user.picture.length > 2) {
+        MediaWarehouse.findOne({ id: user.picture }, (err, data) => {
+          if (err) {
+            console.log("error in getting picture.");
+            throw err;
+          }
+          console.log("got user picture");
+          let tempPic = "";
+          if (data) tempPic = data.data;
+          userArray.push({
+            username: user.username,
+            picture: tempPic,
+            firstName: user.firstName,
+            lastName: user.lastName,
+          });
+        });
+      } else {
+        userArray.push({
+          username: user.username,
+          picture: "",
+          firstName: user.firstName,
+          lastName: user.lastName,
+        });
+      }
+    });
+  }
+  let readyPromise = new Promise(function (resolve, reject) {
+    let timeout = (n) => {
+      setTimeout(() => {
+        if (userArray.length === list.length) {
+          // return userArray;
+          resolve(userArray);
+        } else timeout(n);
+      }, n);
+    };
+    timeout(50);
+  });
+  return readyPromise;
+}
+
+app.post("/fetchLikers", async (req, res) => {
+  console.log("fetching likers");
+  const likedArr = await getUsers(req.body.list);
+  res.send({ list: likedArr });
 });
 
 app.post("/fetchUsers", (req, res) => {
@@ -847,8 +908,6 @@ app.post("/unlike", (req, res) => {
   });
 });
 
-// uplaod to mediawarehopuse func make
-
 app.post("/postComment", (req, res) => {
   FeedNetwork.findOne({ entryID: req.body.post }, (err, data) => {
     if (err) {
@@ -1117,18 +1176,18 @@ app.post("/deleteUser", (req, res) => {
                     result.save();
                   });
 
-                  for (let i = 0; i < user.entries.length; i++) {
-                    FeedNetwork.findOneAndDelete(
-                      { entryID: user.entries[i].entryID },
-                      (err, feed) => {
-                        if (err) throw err;
-                        if (feed) {
-                          if (feed.comments.length > 0) {
-                            deleteFromComment(feed.comments);
-                          }
-                        }
-                      }
-                    );
+      for (let i = 0; i < user.entries.length; i++) {
+        FeedNetwork.findOneAndDelete(
+          { entryID: user.entries[i].entryID },
+          (err, feed) => {
+            if (err) throw err;
+            if (feed) {
+              if (feed.comments.length > 0) {
+                deleteFromComment(feed.comments[i]);
+              }
+            }
+          }
+        );
 
                     for (
                       let j = 0;
@@ -1178,40 +1237,8 @@ app.post("/deleteUser", (req, res) => {
   // res.send({mesage: "success"});
 });
 
-//------------------------------------------------------------- Weather API --------------------------------------------------------------------
-
-// const transporter = nodemailer.createTransport({
-//   host: "smtp.gmail.com",
-//   port: 465,
-//   secure: true,
-//   auth: {
-//     user: "saivigneshsham@gmail.com",
-//     pass: "",
-//     clientId:
-//       "",
-//     clientSocket: "",
-//     refreshToken:
-//       "",
-//   },
-// });
-
-// const mailOptions = {
-//   from: "saivigneshsham@gmail.com",
-//   to: "saivigneshsham@gmail.com",
-//   subject: "Sending Email using Node.js",
-//   text: "That was easy!",
-// };
-
-// transporter.sendMail(mailOptions, function (error, info) {
-//   if (error) {
-//     console.log(error);
-//   } else {
-//     console.log("Email was sent succussfully");
-//   }
-// });
-
 app.listen(8000, () => {
-  //cleanup();
+  // cleanup();
   console.log(`Server is running on port 8000.`);
 });
 
