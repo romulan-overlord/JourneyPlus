@@ -5,12 +5,29 @@ import SingleUser from "./SingleUser";
 function Followers(props) {
   const [followerList, setFollowerList] = useState([]);
   const [check, setCheck] = useState(true);
+  const [filteredList, setFilteredList] = useState(followerList);
   useEffect(() => {
     if (followerList.length === 0 && check) {
       setCheck(false);
       fetchFollowers();
     }
   });
+
+  const filterBySearch = (event) => {
+    // Access input value
+    const query = event.target.value;
+
+    // Create copy of item list
+    var updatedList = [...followerList];
+
+    // Include all elements which includes the search query
+    updatedList = updatedList.filter(function (item) {
+      return item.username.toLowerCase().indexOf(query.toLowerCase()) !== -1;
+    });
+
+    // Trigger render with updated values
+    setFilteredList(updatedList);
+  };
 
   function fetchFollowers() {
     console.log("fetching followers");
@@ -28,21 +45,31 @@ function Followers(props) {
       .then((data) => {
         console.log(data);
         setFollowerList(data.followers);
-        //setUserList(data.users);
+        setFilteredList(data.followers);
       });
   }
 
-  function updateFollowers(followers){
-    setFollowerList(followers)
+  function updateFollowers(followers) {
+    setFollowerList(followers);
   }
 
   return (
     <div className="container">
       <div className="card">
         <div className="card-header-profile">Followers</div>
+        <div className="card-header">
+          <input
+            className="form-control"
+            name="search"
+            onChange={filterBySearch}
+            id="search"
+            type="text"
+            placeholder="Search"
+          ></input>
+        </div>
         <div className="card-body">
           {followerList.length !== 0
-            ? followerList.map((follower, index) => {
+            ? filteredList.map((follower, index) => {
                 return (
                   <SingleUser
                     user={follower}

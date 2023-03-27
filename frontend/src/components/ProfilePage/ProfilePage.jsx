@@ -101,9 +101,13 @@ function ProfilePage(props) {
       <hr className="mt-0 mb-4"></hr>
       {isProfile ? (
         <Profile
+          invertIsSignedUp={props.invertIsSignedUp}
+          invertProfilePage={props.invertProfilePage}
           updateUserDetails={props.updateUserDetails}
           updatePicture={props.updatePicture}
-          currentUser={props.selfProfile ? props.currentUser : props.foreignUser}
+          currentUser={
+            props.selfProfile ? props.currentUser : props.foreignUser
+          }
           logOut={props.logOut}
           selfProfile={props.selfProfile}
         />
@@ -149,7 +153,7 @@ function ProfilePage(props) {
       ) : null}
       {isPosts ? (
         <UserFeed
-          foreignUser= {props.foreignUser}
+          foreignUser={props.foreignUser}
           currentUser={props.currentUser}
           openEntry={props.openEntry}
           getForeignUser={props.getForeignUser}

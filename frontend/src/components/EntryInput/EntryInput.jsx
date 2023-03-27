@@ -12,6 +12,7 @@ function EntryInput(props) {
 
   const [isMedia, setMedia] = useState(!props.createMode); //tracks if entry has media attachments (conditional rendering of MediaTray)
   const [ready, setReady] = useState(true); //tracks whether mediaTray is ready to be rendered or not
+  const [isPrivate, setPrivate] = useState(entryData.private);
 
   useEffect(setDimensions);
 
@@ -172,6 +173,13 @@ function EntryInput(props) {
     });
   }
 
+  function toggleVisibility() {
+    switchVisibility(!isPrivate);
+    setPrivate((prev) => {
+      return !prev;
+    });
+  }
+
   return (
     <div>
       <div
@@ -199,13 +207,15 @@ function EntryInput(props) {
                     ></input>
                   </div>
                   <div className="container-fluid col-sm-1 mx-auto">
-                    { props.feedMode !== true ? (<IconButton className="mx-auto" type="submit">
-                      {props.createMode ? (
-                        <DoneIcon fontSize="large" sx={{ color: "white" }} />
-                      ) : (
-                        <EditIcon fontSize="large" sx={{ color: "white" }} />
-                      )}
-                    </IconButton>) : null}
+                    {props.feedMode !== true ? (
+                      <IconButton className="mx-auto" type="submit">
+                        {props.createMode ? (
+                          <DoneIcon fontSize="large" sx={{ color: "white" }} />
+                        ) : (
+                          <EditIcon fontSize="large" sx={{ color: "white" }} />
+                        )}
+                      </IconButton>
+                    ) : null}
                   </div>
                 </div>
               </div>
@@ -258,7 +268,55 @@ function EntryInput(props) {
           </div>
         </form>
       </div>
+      <div
+        class="modal fade"
+        id="exampleModal"
+        tabindex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel">
+                {isPrivate
+                  ? "From Private to Public"
+                  : "From Public to Private"}
+              </h1>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              {isPrivate
+                ? "Do you want to make your post public?"
+                : "Do you want to make your post private?"}
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                No
+              </button>
+              <button
+                type="button"
+                onClick={toggleVisibility}
+                data-bs-dismiss="modal"
+                class="btn btn-primary"
+              >
+                Yes
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
       <Footer
+        isPrivate={isPrivate}
         addBkgAudio={addBkgAudio}
         addBkgImage={addBkgImage}
         return={props.exitEntry}

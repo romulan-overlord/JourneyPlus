@@ -1048,7 +1048,7 @@ app.post("/deleteUser", (req, res) => {
 
                   Network.findOne({}, async (err, result) => {
                     console.log("Inside Network");
-                    if (err) throw err;
+                    //if (err) throw err;
                     let index = result.users.indexOf(req.body.username);
                     result.users.splice(index, 1);
                     result.userCount--;
@@ -1120,6 +1120,10 @@ app.post("/deleteUser", (req, res) => {
                     // deleteEntry(user.entries[i]);
                     // user.entries.splice(i, 1);
                   }
+                  console.log("Account succesfully deleted");
+                  res.send({
+                    success: "success",
+                  });
                 }
               }
             );
@@ -1137,7 +1141,7 @@ app.post("/deleteUser", (req, res) => {
 });
 
 app.listen(8000, () => {
-  // cleanup();
+  //cleanup();
   console.log(`Server is running on port 8000.`);
 });
 
