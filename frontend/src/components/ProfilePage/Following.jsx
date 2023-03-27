@@ -63,6 +63,7 @@ function Following(props) {
                     currentUser={props.currentUser}
                     updateNetwork={props.updateNetwork}
                     key={index}
+                    getForeignUser={props.getForeignUser}
                   />
                 );
               })

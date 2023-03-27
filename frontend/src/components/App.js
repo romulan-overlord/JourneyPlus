@@ -240,7 +240,8 @@ function App() {
 
   function getForeignUser(user) {
     console.log("getting foreign user");
-    setProfilePage((prev) => !prev);
+    // setProfilePage((prev) => !prev);
+    setProfilePage(true);
     setSelfProfile(false);
     setForeignUser(user);
   }

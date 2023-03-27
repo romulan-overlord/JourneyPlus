@@ -44,6 +44,12 @@ function ProfilePage(props) {
       return !prev;
     });
   }
+
+  function getForeignUser(user){
+    openProfile();
+    props.getForeignUser(user);
+  }
+
   const ColoredLine = ({ color }) => (
     <hr
       style={{
@@ -111,6 +117,7 @@ function ProfilePage(props) {
             followers: props.currentUser.followers,
           }}
           updateNetwork={props.updateNetwork}
+          getForeignUser={getForeignUser}
         />
       ) : null}
       {isFollowing ? (
@@ -124,6 +131,7 @@ function ProfilePage(props) {
               followers: props.currentUser.followers,
             }}
             updateNetwork={props.updateNetwork}
+            getForeignUser={getForeignUser}
           />
         ) : (
           <Following
@@ -135,6 +143,7 @@ function ProfilePage(props) {
               followers: props.currentUser.followers,
             }}
             updateNetwork={props.updateNetwork}
+            getForeignUser={getForeignUser}
           />
         )
       ) : null}

@@ -532,7 +532,7 @@ function getUsers(list) {
             console.log("error in getting picture.");
             throw err;
           }
-          console.log("got user picture");
+          // console.log("got user picture");
           let tempPic = "";
           if (data) tempPic = data.data;
           userArray.push({
@@ -540,6 +540,9 @@ function getUsers(list) {
             picture: tempPic,
             firstName: user.firstName,
             lastName: user.lastName,
+            email: user.email,
+            followers: user.followers,
+            following: user.following,
           });
         });
       } else {
@@ -548,6 +551,9 @@ function getUsers(list) {
           picture: "",
           firstName: user.firstName,
           lastName: user.lastName,
+          email: user.email,
+          followers: user.followers,
+          following: user.following,
         });
       }
     });
@@ -572,67 +578,23 @@ app.post("/fetchLikers", async (req, res) => {
   res.send({ list: likedArr });
 });
 
-app.post("/fetchUsers", (req, res) => {
+app.post("/fetchUsers", async (req, res) => {
   let userArray = [];
-  console.log("fetchUsers called");
   Network.findOne({}, async (err, result) => {
     if (err) throw err;
-    for (let i = 0; i < result.userCount; i++) {
-      Users.findOne({ username: result.users[i] }, async (err, user) => {
-        if (err) throw err;
-        console.log("user found: " + user.username);
-        if (user.username !== req.body.username) {
-          if (user.picture.length > 2) {
-            MediaWarehouse.findOne({ id: user.picture }, (err, data) => {
-              if (err) {
-                console.log("error in getting picture.");
-                throw err;
-              }
-              console.log("got user picture");
-              let tempPic = "";
-              if (data) tempPic = data.data;
-              userArray.push({
-                username: user.username,
-                picture: tempPic,
-                firstName: user.firstName,
-                lastName: user.lastName,
-              });
-              console.log("user push success: " + user.username);
-            });
-          } else {
-            userArray.push({
-              username: user.username,
-              picture: "",
-              firstName: user.firstName,
-              lastName: user.lastName,
-            });
-          }
-        }
-      });
-    }
-    let readyPromise = new Promise(function (resolve, reject) {
-      let timeout = (n) => {
-        // console.log(req.body.following);
-        setTimeout(() => {
-          if (userArray.length === result.userCount - 1) {
-            userArray = userArray.filter((n) => {
-              // console.log("checking: " + n.username);
-              return !req.body.following.includes(n.username);
-            });
-            console.log("responding users");
-            res.send({ users: userArray });
-            resolve();
-          } else timeout(n);
-        }, n);
-      };
-      timeout(50);
+    userArray = await getUsers(result.users);
+    userArray = userArray.filter((n) => {
+      return (
+        !req.body.following.includes(n.username) &&
+        n.username !== req.body.username
+      );
     });
-    readyPromise.then(() => {});
+    res.send({ users: userArray });
   });
 });
 
 app.post("/fetchFollowers", (req, res) => {
-  const followerArray = [];
+  let followerArray = [];
   console.log("fetching followers: ");
   console.log(req.body);
   Users.findOne(
@@ -646,48 +608,15 @@ app.post("/fetchFollowers", (req, res) => {
         throw err;
       }
       console.log("found main user: " + req.body.username);
-      for (let i = 0; i < user.followers.length; i++) {
-        Users.findOne({ username: user.followers[i] }, (err, follower) => {
-          if (err) {
-            console.log("error fetching follower");
-            throw err;
-          }
-          MediaWarehouse.findOne({ id: follower.picture }, (err, result) => {
-            if (err) {
-              console.log("error finding data in mediawarehouse");
-              throw err;
-            }
-            followerArray.push({
-              username: follower.username,
-              picture: result ? result.data : "",
-              firstName: follower.firstName,
-              lastName: follower.lastName,
-            });
-          });
-          console.log("push success: " + followerArray.length);
-        });
-      }
-      let readyPromise = new Promise(function (resolve, reject) {
-        let timeout = (n) => {
-          console.log("in timeout: ");
-          setTimeout(() => {
-            if (followerArray.length === user.followers.length) {
-              console.log("responding");
-              res.send({ followers: followerArray });
-              resolve();
-            } else timeout(n);
-          }, n);
-        };
-        timeout(50);
-      });
-      readyPromise.then(() => {});
+      followerArray = await getUsers(user.followers);
+      res.send({ followers: followerArray });
     }
   );
 });
 
 app.post("/fetchFollowing", (req, res) => {
   // console.log("in fetch Following: " + req.body.username);
-  const followingArray = [];
+  let followingArray = [];
   Users.findOne(
     {
       username: req.body.username,
@@ -695,38 +624,9 @@ app.post("/fetchFollowing", (req, res) => {
     },
     async (err, user) => {
       if (err) throw err;
-      for (let i = 0; i < user.following.length; i++) {
-        Users.findOne({ username: user.following[i] }, (err, following) => {
-          if (err) throw err;
-          MediaWarehouse.findOne({ id: following.picture }, (err, result) => {
-            if (err) {
-              console.log("error finding data in mediawarehouse");
-              throw err;
-            }
-            followingArray.push({
-              username: following.username,
-              picture: result ? result.data : "",
-              firstName: following.firstName,
-              lastName: following.lastName,
-            });
-          });
-        });
-      }
-      let readyPromise = new Promise(function (resolve, reject) {
-        let timeout = (n) => {
-          // console.log("in timeout: ");
-          setTimeout(() => {
-            if (followingArray.length === user.following.length) resolve();
-            else timeout(n);
-          }, n);
-        };
-        timeout(50);
-      });
-      readyPromise.then(() => {
-        // console.log(followingArray);
-        console.log("responding following");
-        res.send({ following: followingArray });
-      });
+      followingArray = await getUsers(user.following);
+      console.log("responding following");
+      res.send({ following: followingArray });
     }
   );
 });
@@ -1176,18 +1076,18 @@ app.post("/deleteUser", (req, res) => {
                     result.save();
                   });
 
-      for (let i = 0; i < user.entries.length; i++) {
-        FeedNetwork.findOneAndDelete(
-          { entryID: user.entries[i].entryID },
-          (err, feed) => {
-            if (err) throw err;
-            if (feed) {
-              if (feed.comments.length > 0) {
-                deleteFromComment(feed.comments[i]);
-              }
-            }
-          }
-        );
+                  for (let i = 0; i < user.entries.length; i++) {
+                    FeedNetwork.findOneAndDelete(
+                      { entryID: user.entries[i].entryID },
+                      (err, feed) => {
+                        if (err) throw err;
+                        if (feed) {
+                          if (feed.comments.length > 0) {
+                            deleteFromComment(feed.comments[i]);
+                          }
+                        }
+                      }
+                    );
 
                     for (
                       let j = 0;
@@ -1215,8 +1115,8 @@ app.post("/deleteUser", (req, res) => {
 
                     console.log("Account succesfully deleted");
                     res.send({
-                      success: "sucess"
-                    })
+                      success: "sucess",
+                    });
                     // deleteEntry(user.entries[i]);
                     // user.entries.splice(i, 1);
                   }
@@ -1224,15 +1124,14 @@ app.post("/deleteUser", (req, res) => {
               }
             );
           } else {
-             res.send({
-               success: "failure", //The entered password is incorrect
-             });
+            res.send({
+              success: "failure", //The entered password is incorrect
+            });
           }
         }
       );
     }
   });
-  
 
   // res.send({mesage: "success"});
 });

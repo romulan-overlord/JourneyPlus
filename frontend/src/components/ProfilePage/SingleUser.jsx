@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import $ from "jquery";
 import { expressIP } from "../../settings";
 import { Avatar } from "@mui/material";
 
@@ -73,7 +74,7 @@ function SingleUser(props) {
       .then((data) => {
         // console.log(data);
         setFollow("");
-        let myFollowers= props.currentUser.followers;
+        let myFollowers = props.currentUser.followers;
         let index = myFollowers.indexOf(props.user.username);
         myFollowers.splice(index, 1);
         props.updateNetwork({
@@ -86,6 +87,8 @@ function SingleUser(props) {
       });
   }
 
+  //write function that fetches user details from server and calls props.getforeignUser
+
   return (
     <div className="d-flex align-items-center pb-1" id="tooltips-container">
       <Avatar src={props.user.picture} />
@@ -95,7 +98,16 @@ function SingleUser(props) {
         alt=""
       ></img> */}
       <div className="w-100 ms-3">
-        <h5 className="mb-1">{props.user.firstName}</h5>
+        <h5
+          onClick={() => {
+            // $("#likeList").modal("toggle");
+            props.getForeignUser(props.user);
+          }}
+          className="mb-1"
+          data-bs-dismiss="modal"
+        >
+          {props.user.firstName}
+        </h5>
         <p className="mb-0 font-13">{props.user.username}</p>
       </div>
       {isFollow === "Follow" ? (

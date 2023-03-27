@@ -51,6 +51,7 @@ function Followers(props) {
                     updateNetwork={props.updateNetwork}
                     updateFollowers={updateFollowers}
                     key={index}
+                    getForeignUser={props.getForeignUser}
                   />
                 );
               })

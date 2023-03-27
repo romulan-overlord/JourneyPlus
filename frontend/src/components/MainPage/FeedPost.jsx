@@ -155,7 +155,7 @@ function FeedPost(props) {
             </div>
             <div className="modal-body">
               {likerList.map((user) => {
-                return <SingleUser user={user} />;
+                return <SingleUser user={user} getForeignUser={props.getForeignUser}/>;
               })}
             </div>
           </div>
