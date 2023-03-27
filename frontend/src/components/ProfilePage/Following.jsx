@@ -6,12 +6,29 @@ import SingleUser from "./SingleUser";
 function Following(props) {
   const [followingList, setFollowingList] = useState([]);
   const [check, setCheck] = useState(true);
+  const [filteredList, setFilteredList] = useState(followingList);
   useEffect(() => {
     if (followingList.length === 0 && check) {
       fetchFollowing();
       setCheck(false);
     }
   });
+
+  const filterBySearch = (event) => {
+    // Access input value
+    const query = event.target.value;
+
+    // Create copy of item list
+    var updatedList = [...followingList];
+
+    // Include all elements which includes the search query
+    updatedList = updatedList.filter(function (item) {
+      return item.username.toLowerCase().indexOf(query.toLowerCase()) !== -1;
+    });
+
+    // Trigger render with updated values
+    setFilteredList(updatedList);
+  };
 
   function getUsernameArray(arr) {
     const retArr = [];
@@ -37,7 +54,7 @@ function Following(props) {
         // console.log(data);
         setFollowingList(data.following);
         props.updateNetwork({ following: getUsernameArray(data.following) });
-        //setUserList(data.users);
+        setFilteredList(data.following);
       });
   }
   return (
@@ -53,9 +70,19 @@ function Following(props) {
             Discover
           </button>
         </div>
+        <div className="card-header">
+          <input
+            className="form-control"
+            name="search"
+            onChange={filterBySearch}
+            id="search"
+            type="text"
+            placeholder="Search"
+          ></input>
+        </div>
         <div className="card-body">
           {followingList.length !== 0
-            ? followingList.map((follower, index) => {
+            ? filteredList.map((follower, index) => {
                 return (
                   <SingleUser
                     user={follower}

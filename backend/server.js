@@ -1148,7 +1148,7 @@ app.post("/deleteUser", (req, res) => {
 
                   Network.findOne({}, async (err, result) => {
                     console.log("Inside Network");
-                    if (err) throw err;
+                    //if (err) throw err;
                     let index = result.users.indexOf(req.body.username);
                     result.users.splice(index, 1);
                     result.userCount--;
@@ -1176,19 +1176,19 @@ app.post("/deleteUser", (req, res) => {
                     result.save();
                   });
 
-      for (let i = 0; i < user.entries.length; i++) {
-        FeedNetwork.findOneAndDelete(
-          { entryID: user.entries[i].entryID },
-          (err, feed) => {
-            if (err) throw err;
-            if (feed) {
-              if (feed.comments.length > 0) {
-                deleteFromComment(feed.comments[i]);
-              }
-            }
-          }
-        );
-
+                  for (let i = 0; i < user.entries.length; i++) {
+                    console.log("inside delete feed");
+                    FeedNetwork.findOneAndDelete(
+                      { entryID: user.entries[i].entryID },
+                      (err, feed) => {
+                        if (err) throw err;
+                        if (feed) {
+                          if (feed.comments.length > 0) {
+                            deleteFromComment(feed.comments[i]);
+                          }
+                        }
+                      }
+                    );
                     for (
                       let j = 0;
                       j < user.entries[i].media.image.length;
@@ -1213,13 +1213,14 @@ app.post("/deleteUser", (req, res) => {
                     if (user.entries[i].backgroundAudio.length > 0)
                       deleteFromWarehouse(user.backgroundAudio);
 
-                    console.log("Account succesfully deleted");
-                    res.send({
-                      success: "sucess"
-                    })
+                    
                     // deleteEntry(user.entries[i]);
                     // user.entries.splice(i, 1);
                   }
+                  console.log("Account succesfully deleted");
+                  res.send({
+                    success: "success",
+                  });
                 }
               }
             );
@@ -1238,7 +1239,7 @@ app.post("/deleteUser", (req, res) => {
 });
 
 app.listen(8000, () => {
-  // cleanup();
+  //cleanup();
   console.log(`Server is running on port 8000.`);
 });
 

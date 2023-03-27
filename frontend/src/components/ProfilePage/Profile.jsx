@@ -13,6 +13,7 @@ function Profile(props) {
   const [validEmail, setValidEmail] = useState("");
   const [file, setFile] = useState(props.currentUser.picture);
   const [IsDeletePwd, setDeletePwd] = useState(true);
+  const [deleteModal, setDeleteModal] = useState(false);
 
   const ColoredLine = ({ color }) => (
     <hr
@@ -41,6 +42,12 @@ function Profile(props) {
     setDeletePwd((prev) => {
       return !prev;
     });
+  }
+
+  function invertModal() {
+    setDeleteModal((prev) => {
+      return !prev;
+    })
   }
 
   function handleSubmit(event) {
@@ -179,6 +186,11 @@ function Profile(props) {
       .then((data) => {
         if(data.success === "failure"){
           invertPwd();
+        }else if(data.success === "success"){
+          console.log("data sent to frontend");
+          invertModal();
+          props.invertIsSignedUp();
+          props.invertProfilePage();
         }
       });
   }
@@ -316,7 +328,6 @@ function Profile(props) {
                                 </div>
                               </div>
                             )}
-                       
                           </div>
                           <div class="modal-footer">
                             <button
@@ -326,7 +337,10 @@ function Profile(props) {
                             >
                               Close
                             </button>
-                            <button type="submit" class="btn btn-danger">
+                            <button
+                              type="submit"
+                              class="btn btn-danger"
+                            >
                               Delete
                             </button>
                           </div>

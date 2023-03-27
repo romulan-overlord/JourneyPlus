@@ -17,8 +17,7 @@ export default function Footer(props) {
   const [muteAudio, setMuteAudio] = useState(false);
   const [reRender, setRender] = useState(false);
   const [isWeather, setWeather] = useState(props.createMode);
-  const [isPrivate, setPrivate] = useState(props.entryData.private);
-
+  
   useEffect(() => {
     if (reRender) {
       setRender((prev) => {
@@ -96,12 +95,6 @@ export default function Footer(props) {
     if (props.createMode === true) props.addBkgImage(i);
   }
 
-  function toggleVisibility() {
-    props.switchVisibility(!isPrivate);
-    setPrivate((prev) => {
-      return !prev;
-    });
-  }
 
   const now = new Date().toDateString();
   const [time, setTime] = useState(now);
@@ -228,19 +221,21 @@ export default function Footer(props) {
               <span className="date-p mx-2">|</span>
               <span
                 className="date-p"
-                onClick={toggleVisibility}
-                // data-bs-toggle="modal"
-                // data-bs-target="#visibilityModal"
-                data-toggle="tooltip"
+                // onClick={toggleVisibility}
+                data-bs-toggle="modal"
+                data-bs-target="#exampleModal"
+                // data-toggle="tooltip"
                 data-placement="top"
-                title={"This post is " + (isPrivate ? "private" : "public")}
+                title={"This post is " + (props.isPrivate ? "private" : "public")}
               >
-                {isPrivate ? (
+                {props.isPrivate ? (
                   <VisibilityOffOutlinedIcon fontSize="small" />
                 ) : (
                   <VisibilityOutlinedIcon fontSize="small" />
                 )}
               </span>
+
+  
             </div>
           ) : null}
         </div>

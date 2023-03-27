@@ -6,6 +6,23 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 function Users(props) {
   const [userList, setUserList] = useState([]);
   const [check, setCheck] = useState(true);
+  const [filteredList, setFilteredList] = useState(userList);
+
+  const filterBySearch = (event) => {
+  // Access input value
+  const query = event.target.value;
+
+  // Create copy of item list
+  var updatedList = [...userList];
+
+  // Include all elements which includes the search query
+  updatedList = updatedList.filter(function(item){
+    return item.username.toLowerCase().indexOf(query.toLowerCase()) !== -1;  
+  });
+    
+  // Trigger render with updated values
+  setFilteredList(updatedList);
+  };
 
   useEffect(() => {
     if (userList.length === 0 && check) {
@@ -19,12 +36,13 @@ function Users(props) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({...props.currentUser}),
+      body: JSON.stringify({ ...props.currentUser }),
     })
       .then((response) => response.json())
       .then((data) => {
         console.log("Users: " + data);
         setUserList(data.users);
+        setFilteredList(data.users);
       });
   }
   return (
@@ -40,9 +58,19 @@ function Users(props) {
             <ArrowBackIcon />
           </button>
         </div>
+        <div className="card-header">
+          <input
+            className="form-control"
+            name="search"
+            id="search-box"
+            onChange={filterBySearch}
+            type="text"
+            placeholder="Search"
+          ></input>
+        </div>
         <div className="card-body">
           {userList.length !== 0
-            ? userList.map((user, index) => {
+            ? filteredList.map((user, index) => {
                 return (
                   <SingleUser
                     user={user}
