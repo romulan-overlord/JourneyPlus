@@ -69,7 +69,7 @@ function EntryInput(props) {
 
   function handleSubmit(event) {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
+    entryData.lastModifiedBy = props.currentUser.username;
     fetch(expressIP + "/submit-entry", {
       method: "POST", // or 'PUT'
       headers: {
@@ -207,7 +207,7 @@ function EntryInput(props) {
                     ></input>
                   </div>
                   <div className="container-fluid col-sm-1 mx-auto">
-                    {props.feedMode !== true ? (
+                    {props.display !== "Feed" ? (
                       <IconButton className="mx-auto" type="submit">
                         {props.createMode ? (
                           <DoneIcon fontSize="large" sx={{ color: "white" }} />
@@ -324,6 +324,15 @@ function EntryInput(props) {
         createMode={props.createMode}
         entryData={entryData}
         switchVisibility={switchVisibility}
+        currentUser={props.currentUser}
+        display={props.display}
+        entry={{
+          entryID: entryData.entryID,
+          shared: entryData.shared,
+          setShared: (shared) => {
+            entryData.shared = shared;
+          },
+        }}
       />
       {setDimensions()}
     </div>

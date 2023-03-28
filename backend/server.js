@@ -60,6 +60,7 @@ const FeedNetwork = mongoose.model("feedNetwork", feedNetworkSchema);
 
 const entrySchema = {
   entryID: String,
+  owner: String,
   size: Number,
   title: String,
   content: String,
@@ -73,6 +74,8 @@ const entrySchema = {
   },
   private: Boolean,
   time: String,
+  shared: [String],
+  lastModifiedBy: String,
 };
 
 const Entry = mongoose.model("entry", entrySchema);
@@ -88,6 +91,7 @@ const userSchema = new mongoose.Schema({
   picture: String,
   cookieID: String,
   entries: [entrySchema],
+  shared: [{ username: String, entryID: String }],
   following: [String],
   followers: [String],
   privatePosts: 0,
@@ -196,17 +200,20 @@ function deleteEntry(mainEntry) {
 app.post("/submit-entry", (req, res) => {
   // console.log("post received");
   // console.log("size of post: " + sizeof(req.body));
-  Users.findOne({ username: req.body.user }, async function (err, results) {
-    var newEntry = null;
-    if (err) throw err;
-    if (results) {
-      for (let i = 0; i < results.entries.length; i++) {
-        if (results.entries[i].entryID === req.body.entry.entryID) {
-          if (results.entries[i].private === true)
-            results.privatePosts = results.privatePosts - 1;
-          else results.publicPosts = results.publicPosts - 1;
-          deleteEntry(results.entries[i]);
-          results.entries.splice(i, 1);
+  Users.findOne(
+    {
+      username:
+        req.body.entry.owner.length === 0
+          ? req.body.user
+          : req.body.entry.owner,
+    },
+    async function (err, results) {
+      var newEntry = null;
+      if (err) throw err;
+      if (results) {
+        if (req.body.entry.owner.length === 0) {
+          req.body.entry.entryID = uniqid();
+          req.body.entry.owner = req.body.user;
           newEntry = reduceEntry(req.body.entry);
           if (newEntry.private === true)
             results.privatePosts = results.privatePosts + 1;
@@ -215,34 +222,44 @@ app.post("/submit-entry", (req, res) => {
             const feed = new FeedNetwork({
               entryID: newEntry.entryID,
               likes: 0,
-              likedBy: [],
               comments: [],
             });
             feed.save();
           }
           results.entries.push(newEntry);
+        } else {
+          for (let i = 0; i < results.entries.length; i++) {
+            if (results.entries[i].entryID === req.body.entry.entryID) {
+              if (results.entries[i].private === true)
+                results.privatePosts = results.privatePosts - 1;
+              else results.publicPosts = results.publicPosts - 1;
+              deleteEntry(results.entries[i]);
+              results.entries.splice(i, 1);
+              newEntry = reduceEntry(req.body.entry);
+              // if (req.body.user === req.body.entry.owner) {
+                if (newEntry.private === true)
+                  results.privatePosts = results.privatePosts + 1;
+                else {
+                  results.publicPosts = results.publicPosts + 1;
+                  const feed = new FeedNetwork({
+                    entryID: newEntry.entryID,
+                    likes: 0,
+                    likedBy: [],
+                    comments: [],
+                  });
+                  feed.save();
+                }
+              // }
+              results.entries.push(newEntry);
+            }
+          }
         }
+
+        results.save();
+        res.send({ mesage: "success", savedEntry: newEntry });
       }
-      if (newEntry === null) {
-        req.body.entry.entryID = uniqid();
-        newEntry = reduceEntry(req.body.entry);
-        if (newEntry.private === true)
-          results.privatePosts = results.privatePosts + 1;
-        else {
-          results.publicPosts = results.publicPosts + 1;
-          const feed = new FeedNetwork({
-            entryID: newEntry.entryID,
-            likes: 0,
-            comments: [],
-          });
-          feed.save();
-        }
-        results.entries.push(newEntry);
-      }
-      results.save();
-      res.send({ mesage: "success", savedEntry: newEntry });
     }
-  });
+  );
 });
 
 app.post("/removeEntry", (req, res) => {
@@ -263,6 +280,68 @@ app.post("/removeEntry", (req, res) => {
       results.save();
       res.send({ message: "success" });
     }
+  });
+});
+
+app.post("/share", (req, res) => {
+  let retList = null;
+  Users.findOne({ username: req.body.shareTo }, (err, user) => {
+    if (err) {
+      console.log("error finding user to share entry with");
+      throw err;
+    }
+    user.shared.push({
+      username: req.body.owner,
+      entryID: req.body.entryID,
+    });
+    user.save();
+  });
+  Users.findOne({ username: req.body.owner }, (err, user) => {
+    if (err) {
+      console.log("error finding owner of post being shared");
+      throw err;
+    }
+    for (let i = 0; i < user.entries.length; i++) {
+      if (user.entries[i].entryID === req.body.entryID) {
+        user.entries[i].shared.push(req.body.shareTo);
+        retList = user.entries[i].shared;
+        break;
+      }
+    }
+    user.save();
+    res.send({ list: retList });
+  });
+});
+
+app.post("/unshare", (req, res) => {
+  let retList = null;
+  Users.findOne({ username: req.body.unshareTo }, (err, user) => {
+    if (err) {
+      console.log("error finding user to share entry with");
+      throw err;
+    }
+    for (let i = 0; i < user.shared.length; i++) {
+      if (user.shared[i].entryID === req.body.entryID) {
+        user.shared.splice(i, 1);
+      }
+    }
+    user.save();
+  });
+  Users.findOne({ username: req.body.owner }, (err, user) => {
+    if (err) {
+      console.log("error finding owner of post being shared");
+      throw err;
+    }
+    for (let i = 0; i < user.entries.length; i++) {
+      if (user.entries[i].entryID === req.body.entryID) {
+        let index = user.entries[i].shared.indexOf(req.body.shareTo);
+        user.entries[i].shared.splice(index, 1);
+        retList = user.entries[i].shared;
+        break;
+      }
+    }
+    user.save();
+    res.send({ list: retList });
   });
 });
 
@@ -680,7 +759,7 @@ app.post("/getFeed", (req, res) => {
       feedCount = feedCount + user.publicPosts;
       for (let j = 0; j < user.entries.length; j++) {
         if (user.entries[j].private === false) {
-          if (user.picture.length > 2) {
+          if (user.picture.length > 0) {
             MediaWarehouse.findOne({ id: user.picture }, (err, data) => {
               if (err) {
                 console.log("error in getting picture.");
@@ -701,6 +780,19 @@ app.post("/getFeed", (req, res) => {
                 entry: user.entries[j],
               });
             });
+          } else {
+            feedArr.push({
+              creator: {
+                username: user.username,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                picture: "",
+                email: user.email,
+                following: user.following,
+                followers: user.followers,
+              },
+              entry: user.entries[j],
+            });
           }
         }
       }
@@ -708,13 +800,14 @@ app.post("/getFeed", (req, res) => {
   }
   let readyPromise = new Promise(function (resolve, reject) {
     let timeout = (n) => {
-      // console.log("in timeout: ");
+      console.log("in timeout: ");
       setTimeout(() => {
+        console.log(feedArr.length + "<-feedArr feedcount -> " + feedCount);
         if (feedArr.length === feedCount) resolve();
         else timeout(n);
       }, n);
     };
-    timeout(50);
+    timeout(1000);
   });
   readyPromise.then(() => {
     res.send({ feed: feedArr });
@@ -753,7 +846,7 @@ app.post("/getUserFeed", (req, res) => {
         throw err;
       }
       for (let i = 0; i < feedArr.length; i++) {
-        feedArr[i].creator.picture = data.data;
+        if (data) feedArr[i].creator.picture = data.data;
       }
       feedReady = true;
     });
@@ -769,6 +862,96 @@ app.post("/getUserFeed", (req, res) => {
   });
   readyPromise.then(() => {
     res.send({ feed: feedArr });
+  });
+});
+
+app.post("/getShared", async (req, res) => {
+  let check = false;
+  let shared = null;
+  let retArr = [];
+  console.log("before first query");
+  Users.findOne({ username: req.body.username }, async (err, user) => {
+    if (err) {
+      console.log("error finding main user in getShared");
+      throw err;
+    }
+    shared = user.shared;
+    console.log("inside first query" + shared);
+    check = true;
+  });
+  let fetcher = (n) => {
+    setTimeout(() => {
+      if (shared) {
+        console.log("start building sharedList");
+        for (let i = 0; i < shared.length; i++) {
+          Users.findOne({ username: shared[i].username }, (err, user) => {
+            if (err) {
+              console.log("error finding user whose post is shared");
+              throw err;
+            }
+            for (let j = 0; j < user.entries.length; j++) {
+              if (user.entries[j].entryID === shared[i].entryID) {
+                if (user.picture.length > 2) {
+                  MediaWarehouse.findOne({ id: user.picture }, (err, data) => {
+                    if (err) {
+                      console.log("error in getting picture.");
+                      throw err;
+                    }
+                    let tempPic = "";
+                    if (data) tempPic = data.data;
+                    retArr.push({
+                      creator: {
+                        username: user.username,
+                        firstName: user.firstName,
+                        lastName: user.lastName,
+                        picture: tempPic,
+                        email: user.email,
+                        following: user.following,
+                        followers: user.followers,
+                      },
+                      entry: user.entries[j],
+                    });
+                  });
+                } else {
+                  retArr.push({
+                    creator: {
+                      username: user.username,
+                      firstName: user.firstName,
+                      lastName: user.lastName,
+                      picture: "",
+                      email: user.email,
+                      following: user.following,
+                      followers: user.followers,
+                    },
+                    entry: user.entries[j],
+                  });
+                }
+              }
+              break;
+            }
+          });
+        }
+      } else fetcher(n);
+    }, n);
+  };
+  fetcher(50);
+  console.log("help: " + shared);
+  let readyPromise = new Promise(function (resolve, reject) {
+    let timeout = (n) => {
+      console.log("in timeout: ");
+      setTimeout(() => {
+        if (shared) {
+          console.log("checking resolve: ");
+          console.log(retArr.length + "<-retArr shared -> " + shared.length);
+          if (retArr.length === shared.length) resolve();
+          else timeout(n);
+        } else timeout(n);
+      }, n);
+    };
+    timeout(50);
+  });
+  readyPromise.then(() => {
+    res.send({ shared: retArr });
   });
 });
 
@@ -1141,7 +1324,7 @@ app.post("/deleteUser", (req, res) => {
 });
 
 app.listen(8000, () => {
-  //cleanup();
+  // cleanup();
   console.log(`Server is running on port 8000.`);
 });
 
@@ -1156,7 +1339,7 @@ function cleanup() {
   Network.deleteMany({})
     .then(() => {
       console.log("users deleted");
-      Network.create({ users: [], userCount: 0 });
+      Network.create({ users: ["romulan", "sham"], userCount: 2 });
     })
     .catch(function (error) {
       console.log(error); // Failure
@@ -1164,6 +1347,40 @@ function cleanup() {
   Users.deleteMany({})
     .then(() => {
       console.log("users deleted");
+      Users.create({
+        firstName: "Ritu Raj",
+        lastName: "Pradhan",
+        password:
+          "$2b$10$LYvW.Zfy1uroKYWtkqBeUOFUQTX5xmDO1vkDZh0pparhkWrh5rEoC",
+        username: "romulan",
+        email: "riturajpradhan911@gmail.com",
+        picture: "",
+        cookieID: "lfqxj199",
+        following: ["sham"],
+        followers: ["sham"],
+        privatePosts: 0,
+        publicPosts: 0,
+        entries: [],
+        shared: [],
+        __v: 3,
+      });
+      Users.create({
+        firstName: "Vignesh",
+        lastName: "Overlord",
+        password:
+          "$2b$10$YlPJx3j4yC8.RsW7v0Sq1u3JE37oF04iABgv8g6ahKqF7tbLWRl.S",
+        username: "sham",
+        email: "vig@123.com",
+        picture: "",
+        cookieID: "lfqxm1jy",
+        following: ["romulan"],
+        followers: ["romulan"],
+        privatePosts: 0,
+        publicPosts: 0,
+        entries: [],
+        shared: [],
+        __v: 3,
+      });
     })
     .catch(function (error) {
       console.log(error); // Failure

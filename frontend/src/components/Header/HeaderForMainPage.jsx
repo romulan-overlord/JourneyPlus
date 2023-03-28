@@ -54,6 +54,15 @@ export default function HeaderForMainPage(props){
                         Feed
                       </a>
                     </li>
+                    <li
+                      onClick={() => {
+                        props.setVisibility("Shared");
+                      }}
+                    >
+                      <a className="dropdown-item" href="#">
+                        Shared
+                      </a>
+                    </li>
                   </ul>
                 </li>
               </td>
