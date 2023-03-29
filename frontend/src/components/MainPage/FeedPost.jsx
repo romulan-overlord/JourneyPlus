@@ -21,7 +21,7 @@ function FeedPost(props) {
 
   useEffect(() => {
     if (ready) {
-      fetchDetails();
+      if (!props.feed.entry.private) fetchDetails();
       setReady(false);
     }
   });
@@ -155,7 +155,12 @@ function FeedPost(props) {
             </div>
             <div className="modal-body">
               {likerList.map((user) => {
-                return <SingleUser user={user} getForeignUser={props.getForeignUser}/>;
+                return (
+                  <SingleUser
+                    user={user}
+                    getForeignUser={props.getForeignUser}
+                  />
+                );
               })}
             </div>
           </div>
@@ -194,29 +199,32 @@ function FeedPost(props) {
                     private={props.private}
                     isFeed={props.isFeed}
                   />
-                  <div className="p-2">
-                    <Stack direction="row" spacing={1.5}>
-                      {liked ? (
-                        <FavoriteOutlinedIcon
-                          sx={{ color: "#C21010" }}
-                          onClick={handleUnlike}
-                        />
-                      ) : (
-                        <FavoriteBorderIcon onClick={handleLike} />
-                      )}
-                      <MapsUgcOutlinedIcon onClick={toggleComments} />
-                      <ReplyOutlinedIcon />
-                      <p
-                        onClick={() => {
-                          fetchLikers(likes.likedBy);
-                        }}
-                        data-bs-toggle="modal"
-                        data-bs-target="#likeList"
-                      >
-                        {likes.likes + (likes.likes === 1 ? " like" : " likes")}
-                      </p>
-                    </Stack>
-                  </div>
+                  {props.feed.entry.private ? null : (
+                    <div className="p-2">
+                      <Stack direction="row" spacing={1.5}>
+                        {liked ? (
+                          <FavoriteOutlinedIcon
+                            sx={{ color: "#C21010" }}
+                            onClick={handleUnlike}
+                          />
+                        ) : (
+                          <FavoriteBorderIcon onClick={handleLike} />
+                        )}
+                        <MapsUgcOutlinedIcon onClick={toggleComments} />
+                        <ReplyOutlinedIcon />
+                        <p
+                          onClick={() => {
+                            fetchLikers(likes.likedBy);
+                          }}
+                          data-bs-toggle="modal"
+                          data-bs-target="#likeList"
+                        >
+                          {likes.likes +
+                            (likes.likes === 1 ? " like" : " likes")}
+                        </p>
+                      </Stack>
+                    </div>
+                  )}
 
                   {/* <p className="mt-3 mb-0 lead feed-title">{props.feed.entry.title}</p>
                   <p className="mt-1 mb-4 pb-2">{props.feed.entry.content}</p> */}

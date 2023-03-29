@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
-import { expressIP } from "../settings";
+import { expressIP, defaultEntry } from "../settings";
 
 import EntryInput from "./EntryInput/EntryInput";
 import Header from "./Header/Header";
@@ -22,24 +22,7 @@ function App() {
   const [selfProfile, setSelfProfile] = useState(true);
   //useState to store details of foreignUser
   const [foreignUser, setForeignUser] = useState({});
-  const [passedEntry, setPassedEntry] = useState({
-    entryID: "",
-    title: "",
-    content: "",
-    media: {
-      image: [],
-      video: [],
-      audio: [],
-    },
-    backgroundAudio: "",
-    backgroundImage: "",
-    date: "",
-    weather: {
-      desc: "",
-      icon: "",
-    },
-    private: true,
-  });
+  const [passedEntry, setPassedEntry] = useState(defaultEntry);
 
   const [lat, setLat] = useState([]);
   const [long, setLong] = useState([]);
@@ -144,24 +127,7 @@ function App() {
 
   function exitEntry() {
     invertCompose();
-    setPassedEntry({
-      entryID: "",
-      title: "",
-      content: "",
-      media: {
-        image: [],
-        video: [],
-        audio: [],
-      },
-      backgroundAudio: "",
-      backgroundImage: "",
-      date: "",
-      weather: {
-        desc: "",
-        icon: "",
-      },
-      private: true,
-    });
+    setPassedEntry(defaultEntry);
     setCreateMode(true);
   }
 
@@ -296,7 +262,7 @@ function App() {
             createMode={createMode}
             invertCreateMode={invertCreateMode}
             exitEntry={exitEntry}
-            feedMode={display === "Feed" ? true : false}
+            display={display}
           />
         ) : !profilePage ? (
           <MainPage

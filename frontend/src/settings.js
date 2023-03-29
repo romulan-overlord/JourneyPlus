@@ -4,6 +4,7 @@ export const expressIP = "http://192.168.34.131:8000";
 
 export const defaultEntry = {
   entryID: "",
+  owner: "",
   title: "",
   content: "",
   media: {
@@ -18,7 +19,9 @@ export const defaultEntry = {
     desc: "",
     icon: "",
   },
+  shared: [],
   private: true,
+  lastModifiedBy: "",
 };
 
 export default backgrounds;

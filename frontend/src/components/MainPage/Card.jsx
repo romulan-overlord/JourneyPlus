@@ -71,93 +71,95 @@ function Card(props) {
 
   return (
     <>
-      {props.entry.private === props.private ? (
+      {/* {props.entry.private === props.private ? ( */}
+      <div
+        className={
+          props.inFeedPost
+            ? "card-container col-12"
+            : "card-container px-3 pb-2 col-lg-4 col-md-6"
+        }
+        key={props.index}
+      >
         <div
           className={
-            props.inFeedPost
-              ? "card-container col-12"
-              : "card-container px-3 pb-2 col-lg-4 col-md-6"
+            props.isFeed ? "card my-card h-100" : "card my-card h-100 card-red"
           }
+          id={"c" + props.index}
           key={props.index}
         >
-          <div
-            className={props.isFeed ? "card my-card h-100" : "card my-card h-100 card-red"}
-            id={"c" + props.index}
-            key={props.index}
-          >
-            <div className="card-menu">
-              {!props.isFeed ? (
-                <div className="dropdown card-dropdown">
-                  <a
-                    className="btn btn-sm  bkg-btn"
-                    href="#"
-                    role="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
+          <div className="card-menu">
+            {!props.isFeed ? (
+              <div className="dropdown card-dropdown">
+                <a
+                  className="btn btn-sm  bkg-btn"
+                  href="#"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <MoreVertIcon
+                    className="date-p"
+                    fontSize="small"
+                  ></MoreVertIcon>
+                </a>
+                <ul className="dropdown-menu px-2">
+                  <li
+                    className="card-menu-item"
+                    onClick={() => {
+                      props.openEntry(props.entry, false);
+                    }}
                   >
-                    <MoreVertIcon
-                      className="date-p"
-                      fontSize="small"
-                    ></MoreVertIcon>
-                  </a>
-                  <ul className="dropdown-menu px-2">
-                    <li
-                      className="card-menu-item"
-                      onClick={() => {
-                        props.openEntry(props.entry, false);
-                      }}
-                    >
-                      View
-                    </li>
-                    <li
-                      className="card-menu-item"
-                      onClick={() => {
-                        props.openEntry(props.entry, true);
-                      }}
-                    >
-                      Edit
-                    </li>
-                    <li
-                      className="card-menu-item"
-                      onClick={() => {
-                        props.deleteEntry(props.entry.entryID);
-                      }}
-                    >
-                      Delete
-                    </li>
-                  </ul>
-                </div>
-              ) : null}
-            </div>
-            <div
-              className="card-body"
-              key={props.index}
-              onClick={() => {
-                props.openEntry(props.entry, false);
-              }}
-            >
-              <h3 className="main-page-card-title">{props.entry.title}</h3>
-              <p className="main-page-card-text">
-                {props.entry.content.substring(0, 200) + "..."}
-              </p>
-            </div>
-            <div className="row w-100 bottom-menu">
-              <div className="col-12 bottom-menu-col">
-                {flags.isMedia ? (
-                  <span className="date-p">
-                    <PermMediaIcon fontSize="small"></PermMediaIcon>
-                  </span>
-                ) : null}
-                {flags.isBkgAud ? (
-                  <span className="date-p">
-                    <AudiotrackIcon fontSize="small"></AudiotrackIcon>
-                  </span>
-                ) : null}
+                    View
+                  </li>
+                  <li
+                    className="card-menu-item"
+                    onClick={() => {
+                      props.openEntry(props.entry, true);
+                    }}
+                  >
+                    Edit
+                  </li>
+                  <li
+                    className="card-menu-item"
+                    onClick={() => {
+                      props.deleteEntry(props.entry.entryID);
+                    }}
+                  >
+                    Delete
+                  </li>
+                </ul>
               </div>
+            ) : null}
+          </div>
+          <div
+            className="card-body"
+            key={props.index}
+            onClick={() => {
+              props.openEntry(props.entry, false);
+            }}
+          >
+            <h3 className="main-page-card-title">{props.entry.title}</h3>
+            <p className="main-page-card-text">
+              {props.entry.content.substring(0, 200) + "..."}
+            </p>
+          </div>
+          <div className="row w-100 bottom-menu">
+            <div className="col-12 bottom-menu-col">
+              {flags.isMedia ? (
+                <span className="date-p">
+                  <PermMediaIcon fontSize="small"></PermMediaIcon>
+                </span>
+              ) : null}
+              {flags.isBkgAud ? (
+                <span className="date-p">
+                  <AudiotrackIcon fontSize="small"></AudiotrackIcon>
+                </span>
+              ) : null}
             </div>
           </div>
         </div>
-      ) : null}
+      </div>
+      {/* ) : null} */}
     </>
   );
 }

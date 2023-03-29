@@ -87,6 +87,52 @@ function SingleUser(props) {
       });
   }
 
+  function handleShare() {
+    fetch(expressIP + "/share", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        shareTo: props.user.username,
+        entryID: props.entryID,
+        owner: props.owner,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        props.setShared(data.list);
+        setFollow("Unshare");
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }
+
+  function handleUnshare(){
+    fetch(expressIP + "/unshare", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        unshareTo: props.user.username,
+        entryID: props.entryID,
+        owner: props.owner,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        props.setShared(data.list);
+        setFollow("Share");
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }
+
   //write function that fetches user details from server and calls props.getforeignUser
 
   return (
@@ -100,7 +146,6 @@ function SingleUser(props) {
       <div className="w-100 ms-3">
         <h5
           onClick={() => {
-            // $("#likeList").modal("toggle");
             props.getForeignUser(props.user);
           }}
           className="mb-1"
@@ -131,6 +176,22 @@ function SingleUser(props) {
           className="btn btn-danger unfollow-button"
           type="button"
           onClick={handleRemove}
+        >
+          {isFollow}
+        </button>
+      ) : isFollow === "Share" ? (
+        <button
+          className="btn btn-primary unfollow-button"
+          type="button"
+          onClick={handleShare}
+        >
+          {isFollow}
+        </button>
+      ) : isFollow === "Unshare" ? (
+        <button
+          className="btn btn-danger unfollow-button"
+          type="button"
+          onClick={handleUnshare}
         >
           {isFollow}
         </button>

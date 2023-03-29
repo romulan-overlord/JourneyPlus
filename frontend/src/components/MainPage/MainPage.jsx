@@ -8,7 +8,8 @@ function MainPage(props) {
   // const [entryList, setEntryList] = useState(props.currentUser.entries);
   const [feedList, setFeedList] = useState([]);
   const [feedReady, setFeedReady] = useState(false);
-  // const [publicReady, setPublicReady] = useState(false);
+  const [sharedList, setSharedList] = useState([]);
+  const [sharedReady, setSharedReady] = useState(false);
 
   useEffect(() => {
     if (props.display === "Feed" && feedReady === false) {
@@ -30,11 +31,25 @@ function MainPage(props) {
           console.error("Error:", error);
         });
     }
-    // users personal posts are getting overwritten. fix pls.
-    // if (publicReady === false) {
-    //   setEntryList(props.currentUser.entries);
-    //   setPublicReady(true);
-    // }
+    if (props.display === "Shared" && sharedReady === false) {
+      //send list of people i am following, fetch their public posts
+      fetch(expressIP + "/getShared", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username: props.currentUser.username }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          setSharedList(data.shared);
+          setSharedReady(true);
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    }
     setUserReady(true);
   });
 
@@ -44,9 +59,9 @@ function MainPage(props) {
       id="entryRow"
     >
       {userReady
-        ? props.display !== "Feed"
+        ? props.display !== "Feed" && props.display !== "Shared"
           ? props.currentUser.entries.map((entry, index) => {
-              if (props.display === "Private")
+              if (props.display === "Private" && entry.private === true)
                 return (
                   <Card
                     entry={entry}
@@ -92,7 +107,8 @@ function MainPage(props) {
                 );
               }
             })
-          : feedList.map((feed, index) => {
+          : props.display === "Feed"
+          ? feedList.map((feed, index) => {
               return (
                 <FeedPost
                   feed={feed}
@@ -111,6 +127,26 @@ function MainPage(props) {
                 />
               );
             })
+          : sharedList.map((feed, index) => {
+            console.log("mapping : " + feed);
+            return (
+              <FeedPost
+                feed={feed}
+                index={index}
+                currentUser={{
+                  username: props.currentUser.username,
+                  cookieID: props.currentUser.cookieID,
+                  picture: props.currentUser.picture,
+                }}
+                getForeignUser={props.getForeignUser}
+                key={index}
+                openEntry={props.openEntry}
+                deleteEntry={props.deleteEntry}
+                private={props.display === "Private" ? true : false}
+                isFeed={true}
+              />
+            );
+          })
         : null}
     </div>
   );
