@@ -2,11 +2,27 @@ import React, { useState, useEffect } from "react";
 import { expressIP } from "./../../settings";
 import SingleUser from "./SingleUser";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import IconButton from "@mui/material/IconButton";
+import SearchIcon from "@mui/icons-material/Search";
 
 function Users(props) {
   const [userList, setUserList] = useState([]);
   const [check, setCheck] = useState(true);
   const [filteredList, setFilteredList] = useState(userList);
+  const [searchBar, setSearchBar] = useState(false);
+
+  useEffect(() => {
+    if (userList.length === 0 && check) {
+      fetchUsers();
+      setCheck(false);
+    }
+  });
+
+  function handleSearchBar(){
+    setSearchBar((prev) => {
+      return !prev;
+    });
+  }
 
   const filterBySearch = (event) => {
   // Access input value
@@ -24,12 +40,6 @@ function Users(props) {
   setFilteredList(updatedList);
   };
 
-  useEffect(() => {
-    if (userList.length === 0 && check) {
-      fetchUsers();
-      setCheck(false);
-    }
-  });
   function fetchUsers() {
     fetch(expressIP + "/fetchUsers", {
       method: "POST",
@@ -49,7 +59,14 @@ function Users(props) {
     <div className="container">
       <div className="card">
         <div className="card-header-profile d-flex">
-          <div className="w-100">Users</div>
+          <div className="w-100">
+            Users
+            <span onClick={handleSearchBar}>
+              <IconButton>
+                <SearchIcon />
+              </IconButton>
+            </span>
+          </div>
           <button
             onClick={props.invertUsers}
             className="btn btn-primary follow-more-button"
@@ -58,16 +75,20 @@ function Users(props) {
             <ArrowBackIcon />
           </button>
         </div>
-        <div className="card-header">
-          <input
-            className="form-control"
-            name="search"
-            id="search-box"
-            onChange={filterBySearch}
-            type="text"
-            placeholder="Search"
-          ></input>
-        </div>
+        
+          {searchBar ? (
+            <div className="card-header">
+            <input
+              className="form-control"
+              name="search"
+              id="search-box"
+              onChange={filterBySearch}
+              type="text"
+              placeholder="Search"
+            ></input>
+            </div>
+          ) : null}
+        
         <div className="card-body">
           {userList.length !== 0
             ? filteredList.map((user, index) => {

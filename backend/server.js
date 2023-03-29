@@ -92,6 +92,7 @@ const userSchema = new mongoose.Schema({
   followers: [String],
   privatePosts: 0,
   publicPosts: 0,
+  otp: String
 });
 
 const Users = mongoose.model("user", userSchema);
@@ -437,6 +438,78 @@ app.post("/auto-login", (req, res) => {
       }
     }
   );
+});
+
+app.post("/getOTP", (req, res) => {
+  console.log("handling submit");
+  Users.findOne({ email: req.body.email }, async (err, foundUser) => {
+    if (err) throw err;
+    else {
+      if (foundUser) {
+        let otp = uniqid().substring(uniqid().length - 6);
+        Users.updateOne({email: req.body.email}, {otp: otp}, function(err, docs){
+          if(err) throw err;
+          else{
+            Users.findOne({ email: req.body.email }, async (err, updatedUser) => {
+              if(err) throw err;
+              else{
+                if(updatedUser){
+                  console.log(updatedUser);
+                  console.log("OTP: " + updatedUser.otp);
+
+                  send(
+                    req.body.email,
+                    "OTP Code",
+                    "Dear " +
+                      foundUser.username +
+                      " " +
+                      "your OTP code is " + updatedUser.otp +
+                      "."
+                  )
+                    .then((messageId) =>
+                      console.log("Message sent successfully:", messageId)
+                    )
+                    .catch((err) => console.error(err));
+
+                  res.send({ success: "OTPsuccess" });
+                }
+              }
+            });
+          }
+        });
+        
+      } else if (!foundUser) {
+        res.send({ success: "InvalidEmail" });
+      }
+    }
+  });
+});
+
+app.post("/confirmOTP", (req, res) => {
+  Users.findOne({otp: req.body.otp}, async(err, foundUser) => {
+    if(err) throw err;
+    else{
+      if(foundUser){
+        res.send({success: "OTPmatch"})
+      }else{
+        res.send({success: "OTPIncorrect"})
+      }
+    }
+  });
+});
+
+app.post("/resetPassword", async(req, res) => {
+  const hashedPassword =  await bcrypt.hash(req.body.resetPwd, 10);
+  Users.updateOne({email: req.body.email}, {password: hashedPassword}, (err, result) => {
+    if(err) throw err;
+    else{
+      if(result){
+        res.send({success: "resetSuccess"})
+      }else{
+        res.send({success: "resetFail"})
+      }
+    }
+  })
 });
 
 app.post("/getFullData", (req, res) => {

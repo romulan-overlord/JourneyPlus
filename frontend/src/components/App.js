@@ -308,7 +308,7 @@ function App() {
           />
         ) : (
           <ProfilePage
-            invertIsSignedUp={invertIsSignedUp}
+            invertLoggedIn={invertLoggedIn}
             invertProfilePage={invertProfilePage}
             updateUserDetails={updateUserDetails}
             currentUser={currentUser}
