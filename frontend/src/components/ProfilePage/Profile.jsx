@@ -4,6 +4,7 @@ import PersonAdd from "@mui/icons-material/PersonAdd";
 import PeopleIcon from "@mui/icons-material/People";
 import People from "@mui/icons-material/People";
 import { Avatar } from "@mui/material";
+import $ from "jquery";
 
 function Profile(props) {
   const [isEdited, setIsEdited] = useState(true);
@@ -188,8 +189,8 @@ function Profile(props) {
           invertPwd();
         }else if(data.success === "success"){
           console.log("data sent to frontend");
-          invertModal();
-          props.invertIsSignedUp();
+          window.$('#exampleModal').modal("hide");
+          props.invertLoggedIn();
           props.invertProfilePage();
         }
       });

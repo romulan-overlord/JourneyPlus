@@ -1,17 +1,27 @@
 import React, { useState, useEffect } from "react";
 import { expressIP } from "./../../settings";
 import SingleUser from "./SingleUser";
+import IconButton from "@mui/material/IconButton";
+import SearchIcon from "@mui/icons-material/Search";
 
 function Followers(props) {
   const [followerList, setFollowerList] = useState([]);
   const [check, setCheck] = useState(true);
   const [filteredList, setFilteredList] = useState(followerList);
+  const [searchBar, setSearchBar] = useState(false);
+
   useEffect(() => {
     if (followerList.length === 0 && check) {
       setCheck(false);
       fetchFollowers();
     }
   });
+
+  function handleSearchBar() {
+    setSearchBar((prev) => {
+      return !prev;
+    });
+  }
 
   const filterBySearch = (event) => {
     // Access input value
@@ -56,17 +66,27 @@ function Followers(props) {
   return (
     <div className="container">
       <div className="card">
-        <div className="card-header-profile">Followers</div>
-        <div className="card-header">
-          <input
-            className="form-control"
-            name="search"
-            onChange={filterBySearch}
-            id="search"
-            type="text"
-            placeholder="Search"
-          ></input>
+        <div className="card-header-profile">
+          Followers
+          <span onClick={handleSearchBar}>
+            <IconButton>
+              <SearchIcon />
+            </IconButton>
+          </span>
         </div>
+        {searchBar ? (
+          <div className="card-header">
+            <input
+              className="form-control"
+              name="search"
+              onChange={filterBySearch}
+              id="search"
+              type="text"
+              placeholder="Search"
+            ></input>
+          </div>
+        ) : null}
+
         <div className="card-body">
           {followerList.length !== 0
             ? filteredList.map((follower, index) => {

@@ -2,17 +2,26 @@ import { indexOf } from "lodash";
 import React, { useState, useEffect } from "react";
 import { expressIP } from "./../../settings";
 import SingleUser from "./SingleUser";
+import IconButton from "@mui/material/IconButton";
+import SearchIcon from "@mui/icons-material/Search";
 
 function Following(props) {
   const [followingList, setFollowingList] = useState([]);
   const [check, setCheck] = useState(true);
   const [filteredList, setFilteredList] = useState(followingList);
+  const [searchBar, setSearchBar] = useState(false);
   useEffect(() => {
     if (followingList.length === 0 && check) {
       fetchFollowing();
       setCheck(false);
     }
   });
+
+  function handleSearchBar() {
+    setSearchBar((prev) => {
+      return !prev;
+    });
+  }
 
   const filterBySearch = (event) => {
     // Access input value
@@ -61,7 +70,14 @@ function Following(props) {
     <div className="container">
       <div className="card">
         <div className="card-header-profile d-flex">
-          <div className="w-100">Following</div>
+          <div className="w-100">
+            Following
+            <span onClick={handleSearchBar}>
+              <IconButton>
+                <SearchIcon />
+              </IconButton>
+            </span>
+          </div>
           <button
             onClick={props.invertUsers}
             className="btn btn-primary follow-more-button"
@@ -70,16 +86,19 @@ function Following(props) {
             Discover
           </button>
         </div>
-        <div className="card-header">
-          <input
-            className="form-control"
-            name="search"
-            onChange={filterBySearch}
-            id="search"
-            type="text"
-            placeholder="Search"
-          ></input>
-        </div>
+        {searchBar ? (
+          <div className="card-header">
+            <input
+              className="form-control"
+              name="search"
+              onChange={filterBySearch}
+              id="search"
+              type="text"
+              placeholder="Search"
+            ></input>
+          </div>
+        ) : null}
+
         <div className="card-body">
           {followingList.length !== 0
             ? filteredList.map((follower, index) => {

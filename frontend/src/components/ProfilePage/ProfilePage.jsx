@@ -12,6 +12,7 @@ function ProfilePage(props) {
   const [isFollowing, setFollowing] = useState(false);
   const [isPosts, setPosts] = useState(false);
   const [isUsers, setUsers] = useState(false);
+  const [searchBar, setSearchBar] = useState(false);
 
   function openProfile(event) {
     setIsProfile(true);
@@ -48,6 +49,12 @@ function ProfilePage(props) {
   function getForeignUser(user){
     openProfile();
     props.getForeignUser(user);
+  }
+
+  function handleSearchBar() {
+    setSearchBar((prev) => {
+      return !prev;
+    });
   }
 
   const ColoredLine = ({ color }) => (
@@ -101,7 +108,7 @@ function ProfilePage(props) {
       <hr className="mt-0 mb-4"></hr>
       {isProfile ? (
         <Profile
-          invertIsSignedUp={props.invertIsSignedUp}
+          invertLoggedIn={props.invertLoggedIn}
           invertProfilePage={props.invertProfilePage}
           updateUserDetails={props.updateUserDetails}
           updatePicture={props.updatePicture}
@@ -122,6 +129,8 @@ function ProfilePage(props) {
           }}
           updateNetwork={props.updateNetwork}
           getForeignUser={getForeignUser}
+          handleSearchBar={handleSearchBar}
+          searchBar={searchBar}
         />
       ) : null}
       {isFollowing ? (
@@ -136,6 +145,8 @@ function ProfilePage(props) {
             }}
             updateNetwork={props.updateNetwork}
             getForeignUser={getForeignUser}
+            handleSearchBar={handleSearchBar}
+            searchBar={searchBar}
           />
         ) : (
           <Following
@@ -148,6 +159,8 @@ function ProfilePage(props) {
             }}
             updateNetwork={props.updateNetwork}
             getForeignUser={getForeignUser}
+            handleSearchBar={handleSearchBar}
+            searchBar={searchBar}
           />
         )
       ) : null}

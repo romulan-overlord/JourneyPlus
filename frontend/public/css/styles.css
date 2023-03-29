@@ -133,6 +133,23 @@ body {
 .visibility-icon{
   margin-right: 10px;
 }
+
+/*Login*/
+.forgot-password{
+  float: right;
+  cursor: pointer;
+}
+
+.reset-password-modal{
+  width: 400px;
+  font-family: "Montserrat", serif;
+}
+
+.otp-sent{
+  margin-top: 0.25rem;
+  font-size: .875em;
+  color: #198754;
+}
 /* Navbar */
 
 .navbar-container {
