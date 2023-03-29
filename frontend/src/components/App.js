@@ -8,6 +8,7 @@ import SignUp from "./SignUp";
 import Login from "./Login";
 import MainPage from "./MainPage/MainPage";
 import ProfilePage from "./ProfilePage/ProfilePage";
+import SharedEntry from "./EntryInput/SharedEntry";
 
 function App() {
   const [isLoggedIn, setLoggedIn] = useState(false);
@@ -255,15 +256,16 @@ function App() {
       ) : null}
       {isLoggedIn ? (
         compose ? (
-          <EntryInput
-            currentUser={currentUser}
-            updateEntries={updateEntries}
-            passedEntry={passedEntry}
-            createMode={createMode}
-            invertCreateMode={invertCreateMode}
-            exitEntry={exitEntry}
-            display={display}
-          />
+          // <EntryInput
+          //   currentUser={currentUser}
+          //   updateEntries={updateEntries}
+          //   passedEntry={passedEntry}
+          //   createMode={createMode}
+          //   invertCreateMode={invertCreateMode}
+          //   exitEntry={exitEntry}
+          //   display={display}
+          // />
+          <SharedEntry currentUser={currentUser} />
         ) : !profilePage ? (
           <MainPage
             currentUser={currentUser}
