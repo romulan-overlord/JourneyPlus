@@ -282,24 +282,29 @@ export default function Footer(props) {
             ) : null}
             {props.createMode ? (
               <div className="d-inline">
-                <span className="date-p mx-2">|</span>
-                <span
-                  className="date-p"
-                  // onClick={toggleVisibility}
-                  data-bs-toggle="modal"
-                  data-bs-target="#exampleModal"
-                  // data-toggle="tooltip"
-                  data-placement="top"
-                  title={
-                    "This post is " + (props.isPrivate ? "private" : "public")
-                  }
-                >
-                  {props.isPrivate ? (
-                    <VisibilityOffOutlinedIcon fontSize="small" />
-                  ) : (
-                    <VisibilityOutlinedIcon fontSize="small" />
-                  )}
-                </span>
+                {props.currentUser.username === props.entry.owner ? (
+                  <>
+                    <span className="date-p mx-2">|</span>
+                    <span
+                      className="date-p"
+                      // onClick={toggleVisibility}
+                      data-bs-toggle="modal"
+                      data-bs-target="#exampleModal"
+                      // data-toggle="tooltip"
+                      data-placement="top"
+                      title={
+                        "This post is " +
+                        (props.isPrivate ? "private" : "public")
+                      }
+                    >
+                      {props.isPrivate ? (
+                        <VisibilityOffOutlinedIcon fontSize="small" />
+                      ) : (
+                        <VisibilityOutlinedIcon fontSize="small" />
+                      )}
+                    </span>
+                  </>
+                ) : null}
                 {props.entryData.owner.length > 0 ? (
                   <>
                     <span className="date-p mx-2">|</span>

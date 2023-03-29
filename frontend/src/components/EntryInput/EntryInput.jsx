@@ -328,6 +328,7 @@ function EntryInput(props) {
         display={props.display}
         entry={{
           entryID: entryData.entryID,
+          owner: entryData.owner,
           shared: entryData.shared,
           setShared: (shared) => {
             entryData.shared = shared;

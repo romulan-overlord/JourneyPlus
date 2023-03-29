@@ -1,0 +1,543 @@
+html {
+  height: 100vh;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #2b4b82;
+  background-image: url("./../images/img2.jpg");
+  background-size: cover; /* or "contain" depending on what you want */
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  font-family: "DM Sans", sans-serif;
+}
+
+.disableScroll {
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+.enableScroll {
+  overflow: auto;
+}
+
+.center {
+  position: absolute;
+  top: 50%;
+  transform: translate(0, -50%);
+  padding: 10px;
+  height: 100vh;
+  background-color: #2b4b82;
+}
+
+.col-md-6 {
+  padding: 0;
+}
+
+/* scroll bar styling */
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+  background: none;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: none;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgba(177, 174, 174, 0.4);
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(177, 174, 174, 0.7);
+}
+
+/* Sign up */
+.big-heading {
+  font-family: "DM Sans", sans-serif;
+  font-size: 3.5rem;
+  line-height: 1.5;
+  color: #f7b4a7;
+}
+
+.sub-text {
+  color: #94ddde;
+}
+.center-div {
+  margin-top: 7%;
+}
+
+.signup-column {
+  padding: 3% 2%;
+}
+
+.signup-text {
+  padding-top: 10px;
+  background: none;
+  color: white;
+}
+
+.set-colour {
+  background-color: #6784b6;
+}
+
+.set-signup-button-colour {
+  /* background-color: #5ce1e6; */
+  background-color: #f7b4a7;
+}
+
+.margin-between-input {
+  margin-bottom: 7px;
+}
+
+.first-name-button {
+  padding-left: 0;
+}
+
+.last-name-button {
+  padding-right: 0;
+}
+
+.card-border-radius,
+.button-text {
+  border-radius: 2em;
+}
+.align-card {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.account-text {
+  padding-top: 2%;
+}
+.width-50 {
+  width: 50%;
+}
+
+.width-100 {
+  width: 100%;
+}
+
+.height-100 {
+  height: 100%;
+}
+
+.visibility-icon{
+  margin-right: 10px;
+}
+/* Navbar */
+
+.navbar-container {
+  border-bottom: 1.5px solid white;
+}
+
+.navbar-brand {
+  font-size: 2rem;
+}
+
+.center-element {
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+
+.table_data {
+  padding-right: 50px;
+}
+
+.btn-default {
+  /* background-color: #B2DBD6; */
+  color: #fff;
+  /* border-color: #B2DBD6; */
+}
+
+.btn-default:hover,
+.btn-default:focus,
+.btn-default:active,
+.btn-default.active,
+.open .dropdown-toggle.btn-default {
+  background-color: #d1edf2;
+  color: black;
+  border-color: #d1edf2;
+}
+
+.header-dropdown {
+  background-color: #b2cadb;
+  border-color: black;
+}
+
+
+
+/* Main Page Cards */
+
+.entry-display-container {
+  /* height: 250px; */
+  margin: 0;
+}
+
+.card-container {
+  height: 250px;
+}
+
+.card-dropdown {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+
+.card-menu-item {
+  padding: 0 5px;
+  border-radius: 3px;
+}
+
+.card-menu-item:hover {
+  background-color: rgb(200, 200, 200);
+  transition: 0.25s;
+}
+
+.my-card {
+  background-size: cover;
+  opacity: 0.85;
+  overflow: hidden;
+  white-space: pre-line;
+}
+
+.card-red {
+  /* background: linear-gradient(-45deg, #ffec61, #f321d7); */
+
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
+  transition: 0.2s;
+}
+
+.card-red:hover {
+  transition: 1;
+  transform: scale(1.03);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.09), 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.bottom-menu {
+  position: absolute;
+  bottom: 0;
+}
+
+.bottom-menu-col {
+  text-align: right;
+}
+
+.main-page-card-title {
+  font-family: "Montserrat";
+  font-size: 1.4rem;
+  color: white;
+  /* text-align: center; */
+}
+
+.main-page-card-text {
+  font-size: 1.1rem;
+  font-family: "Montserrat", serif;
+  color: white;
+}
+
+.align-card-button {
+  text-align: center;
+}
+
+/* Create New Entry */
+
+.text-input-container {
+  box-sizing: border-box;
+  padding-top: 25px;
+}
+
+.scroll-view {
+  flex-grow: 1;
+}
+
+.title-done-button-row {
+  width: 100%;
+  margin: 0;
+}
+
+.entry-title-container {
+  border-bottom: 1.5px solid white;
+  color: white;
+  /* margin-top: 30px; */
+}
+
+.entry-title {
+  width: 80%;
+  height: 100%;
+  border: none;
+  background: none;
+  font-size: large;
+  outline: none;
+  color: white;
+}
+
+.done-button {
+  color: white;
+}
+
+.entry-content {
+  width: 100%;
+  background: transparent;
+  outline: none;
+  border: none;
+  color: white;
+  resize: none;
+}
+
+.table-class {
+  table-layout: fixed;
+}
+
+.no-media-container {
+  text-align: center;
+}
+
+.no-media {
+  display: inline-block;
+  width: 80%;
+}
+
+#files {
+  display: none;
+}
+
+.noDisplay {
+  display: none;
+}
+
+.media-tray-container {
+  overflow: auto;
+}
+
+.lead {
+  margin: 0;
+  color: white;
+}
+
+.audio-player {
+  width: 100%;
+  color: rgba(165, 134, 134, 0.4);
+}
+
+/* Footer */
+
+.footer {
+  width: 100%;
+  height: 25px;
+  position: fixed;
+  bottom: 0;
+  /* background-color: #17263f; */
+  /* background: none; */
+  background-color: rgba(18, 18, 18, 0.3);
+  border-top: solid rgb(200, 200, 200) 1px;
+}
+
+.my-dropdown {
+  display: inline;
+}
+
+.bkg-btn {
+  padding: 0;
+  border: none;
+}
+
+.my-dropdown-menu {
+  height: 300px;
+  overflow: auto;
+}
+
+.weatherIcon {
+  height: 25px;
+}
+
+.date-p {
+  color: white;
+}
+
+.return-button {
+  text-align: right;
+}
+
+/* Full Viewer */
+.full-view-container {
+  position: absolute;
+  height: 100vh;
+  width: 100vw;
+  top: 0;
+  left: 0;
+  background-color: rgba(18, 18, 18, 0.5);
+  z-index: 3;
+  padding: 0;
+}
+
+.full-image {
+  /* width:75%; */
+  margin: auto;
+  height: 80vh;
+}
+
+.full-video {
+  /* width:75%; */
+  margin: auto;
+  height: 80vh;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.close-full-view {
+  position: absolute;
+  top: 50px;
+  right: 50px;
+  z-index: 4;
+}
+
+/* Profile Page */
+.img-account-profile {
+  height: 10rem;
+}
+.rounded-circle {
+  border-radius: 50% !important;
+}
+.card-profile {
+  font-family: "Montserrat";
+  box-shadow: 0 0.15rem 1.75rem 0 rgb(33 40 50 / 15%);
+}
+.card-profile .card-header-profile {
+  font-weight: 500;
+}
+.card-header-profile:first-child {
+  border-radius: 0.35rem 0.35rem 0 0;
+}
+.card-header-profile {
+  font-size: 20px;
+  padding: 1rem 1.35rem;
+  margin-bottom: 0;
+  background-color: rgba(33, 40, 50, 0.03);
+  border-bottom: 1px solid rgba(33, 40, 50, 0.125);
+}
+.form-control,
+.dataTable-input {
+  display: block;
+  width: 100%;
+  padding: 0.875rem 1.125rem;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1;
+  color: #69707a;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #c5ccd6;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border-radius: 0.35rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.follow-container {
+  font-family: "Montserrat";
+  margin-top: 20px;
+}
+
+.edit-profile-container {
+  font-family: "Montserrat";
+}
+
+.profile-cancel-button {
+  margin-right: 4px;
+}
+
+/* Navigation Bar in Profile Page */
+.nav-borders .nav-link.active {
+  font-family: "Montserrat";
+  font-size: 18px;
+  color: #0061f2;
+  border-bottom-color: #0061f2;
+}
+.nav-borders .nav-link {
+  font-family: "Montserrat";
+  font-size: 18px;
+  color: #69707a;
+  border-bottom-width: 0.125rem;
+  border-bottom-style: solid;
+  border-bottom-color: transparent;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 0;
+  padding-right: 0;
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+/*Profile Picture*/
+.profile-picture{
+  display: inline-block;
+}
+
+.uploadImage{
+    display: inline-block;
+    line-height: 2.2em;
+    padding: 0.25em 0.62em;
+    border-radius: 0.30em;
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    font-family: "Montserrat";
+    font-size: 0.9em;
+    color: white;
+    transition: 0.2s;
+ }
+
+ .uploadImage:hover{
+  background-color: #0b5ed7;
+ }
+
+.uploadImage:focus {
+    padding: 0  0.56em 0 0.68em;
+ }
+/* Followers */
+.rounded-circle {
+  border-radius: 50% !important;
+}
+
+.img-thumbnail {
+  padding: 0.25rem;
+  background-color: #ecf2f5;
+  border: 1px solid #dee2e6;
+  border-radius: 0.25rem;
+  max-width: 100%;
+  height: auto;
+}
+.avatar-md {
+  height: 3.5rem;
+  width: 3.5rem;
+}
+
+.bg-transparent {
+  --bs-bg-opacity: 1;
+  background-color: transparent !important;
+}
+
+.unfollow-button {
+  margin-right: 0.6%;
+}
+
+.loading-container {
+  background-color: rgba(18, 18, 18, 0.5);
+}
+
+/* Feed page */
+
+.feed-title {
+  color: black;
+}
