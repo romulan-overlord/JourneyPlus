@@ -6,6 +6,8 @@ import EditIcon from "@mui/icons-material/Edit";
 import $ from "jquery";
 import MediaTray from "./MediaTray";
 import Footer from "../Footer";
+import Help from "./Help";
+import Test from "./Test";
 
 function EntryInput(props) {
   const [entryData, setEntryData] = useState(props.passedEntry);
@@ -224,13 +226,15 @@ function EntryInput(props) {
                 className="container-fluid px-0 entry-content-container"
                 id="content-div"
               >
-                <textarea
+                {/* <textarea
                   className="entry-content height-100"
                   placeholder="Write your thoughts away..."
                   onChange={handleTextChange}
                   name="content"
                   value={entryData.content}
-                ></textarea>
+                ></textarea> */}
+                {/* <Help className="entry-content height-100"/> */}
+                <Test content={entryData.content} entryID={entryData.entryID} />
               </div>
             </div>
             {/* column for media attachments */}
