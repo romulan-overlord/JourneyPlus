@@ -25,6 +25,8 @@ function App() {
   //useState to store details of foreignUser
   const [foreignUser, setForeignUser] = useState({});
   const [passedEntry, setPassedEntry] = useState(defaultEntry);
+  //useState to render entryinput with synced textbox or not
+  const [sync, setSync] = useState(false);
 
   const [lat, setLat] = useState([]);
   const [long, setLong] = useState([]);
@@ -69,7 +71,8 @@ function App() {
     });
   }
 
-  function openEntry(entry, bool) {
+  function openEntry(entry, bool, sync) {
+    sync ? setSync(true) : setSync(false);
     fetch(expressIP + "/getFullData", {
       method: "POST",
       headers: {
@@ -131,6 +134,7 @@ function App() {
     invertCompose();
     setPassedEntry(defaultEntry);
     setCreateMode(true);
+    setSync(false);
   }
 
   function invertLoggedIn(event) {
@@ -265,10 +269,11 @@ function App() {
             invertCreateMode={invertCreateMode}
             exitEntry={exitEntry}
             display={display}
+            sync={sync}
           />
-          // <SharedEntry currentUser={currentUser} />
-          // <Help />
-        ) : !profilePage ? (
+        ) : // <SharedEntry currentUser={currentUser} />
+        // <Help />
+        !profilePage ? (
           <MainPage
             currentUser={currentUser}
             openEntry={openEntry}

@@ -4,6 +4,7 @@ import IconButton from "@mui/material/IconButton";
 import DoneIcon from "@mui/icons-material/Done";
 import EditIcon from "@mui/icons-material/Edit";
 import $ from "jquery";
+import _ from "lodash";
 import MediaTray from "./MediaTray";
 import Footer from "../Footer";
 import Help from "./Help";
@@ -71,6 +72,19 @@ function EntryInput(props) {
 
   function handleSubmit(event) {
     event.preventDefault();
+    if (props.sync) {
+      // entryData.content = $("#editor p").html();
+      // console.log();
+      var myContent = document.querySelectorAll("#editor p");
+      let out = "";
+      for (var i = 0; i < myContent.length; i++) {
+        // let temp = _.replace(myContent[i], "<p>", "");
+        // temp = _.replace(temp, "</p>", "");
+        out = out + myContent[i].innerHTML + "\n";
+        // console.log(myContent[i].innerHTML);
+      }
+      entryData.content = out;
+    }
     entryData.lastModifiedBy = props.currentUser.username;
     fetch(expressIP + "/submit-entry", {
       method: "POST", // or 'PUT'
@@ -226,15 +240,27 @@ function EntryInput(props) {
                 className="container-fluid px-0 entry-content-container"
                 id="content-div"
               >
-                {/* <textarea
-                  className="entry-content height-100"
-                  placeholder="Write your thoughts away..."
-                  onChange={handleTextChange}
-                  name="content"
-                  value={entryData.content}
-                ></textarea> */}
+                {props.sync ? (
+                  <Test
+                    content={entryData.content}
+                    entryID={entryData.entryID}
+                  />
+                ) : props.passedEntry.shared.length > 0 ? (
+                  <Test
+                    content={entryData.content}
+                    entryID={entryData.entryID}
+                  />
+                ) : (
+                  <textarea
+                    className="entry-content height-100"
+                    placeholder="Write your thoughts away..."
+                    onChange={handleTextChange}
+                    name="content"
+                    value={entryData.content}
+                  ></textarea>
+                )}
+
                 {/* <Help className="entry-content height-100"/> */}
-                <Test content={entryData.content} entryID={entryData.entryID} />
               </div>
             </div>
             {/* column for media attachments */}

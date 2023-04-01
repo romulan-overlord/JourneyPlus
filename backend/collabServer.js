@@ -37,6 +37,7 @@ app.post("/help", (req, res) => {
     if (err) throw err;
     if (doc.type === null) {
       doc.create([{ insert: req.body.content }], "rich-text", () => {
+        console.log("document created");
         webSocketServer.on("connection", (webSocket) => {
           var stream = new WebSocketJSONStream(webSocket);
           backend.listen(stream);

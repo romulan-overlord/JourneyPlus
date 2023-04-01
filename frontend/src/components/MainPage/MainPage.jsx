@@ -144,6 +144,7 @@ function MainPage(props) {
                 deleteEntry={props.deleteEntry}
                 private={props.display === "Private" ? true : false}
                 isFeed={true}
+                shared={true}
               />
             );
           })

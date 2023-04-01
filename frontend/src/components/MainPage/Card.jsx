@@ -106,7 +106,7 @@ function Card(props) {
                   <li
                     className="card-menu-item"
                     onClick={() => {
-                      props.openEntry(props.entry, false);
+                      props.openEntry(props.entry, false, props.shared ? true : false);
                     }}
                   >
                     View
@@ -114,7 +114,7 @@ function Card(props) {
                   <li
                     className="card-menu-item"
                     onClick={() => {
-                      props.openEntry(props.entry, true);
+                      props.openEntry(props.entry, true, props.shared ? true : false);
                     }}
                   >
                     Edit
@@ -135,7 +135,7 @@ function Card(props) {
             className="card-body"
             key={props.index}
             onClick={() => {
-              props.openEntry(props.entry, false);
+              props.openEntry(props.entry, false, props.shared ? true : false);
             }}
           >
             <h3 className="main-page-card-title">{props.entry.title}</h3>

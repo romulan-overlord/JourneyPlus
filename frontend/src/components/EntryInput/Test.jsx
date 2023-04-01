@@ -12,7 +12,8 @@ var connection = new Connection(socket);
 
 export default function Test(props) {
   const doc = connection.get("documents", props.entryID);
-  const [val, setVal] = useState(null);
+  // const [val, setVal] = useState(null);
+  const [isInit, setInit] = useState(true);
 
   useEffect(() => {
     console.log("in useEffect");
@@ -41,7 +42,7 @@ export default function Test(props) {
             return console.error(error);
           }
           console.log("trynna set val: " + doc.data);
-          setVal(doc.data);
+          // setVal(doc.data);
           const toolbarOptions = [
             "bold",
             "italic",
@@ -79,7 +80,6 @@ export default function Test(props) {
   return (
     <>
       <div id="editor">
-        <p>{val ? val.ops[0].insert : "helpme"} </p>
       </div>
     </>
   );

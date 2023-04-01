@@ -198,6 +198,7 @@ function FeedPost(props) {
                     deleteEntry={props.deleteEntry}
                     private={props.private}
                     isFeed={props.isFeed}
+                    shared={props.shared ? props.shared : null}
                   />
                   {props.feed.entry.private ? null : (
                     <div className="p-2">
