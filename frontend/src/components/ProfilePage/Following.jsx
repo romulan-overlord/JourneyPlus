@@ -1,6 +1,7 @@
 import { indexOf } from "lodash";
 import React, { useState, useEffect } from "react";
 import { expressIP } from "./../../settings";
+import $ from "jquery";
 import SingleUser from "./SingleUser";
 import IconButton from "@mui/material/IconButton";
 import SearchIcon from "@mui/icons-material/Search";
@@ -66,13 +67,14 @@ function Following(props) {
         setFilteredList(data.following);
       });
   }
+
   return (
     <div className="container">
       <div className="card">
         <div className="card-header-profile d-flex">
           <div className="w-100">
             Following
-            <span onClick={handleSearchBar}>
+            <span id="search-icon"onClick={handleSearchBar}>
               <IconButton>
                 <SearchIcon />
               </IconButton>
@@ -87,7 +89,7 @@ function Following(props) {
           </button>
         </div>
         {searchBar ? (
-          <div className="card-header">
+          <div className="card-header" id="following-search">
             <input
               className="form-control"
               name="search"

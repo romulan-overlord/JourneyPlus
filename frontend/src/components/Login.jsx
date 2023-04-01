@@ -276,7 +276,7 @@ function Login(props) {
                           required
                         ></input>
                         <div className="input-group-text">
-                          <InputAdornment className="visibility-icon">
+                          <InputAdornment className="visibility-icon" position="start">
                             <IconButton
                               aria-label="toggle password visibility"
                               onClick={handleClickShowPassword}
@@ -398,23 +398,23 @@ function Login(props) {
 
                     {/* OTP Confirmation Modal */}
                     <div
-                      class="modal fade"
+                      className="modal fade"
                       id="OTPModal"
-                      tabindex="-1"
+                      // tabindex="-1"
                       aria-labelledby="OTPModalLabel"
                       aria-hidden="true"
                     >
-                      <div class="modal-dialog modal-dialog-centered reset-password-modal">
-                        <div class="modal-content text-center">
-                          <div class="modal-header h5 text-white bg-primary justify-content-center">
+                      <div className="modal-dialog modal-dialog-centered reset-password-modal">
+                        <div className="modal-content text-center">
+                          <div className="modal-header h5 text-white bg-primary justify-content-center">
                             Password Reset
                           </div>
-                          <div class="modal-body px-5">
-                            <p class="py-2">
+                          <div className="modal-body px-5">
+                            <p className="py-2">
                               Enter your email address and we'll send you an
                               email with instructions to reset your password.
                             </p>
-                            <div class="form-outline">
+                            <div className="form-outline">
                               {isValidEmail ? (
                                 <div>
                                   <input
@@ -499,19 +499,19 @@ function Login(props) {
                     </div>
                     {/* Reset Password Modal */}
                     <div
-                      class="modal fade"
+                      className="modal fade"
                       id="ResetModal"
-                      tabindex="-1"
+                      // tabindex="-1"
                       aria-labelledby="ResetModalLabel"
                       aria-hidden="true"
                     >
-                      <div class="modal-dialog modal-dialog-centered reset-password-modal">
-                        <div class="modal-content text-center">
-                          <div class="modal-header h5 text-white bg-primary justify-content-center">
+                      <div className="modal-dialog modal-dialog-centered reset-password-modal">
+                        <div className="modal-content text-center">
+                          <div className="modal-header h5 text-white bg-primary justify-content-center">
                             Password Reset
                           </div>
-                          <div class="modal-body px-5">
-                            <div class="form-outline">
+                          <div className="modal-body px-5">
+                            <div className="form-outline">
                               <input
                                 type="password"
                                 placeholder="Enter New Password"
