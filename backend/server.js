@@ -76,6 +76,7 @@ const entrySchema = {
   time: String,
   shared: [String],
   lastModifiedBy: String,
+  lastModified: Number
 };
 
 const Entry = mongoose.model("entry", entrySchema);
@@ -413,15 +414,15 @@ app.post("/signUp", (req, res) => {
                   data.save();
                 });
                 console.log("User Created");
-                send(
-                  req.body.email,
-                  "SignUp Confirmation",
-                  "Congratulations on successfully signing up on this Journey with us."
-                )
-                  .then((messageId) =>
-                    console.log("Message sent successfully:", messageId)
-                  )
-                  .catch((err) => console.error(err));
+                // send(
+                //   req.body.email,
+                //   "SignUp Confirmation",
+                //   "Congratulations on successfully signing up on this Journey with us."
+                // )
+                //   .then((messageId) =>
+                //     console.log("Message sent successfully:", messageId)
+                //   )
+                //   .catch((err) => console.error(err));
                 res.send({
                   success: "999", //The user has been successfully signed up and saved in the database
                 });
@@ -1431,7 +1432,7 @@ app.post("/deleteUser", (req, res) => {
 });
 
 app.listen(8000, () => {
-  // cleanup();
+  //cleanup();
   console.log(`Server is running on port 8000.`);
 });
 
@@ -1454,40 +1455,40 @@ function cleanup() {
   Users.deleteMany({})
     .then(() => {
       console.log("users deleted");
-      Users.create({
-        firstName: "Ritu Raj",
-        lastName: "Pradhan",
-        password:
-          "$2b$10$LYvW.Zfy1uroKYWtkqBeUOFUQTX5xmDO1vkDZh0pparhkWrh5rEoC",
-        username: "romulan",
-        email: "riturajpradhan911@gmail.com",
-        picture: "",
-        cookieID: "lfqxj199",
-        following: ["sham"],
-        followers: ["sham"],
-        privatePosts: 0,
-        publicPosts: 0,
-        entries: [],
-        shared: [],
-        __v: 3,
-      });
-      Users.create({
-        firstName: "Vignesh",
-        lastName: "Overlord",
-        password:
-          "$2b$10$YlPJx3j4yC8.RsW7v0Sq1u3JE37oF04iABgv8g6ahKqF7tbLWRl.S",
-        username: "sham",
-        email: "vig@123.com",
-        picture: "",
-        cookieID: "lfqxm1jy",
-        following: ["romulan"],
-        followers: ["romulan"],
-        privatePosts: 0,
-        publicPosts: 0,
-        entries: [],
-        shared: [],
-        __v: 3,
-      });
+      // Users.create({
+      //   firstName: "Ritu Raj",
+      //   lastName: "Pradhan",
+      //   password:
+      //     "$2b$10$LYvW.Zfy1uroKYWtkqBeUOFUQTX5xmDO1vkDZh0pparhkWrh5rEoC",
+      //   username: "romulan",
+      //   email: "riturajpradhan911@gmail.com",
+      //   picture: "",
+      //   cookieID: "lfqxj199",
+      //   following: ["sham"],
+      //   followers: ["sham"],
+      //   privatePosts: 0,
+      //   publicPosts: 0,
+      //   entries: [],
+      //   shared: [],
+      //   __v: 3,
+      // });
+      // Users.create({
+      //   firstName: "Vignesh",
+      //   lastName: "Overlord",
+      //   password:
+      //     "$2b$10$YlPJx3j4yC8.RsW7v0Sq1u3JE37oF04iABgv8g6ahKqF7tbLWRl.S",
+      //   username: "sham",
+      //   email: "vig@123.com",
+      //   picture: "",
+      //   cookieID: "lfqxm1jy",
+      //   following: ["romulan"],
+      //   followers: ["romulan"],
+      //   privatePosts: 0,
+      //   publicPosts: 0,
+      //   entries: [],
+      //   shared: [],
+      //   __v: 3,
+      // });
     })
     .catch(function (error) {
       console.log(error); // Failure

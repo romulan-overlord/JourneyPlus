@@ -276,7 +276,10 @@ function Login(props) {
                           required
                         ></input>
                         <div className="input-group-text">
-                          <InputAdornment className="visibility-icon" position="start">
+                          <InputAdornment
+                            className="visibility-icon"
+                            position="start"
+                          >
                             <IconButton
                               aria-label="toggle password visibility"
                               onClick={handleClickShowPassword}

@@ -65,7 +65,7 @@ function SignUp(props) {
         } else if (data.success === "902") {
           invertEmail();
         } else if (data.success === "999") {
-          props.invertIsSignedUp();
+          window.$("#SignedUpModal").modal("show");
         }
       })
       .catch((error) => {
@@ -193,7 +193,10 @@ function SignUp(props) {
                           required
                         ></input>
                         <div className="input-group-text">
-                          <InputAdornment className="visibility-icon" position="start">
+                          <InputAdornment
+                            className="visibility-icon"
+                            position="start"
+                          >
                             <IconButton
                               aria-label="toggle password visibility"
                               onClick={handleClickShowPassword}
@@ -234,6 +237,36 @@ function SignUp(props) {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* Succesfully Signed in Modal */}
+      <div
+        class="modal fade"
+        id="SignedUpModal"
+        aria-labelledby="SignedUpModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel">
+                {/* {isPrivate
+                  ? "From Private to Public"
+                  : "From Public to Private"} */}
+              </h1>
+            </div>
+            <div class="modal-body">Successfully Signed Up</div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                onClick={props.invertIsSignedUp}
+                data-bs-dismiss="modal"
+                class="btn btn-primary"
+              >
+                Continue
+              </button>
             </div>
           </div>
         </div>

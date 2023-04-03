@@ -213,6 +213,7 @@ body {
 .card-menu-item {
   padding: 0 5px;
   border-radius: 3px;
+  cursor: pointer;
 }
 
 .card-menu-item:hover {
@@ -383,6 +384,7 @@ body {
 
 .return-button {
   text-align: right;
+  cursor: pointer;
 }
 
 /* Full Viewer */

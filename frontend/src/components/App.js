@@ -246,6 +246,10 @@ function App() {
       });
   }
 
+  function triggerModal(event){
+    setModal(true);
+  }
+
   return (
     <div className="App height-100">
       {!compose ? (
@@ -304,7 +308,10 @@ function App() {
           updateCurrentUser={updateCurrentUser}
         />
       ) : (
-        <SignUp invertIsSignedUp={invertIsSignedUp} switch={invertIsSignedUp} />
+        <SignUp
+          invertIsSignedUp={invertIsSignedUp}
+          switch={invertIsSignedUp}
+        />
       )}
     </div>
   );
