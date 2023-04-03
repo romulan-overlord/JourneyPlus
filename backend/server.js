@@ -97,7 +97,7 @@ const userSchema = new mongoose.Schema({
   followers: [String],
   privatePosts: 0,
   publicPosts: 0,
-  otp: String
+  otp: String,
 });
 
 const Users = mongoose.model("user", userSchema);
@@ -197,6 +197,20 @@ function deleteEntry(mainEntry) {
   for (let i = 0; i < entry.media.audio.length; i++) {
     MediaWarehouse.deleteOne({ id: entry.media.audio[i] });
   }
+  for (let i = 0; i < entry.shared.length; i++) {
+    Users.findOne({ username: entry.shared[i] }, (err, user) => {
+      if (err) {
+        console.log("error finding user the deleted entry is shared with");
+        throw err;
+      }
+      for (let j = 0; j < user.shared.length; j++) {
+        if (user.shared[j].entryID === entry.entryID) {
+          user.shared.splice(j, 1);
+          user.save();
+        }
+      }
+    });
+  }
 }
 
 app.post("/submit-entry", (req, res) => {
@@ -211,6 +225,7 @@ app.post("/submit-entry", (req, res) => {
     },
     async function (err, results) {
       var newEntry = null;
+      let update = false;
       if (err) throw err;
       if (results) {
         if (req.body.entry.owner.length === 0) {
@@ -229,6 +244,7 @@ app.post("/submit-entry", (req, res) => {
             feed.save();
           }
           results.entries.push(newEntry);
+          update = true;
         } else {
           for (let i = 0; i < results.entries.length; i++) {
             if (results.entries[i].entryID === req.body.entry.entryID) {
@@ -239,26 +255,28 @@ app.post("/submit-entry", (req, res) => {
               results.entries.splice(i, 1);
               newEntry = reduceEntry(req.body.entry);
               // if (req.body.user === req.body.entry.owner) {
-                if (newEntry.private === true)
-                  results.privatePosts = results.privatePosts + 1;
-                else {
-                  results.publicPosts = results.publicPosts + 1;
-                  const feed = new FeedNetwork({
-                    entryID: newEntry.entryID,
-                    likes: 0,
-                    likedBy: [],
-                    comments: [],
-                  });
-                  feed.save();
-                }
+              if (newEntry.private === true)
+                results.privatePosts = results.privatePosts + 1;
+              else {
+                results.publicPosts = results.publicPosts + 1;
+                const feed = new FeedNetwork({
+                  entryID: newEntry.entryID,
+                  likes: 0,
+                  likedBy: [],
+                  comments: [],
+                });
+                feed.save();
+              }
               // }
               results.entries.push(newEntry);
             }
           }
+          if(req.body.entry.owner === req.body.user)
+            update = true;
         }
 
         results.save();
-        res.send({ mesage: "success", savedEntry: newEntry });
+        res.send({ mesage: "success", savedEntry: newEntry, update: update});
       }
     }
   );
@@ -527,37 +545,44 @@ app.post("/getOTP", (req, res) => {
     else {
       if (foundUser) {
         let otp = uniqid().substring(uniqid().length - 6);
-        Users.updateOne({email: req.body.email}, {otp: otp}, function(err, docs){
-          if(err) throw err;
-          else{
-            Users.findOne({ email: req.body.email }, async (err, updatedUser) => {
-              if(err) throw err;
-              else{
-                if(updatedUser){
-                  console.log(updatedUser);
-                  console.log("OTP: " + updatedUser.otp);
+        Users.updateOne(
+          { email: req.body.email },
+          { otp: otp },
+          function (err, docs) {
+            if (err) throw err;
+            else {
+              Users.findOne(
+                { email: req.body.email },
+                async (err, updatedUser) => {
+                  if (err) throw err;
+                  else {
+                    if (updatedUser) {
+                      console.log(updatedUser);
+                      console.log("OTP: " + updatedUser.otp);
 
-                  send(
-                    req.body.email,
-                    "OTP Code",
-                    "Dear " +
-                      foundUser.username +
-                      " " +
-                      "your OTP code is " + updatedUser.otp +
-                      "."
-                  )
-                    .then((messageId) =>
-                      console.log("Message sent successfully:", messageId)
-                    )
-                    .catch((err) => console.error(err));
+                      send(
+                        req.body.email,
+                        "OTP Code",
+                        "Dear " +
+                          foundUser.username +
+                          " " +
+                          "your OTP code is " +
+                          updatedUser.otp +
+                          "."
+                      )
+                        .then((messageId) =>
+                          console.log("Message sent successfully:", messageId)
+                        )
+                        .catch((err) => console.error(err));
 
-                  res.send({ success: "OTPsuccess" });
+                      res.send({ success: "OTPsuccess" });
+                    }
+                  }
                 }
-              }
-            });
+              );
+            }
           }
-        });
-        
+        );
       } else if (!foundUser) {
         res.send({ success: "InvalidEmail" });
       }
@@ -566,30 +591,34 @@ app.post("/getOTP", (req, res) => {
 });
 
 app.post("/confirmOTP", (req, res) => {
-  Users.findOne({otp: req.body.otp}, async(err, foundUser) => {
-    if(err) throw err;
-    else{
-      if(foundUser){
-        res.send({success: "OTPmatch"})
-      }else{
-        res.send({success: "OTPIncorrect"})
+  Users.findOne({ otp: req.body.otp }, async (err, foundUser) => {
+    if (err) throw err;
+    else {
+      if (foundUser) {
+        res.send({ success: "OTPmatch" });
+      } else {
+        res.send({ success: "OTPIncorrect" });
       }
     }
   });
 });
 
-app.post("/resetPassword", async(req, res) => {
-  const hashedPassword =  await bcrypt.hash(req.body.resetPwd, 10);
-  Users.updateOne({email: req.body.email}, {password: hashedPassword}, (err, result) => {
-    if(err) throw err;
-    else{
-      if(result){
-        res.send({success: "resetSuccess"})
-      }else{
-        res.send({success: "resetFail"})
+app.post("/resetPassword", async (req, res) => {
+  const hashedPassword = await bcrypt.hash(req.body.resetPwd, 10);
+  Users.updateOne(
+    { email: req.body.email },
+    { password: hashedPassword },
+    (err, result) => {
+      if (err) throw err;
+      else {
+        if (result) {
+          res.send({ success: "resetSuccess" });
+        } else {
+          res.send({ success: "resetFail" });
+        }
       }
     }
-  })
+  );
 });
 
 app.post("/getFullData", (req, res) => {
@@ -881,7 +910,7 @@ app.post("/getFeed", (req, res) => {
         else timeout(n);
       }, n);
     };
-    timeout(1000);
+    timeout(50);
   });
   readyPromise.then(() => {
     res.send({ feed: feedArr });
@@ -964,6 +993,9 @@ app.post("/getShared", async (req, res) => {
               throw err;
             }
             for (let j = 0; j < user.entries.length; j++) {
+              // for(let k = i; k < shared.length; k++{
+
+              // })
               if (user.entries[j].entryID === shared[i].entryID) {
                 if (user.picture.length > 2) {
                   MediaWarehouse.findOne({ id: user.picture }, (err, data) => {
@@ -1001,7 +1033,7 @@ app.post("/getShared", async (req, res) => {
                   });
                 }
               }
-              break;
+              // break;
             }
           });
         }

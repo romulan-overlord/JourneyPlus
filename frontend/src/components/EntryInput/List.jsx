@@ -10,7 +10,7 @@ function List(props) {
           <div key={index} className="row">
             <div className="col-lg-10">
               <audio controls className="audio-player" id={"m" + index}>
-                <source src={file} type="audio/mpeg"></source>
+                <source src={file} type="audio/mpeg" id={"m" + index}></source>
               </audio>
             </div>
             {props.createMode ? (

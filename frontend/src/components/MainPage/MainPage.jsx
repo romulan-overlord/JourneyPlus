@@ -4,12 +4,12 @@ import Card from "./Card";
 import FeedPost from "./FeedPost";
 
 function MainPage(props) {
-  const [userReady, setUserReady] = useState(false);
+  const [userReady, setUserReady] = useState(props.ready);
   // const [entryList, setEntryList] = useState(props.currentUser.entries);
   const [feedList, setFeedList] = useState([]);
-  const [feedReady, setFeedReady] = useState(false);
+  const [feedReady, setFeedReady] = useState(props.ready);
   const [sharedList, setSharedList] = useState([]);
-  const [sharedReady, setSharedReady] = useState(false);
+  const [sharedReady, setSharedReady] = useState(props.ready);
 
   useEffect(() => {
     if (props.display === "Feed" && feedReady === false) {
@@ -128,7 +128,7 @@ function MainPage(props) {
               );
             })
           : sharedList.map((feed, index) => {
-            console.log("mapping : " + feed);
+            // console.log("mapping : " + feed);
             return (
               <FeedPost
                 feed={feed}
