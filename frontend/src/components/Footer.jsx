@@ -128,6 +128,8 @@ export default function Footer(props) {
   function updateTime() {
     setTime(new Date().toDateString());
   }
+  const t = new Date().toTimeString();
+  console.log(t);
 
   let weatherIcon = "";
 

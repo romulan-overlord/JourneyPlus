@@ -240,6 +240,10 @@ function App() {
       });
   }
 
+  function triggerModal(event){
+    setModal(true);
+  }
+
   return (
     <div className="App height-100">
       {!compose ? (
@@ -256,17 +260,17 @@ function App() {
       ) : null}
       {isLoggedIn ? (
         compose ? (
-          // <EntryInput
-          //   currentUser={currentUser}
-          //   updateEntries={updateEntries}
-          //   passedEntry={passedEntry}
-          //   createMode={createMode}
-          //   invertCreateMode={invertCreateMode}
-          //   exitEntry={exitEntry}
-          //   display={display}
-          // />
-          <SharedEntry currentUser={currentUser} />
-        ) : !profilePage ? (
+          <EntryInput
+            currentUser={currentUser}
+            updateEntries={updateEntries}
+            passedEntry={passedEntry}
+            createMode={createMode}
+            invertCreateMode={invertCreateMode}
+            exitEntry={exitEntry}
+            display={display}
+          />
+        ) : // <SharedEntry currentUser={currentUser} />
+        !profilePage ? (
           <MainPage
             currentUser={currentUser}
             openEntry={openEntry}
@@ -296,7 +300,10 @@ function App() {
           updateCurrentUser={updateCurrentUser}
         />
       ) : (
-        <SignUp invertIsSignedUp={invertIsSignedUp} switch={invertIsSignedUp} />
+        <SignUp
+          invertIsSignedUp={invertIsSignedUp}
+          switch={invertIsSignedUp}
+        />
       )}
     </div>
   );

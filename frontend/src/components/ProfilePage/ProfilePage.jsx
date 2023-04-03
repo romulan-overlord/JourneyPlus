@@ -12,7 +12,6 @@ function ProfilePage(props) {
   const [isFollowing, setFollowing] = useState(false);
   const [isPosts, setPosts] = useState(false);
   const [isUsers, setUsers] = useState(false);
-  const [searchBar, setSearchBar] = useState(false);
 
   function openProfile(event) {
     setIsProfile(true);
@@ -130,7 +129,6 @@ function ProfilePage(props) {
           updateNetwork={props.updateNetwork}
           getForeignUser={getForeignUser}
           handleSearchBar={handleSearchBar}
-          searchBar={searchBar}
         />
       ) : null}
       {isFollowing ? (
@@ -146,7 +144,6 @@ function ProfilePage(props) {
             updateNetwork={props.updateNetwork}
             getForeignUser={getForeignUser}
             handleSearchBar={handleSearchBar}
-            searchBar={searchBar}
           />
         ) : (
           <Following
@@ -160,7 +157,6 @@ function ProfilePage(props) {
             updateNetwork={props.updateNetwork}
             getForeignUser={getForeignUser}
             handleSearchBar={handleSearchBar}
-            searchBar={searchBar}
           />
         )
       ) : null}
