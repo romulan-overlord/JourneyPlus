@@ -330,7 +330,7 @@ export default function Footer(props) {
               onClick={() => {
                 props.return();
               }}
-            >
+            > 
               Return
             </span>
           </div>

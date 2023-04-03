@@ -22,7 +22,7 @@ function FeedPost(props) {
   useEffect(() => {
     if (ready) {
       if (!props.feed.entry.private) fetchDetails();
-      setReady(false);
+      if(likes.likes) setReady(false);
     }
   });
 
@@ -139,7 +139,7 @@ function FeedPost(props) {
       // style={{ backgroundColor: "rgba(200,200,200,0.5)" }}
     >
       {/* Modal */}
-      <div class="modal fade" id="likeList" tabindex="-1">
+      <div className="modal fade" id="likeList" tabIndex="-1">
         <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
           <div className="modal-content">
             <div className="modal-header">
@@ -154,11 +154,12 @@ function FeedPost(props) {
               ></button>
             </div>
             <div className="modal-body">
-              {likerList.map((user) => {
+              {likerList.map((user, index) => {
                 return (
                   <SingleUser
                     user={user}
                     getForeignUser={props.getForeignUser}
+                    key={index}
                   />
                 );
               })}
@@ -238,7 +239,7 @@ function FeedPost(props) {
                       post={props.feed.entry.entryID}
                       updateComments={updateComments}
                     />
-                    {likes.comments.map((comment) => {
+                    {likes.comments.map((comment, index) => {
                       return (
                         <Comment
                           editable={
@@ -251,6 +252,7 @@ function FeedPost(props) {
                           currentUser={props.currentUser.username}
                           updateComments={updateComments}
                           fetchLikers={fetchLikers}
+                          key={index}
                         />
                       );
                     })}

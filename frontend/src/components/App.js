@@ -25,11 +25,6 @@ function App() {
   const [foreignUser, setForeignUser] = useState({});
   const [passedEntry, setPassedEntry] = useState(defaultEntry);
 
-  const [lat, setLat] = useState([]);
-  const [long, setLong] = useState([]);
-  const [apiData, setApiData] = useState({});
-  const apiUrl = `https://api.openweathermap.org/data/2.5/weather/?lat=${lat}&lon=${long}&units=metric&APPID=45014d735557d276c6086a85e85ce49b`;
-
   const [cookies, setCookies] = useCookies([
     "userIsSaved",
     "username",
@@ -69,24 +64,35 @@ function App() {
   }
 
   function openEntry(entry, bool) {
-    fetch(expressIP + "/getFullData", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      mode: "cors",
-      body: JSON.stringify(entry),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-        invertCompose();
-        setPassedEntry(data);
-        setCreateMode(bool);
+    invertCompose();
+    setPassedEntry(entry);
+    setCreateMode(bool);
+  }
+
+  function fetchFullEntry(entry) {
+    return new Promise((resolve, reject) => {
+      fetch(expressIP + "/getFullData", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        mode: "cors",
+        body: JSON.stringify(entry),
       })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+        .then((response) => response.json())
+        .then((data) => {
+          // console.log(data);
+          resolve(data) ;
+          // invertCompose();
+          // setPassedEntry(data);
+          // setCreateMode(bool);
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          reject(defaultEntry);
+        });
+    })
+    
   }
 
   function deleteEntry(entryID) {
@@ -256,23 +262,25 @@ function App() {
       ) : null}
       {isLoggedIn ? (
         compose ? (
-          // <EntryInput
-          //   currentUser={currentUser}
-          //   updateEntries={updateEntries}
-          //   passedEntry={passedEntry}
-          //   createMode={createMode}
-          //   invertCreateMode={invertCreateMode}
-          //   exitEntry={exitEntry}
-          //   display={display}
-          // />
-          <SharedEntry currentUser={currentUser} />
-        ) : !profilePage ? (
+          <EntryInput
+            currentUser={currentUser}
+            updateEntries={updateEntries}
+            fetchFullEntry={fetchFullEntry}
+            passedEntry={passedEntry}
+            createMode={createMode}
+            invertCreateMode={invertCreateMode}
+            exitEntry={exitEntry}
+            display={display}
+          />
+        ) : // <SharedEntry currentUser={currentUser} />
+        !profilePage ? (
           <MainPage
             currentUser={currentUser}
             openEntry={openEntry}
             deleteEntry={deleteEntry}
             display={display}
             getForeignUser={getForeignUser}
+            ready={false}
           />
         ) : (
           <ProfilePage

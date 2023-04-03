@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { Avatar } from "@mui/material";
 
-export default function HeaderForMainPage(props){
-    return (
-      <div>
-        <table className="width-100">
-          <tbody>
-            <tr>
+export default function HeaderForMainPage(props) {
+  return (
+    <div>
+      <table className="width-100">
+        <tbody>
+          <tr>
+            {props.display !== "Feed" ? (
               <td className="table_data">
                 <button
                   type="button"
@@ -16,67 +17,68 @@ export default function HeaderForMainPage(props){
                   Compose
                 </button>
               </td>
-              <td className="table_data">
-                <li className="nav-item dropdown">
-                  <a
-                    className="nav-link active view-mode"
-                    href="#"
-                    role="button"
-                    data-bs-toggle="dropdown"
-                  >
-                    {props.display}
-                  </a>
-                  <ul className="dropdown-menu">
-                    <li
-                      onClick={() => {
-                        props.setVisibility("Private");
-                      }}
-                    >
-                      <a className="dropdown-item" href="#">
-                        Private
-                      </a>
-                    </li>
-                    <li
-                      onClick={() => {
-                        props.setVisibility("Public");
-                      }}
-                    >
-                      <a className="dropdown-item" href="#">
-                        Public
-                      </a>
-                    </li>
-                    <li
-                      onClick={() => {
-                        props.setVisibility("Feed");
-                      }}
-                    >
-                      <a className="dropdown-item" href="#">
-                        Feed
-                      </a>
-                    </li>
-                    <li
-                      onClick={() => {
-                        props.setVisibility("Shared");
-                      }}
-                    >
-                      <a className="dropdown-item" href="#">
-                        Shared
-                      </a>
-                    </li>
-                  </ul>
-                </li>
-              </td>
-              <td>
-                <a className="nav-link" href="#">
-                  <Avatar src={props.picture} onClick={props.invertProfilePage}>
-                    {/* props.logOut  */}
-                    {/* <PersonIcon /> */}
-                  </Avatar>
+            ) : null}
+            <td className="table_data">
+              <li className="nav-item dropdown">
+                <a
+                  className="nav-link active view-mode"
+                  href="#"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                >
+                  {props.display}
                 </a>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    );
+                <ul className="dropdown-menu">
+                  <li
+                    onClick={() => {
+                      props.setVisibility("Private");
+                    }}
+                  >
+                    <a className="dropdown-item" href="#">
+                      Private
+                    </a>
+                  </li>
+                  <li
+                    onClick={() => {
+                      props.setVisibility("Public");
+                    }}
+                  >
+                    <a className="dropdown-item" href="#">
+                      Public
+                    </a>
+                  </li>
+                  <li
+                    onClick={() => {
+                      props.setVisibility("Feed");
+                    }}
+                  >
+                    <a className="dropdown-item" href="#">
+                      Feed
+                    </a>
+                  </li>
+                  <li
+                    onClick={() => {
+                      props.setVisibility("Shared");
+                    }}
+                  >
+                    <a className="dropdown-item" href="#">
+                      Shared
+                    </a>
+                  </li>
+                </ul>
+              </li>
+            </td>
+            <td>
+              <a className="nav-link" href="#">
+                <Avatar src={props.picture} onClick={props.invertProfilePage}>
+                  {/* props.logOut  */}
+                  {/* <PersonIcon /> */}
+                </Avatar>
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  );
 }

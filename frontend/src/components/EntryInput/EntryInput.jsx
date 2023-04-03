@@ -8,17 +8,27 @@ import MediaTray from "./MediaTray";
 import Footer from "../Footer";
 
 function EntryInput(props) {
+  // console.log(props.passedEntry);
   const [entryData, setEntryData] = useState(props.passedEntry);
-
   const [isMedia, setMedia] = useState(!props.createMode); //tracks if entry has media attachments (conditional rendering of MediaTray)
   const [ready, setReady] = useState(true); //tracks whether mediaTray is ready to be rendered or not
   const [isPrivate, setPrivate] = useState(entryData.private);
 
   useEffect(setDimensions);
+  useEffect(() => {
+    fetchFullEntry();
+  }, []);
 
   if (!props.createMode) {
     $("input").prop("disabled", true);
     $("textarea").prop("disabled", true);
+  }
+
+  async function fetchFullEntry() {
+    setEntryData(await props.fetchFullEntry(props.passedEntry));
+    for(let i = 0; i < entryData.media.video.length; i++){
+      console.log($("video #m" + i));
+    }
   }
 
   function changeReady() {
@@ -83,7 +93,7 @@ function EntryInput(props) {
       .then((response) => response.json())
       .then((data) => {
         console.log("Success:", data);
-        props.updateEntries(data.savedEntry);
+        if (data.update) props.updateEntries(data.savedEntry);
         props.exitEntry();
       })
       .catch((error) => {
@@ -209,7 +219,7 @@ function EntryInput(props) {
                   <div className="container-fluid col-sm-1 mx-auto">
                     {props.display !== "Feed" ? (
                       <IconButton className="mx-auto" type="submit">
-                        {props.createMode ? (
+                        {props.createMode && props.display !== "Feed" ? (
                           <DoneIcon fontSize="large" sx={{ color: "white" }} />
                         ) : (
                           <EditIcon fontSize="large" sx={{ color: "white" }} />
@@ -328,7 +338,7 @@ function EntryInput(props) {
         display={props.display}
         entry={{
           entryID: entryData.entryID,
-          owner: entryData.owner,
+          owner: entryData.owner ? entryData.owner : props.currentUser.username,
           shared: entryData.shared,
           setShared: (shared) => {
             entryData.shared = shared;
