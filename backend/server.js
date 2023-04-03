@@ -214,7 +214,7 @@ function deleteEntry(mainEntry) {
 }
 
 app.post("/submit-entry", (req, res) => {
-  // console.log("post received");
+  console.log("post received");
   // console.log("size of post: " + sizeof(req.body));
   Users.findOne(
     {
@@ -224,6 +224,7 @@ app.post("/submit-entry", (req, res) => {
           : req.body.entry.owner,
     },
     async function (err, results) {
+      console.log("user found");
       var newEntry = null;
       let update = false;
       if (err) throw err;
@@ -245,6 +246,7 @@ app.post("/submit-entry", (req, res) => {
           }
           results.entries.push(newEntry);
           update = true;
+          console.log("new entry pushed");
         } else {
           for (let i = 0; i < results.entries.length; i++) {
             if (results.entries[i].entryID === req.body.entry.entryID) {
@@ -271,13 +273,13 @@ app.post("/submit-entry", (req, res) => {
               results.entries.push(newEntry);
             }
           }
-          if(req.body.entry.owner === req.body.user)
-            update = true;
+          if (req.body.entry.owner === req.body.user) update = true;
         }
         console.log(newEntry);
 
         results.save();
-        res.send({ mesage: "success", savedEntry: newEntry, update: update});
+        console.log("user saved");
+        res.send({ mesage: "success", savedEntry: newEntry, update: update });
       }
     }
   );

@@ -56,7 +56,7 @@ function Carousel(props) {
                     id={"m" + index}
                   />
                 ) : (
-                  <video className="width-100" autoPlay loop muted>
+                  <video className="width-100" autoPlay loop muted id={"m" + index}>
                     <source
                       src={file}
                       type="video/mp4"
@@ -77,7 +77,7 @@ function Carousel(props) {
                   id={"m" + index}
                 />
               ) : (
-                <video className="width-100" autoPlay loop muted>
+                <video className="width-100" autoPlay loop muted id={"m" + index}>
                   <source src={file} type="video/mp4" id={"m" + index}></source>
                 </video>
               )}

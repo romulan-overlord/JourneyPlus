@@ -10,7 +10,6 @@ import DeleteIcon from "@mui/icons-material/Delete";
 var _ = require("lodash");
 
 function MediaTray(props) {
-  const [delSwitcher, setDelSwitcher] = useState(true);
   const compartments = Object.keys(props.mediaData);
   const compartmentData = Object.values(props.mediaData);
   const [isFullView, setFullView] = useState(false);

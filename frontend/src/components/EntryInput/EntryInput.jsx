@@ -26,8 +26,13 @@ function EntryInput(props) {
 
   async function fetchFullEntry() {
     setEntryData(await props.fetchFullEntry(props.passedEntry));
-    for(let i = 0; i < entryData.media.video.length; i++){
-      console.log($("video #m" + i));
+    for (let i = 0; i < entryData.media.video.length; i++) {
+      // console.log($("video#m" + i));
+      $("video#m" + i)[0].load();
+    }
+    for (let i = 0; i < entryData.media.audio.length; i++) {
+      // console.log($("video#m" + i));
+      $("audio#m" + i)[0].load();
     }
   }
 
