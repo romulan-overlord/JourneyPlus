@@ -200,6 +200,23 @@ export default function Footer(props) {
                 </span>
                 <span className="date-p mx-2">|</span>
                 <span className="date-p">
+                  <div className="dropdown my-dropdown">
+                    <a
+                      className="btn btn-sm bkg-btn"
+                      href="#"
+                      role="button"
+                      data-bs-toggle="dropdown"
+                      data-toggle="tooltip"
+                      data-placement="top"
+                      title="Change background image"
+                    >
+                      <MusicNoteIcon fontSize="small"></MusicNoteIcon>
+                    </a>
+                    <ul className="dropdown-menu my-dropdown-menu">
+                      <li>Add Music</li>
+                      <li>Remove Music</li>
+                    </ul>
+                  </div>
                   <input
                     onChange={getBackgroundAudio}
                     className="noDisplay"
@@ -330,7 +347,7 @@ export default function Footer(props) {
               onClick={() => {
                 props.return();
               }}
-            > 
+            >
               Return
             </span>
           </div>
