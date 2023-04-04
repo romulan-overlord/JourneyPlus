@@ -79,6 +79,11 @@ export default function Footer(props) {
     };
   }
 
+  function removeBackgroundAudio() {
+    setAudio(false);
+    props.addBkgAudio("");
+  }
+
   function muteBkg() {
     console.log("in muteBkg");
     setMuteAudio((prev) => {
@@ -210,30 +215,43 @@ export default function Footer(props) {
                       data-placement="top"
                       title="Change background image"
                     >
-                      <MusicNoteIcon fontSize="small"></MusicNoteIcon>
+                      <MusicNoteIcon
+                        className="date-p"
+                        fontSize="small"
+                      ></MusicNoteIcon>
                     </a>
-                    <ul className="dropdown-menu my-dropdown-menu">
-                      <li>Add Music</li>
-                      <li>Remove Music</li>
+                    <ul className="dropdown-menu">
+                      <li>
+                        <input
+                          onChange={getBackgroundAudio}
+                          className="noDisplay"
+                          type="file"
+                          id="bkgAudio"
+                          name="bkgAudio"
+                          accept="audio/*"
+                        />
+                        <label
+                          htmlFor="bkgAudio"
+                          data-toggle="tooltip"
+                          data-placement="top"
+                          title="Add background audio"
+                          className="w-100"
+                        >
+                          <p className="dropdown-item m-0 px-2 pb-1">
+                            Add Music
+                          </p>
+                        </label>
+                      </li>
+                      <li>
+                        <p
+                          className="dropdown-item m-0 px-2 cursor"
+                          onClick={removeBackgroundAudio}
+                        >
+                          Remove Music
+                        </p>
+                      </li>
                     </ul>
                   </div>
-                  <input
-                    onChange={getBackgroundAudio}
-                    className="noDisplay"
-                    type="file"
-                    id="bkgAudio"
-                    name="bkgAudio"
-                    accept="audio/*"
-                  />
-
-                  <label
-                    htmlFor="bkgAudio"
-                    data-toggle="tooltip"
-                    data-placement="top"
-                    title="Add background audio"
-                  >
-                    <MusicNoteIcon fontSize="small"></MusicNoteIcon>
-                  </label>
                 </span>
                 <span className="date-p mx-2">|</span>
               </span>

@@ -374,6 +374,10 @@ body {
   overflow: auto;
 }
 
+.cursor{
+  cursor: default;
+}
+
 .weatherIcon {
   height: 25px;
 }
