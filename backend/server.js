@@ -76,7 +76,7 @@ const entrySchema = {
   time: String,
   shared: [String],
   lastModifiedBy: String,
-  lastModified: Number
+  lastModified: Number,
 };
 
 const Entry = mongoose.model("entry", entrySchema);
@@ -166,7 +166,7 @@ function reduceEntry(entry) {
   return newEntry;
 }
 
-function deleteEntry(mainEntry) {
+function deleteEntry(mainEntry, permanent) {
   const entry = mainEntry;
   FeedNetwork.deleteOne({ entryID: entry.entryID })
     .then(function () {
@@ -197,19 +197,21 @@ function deleteEntry(mainEntry) {
   for (let i = 0; i < entry.media.audio.length; i++) {
     MediaWarehouse.deleteOne({ id: entry.media.audio[i] });
   }
-  for (let i = 0; i < entry.shared.length; i++) {
-    Users.findOne({ username: entry.shared[i] }, (err, user) => {
-      if (err) {
-        console.log("error finding user the deleted entry is shared with");
-        throw err;
-      }
-      for (let j = 0; j < user.shared.length; j++) {
-        if (user.shared[j].entryID === entry.entryID) {
-          user.shared.splice(j, 1);
-          user.save();
+  if (permanent) {
+    for (let i = 0; i < entry.shared.length; i++) {
+      Users.findOne({ username: entry.shared[i] }, (err, user) => {
+        if (err) {
+          console.log("error finding user the deleted entry is shared with");
+          throw err;
         }
-      }
-    });
+        for (let j = 0; j < user.shared.length; j++) {
+          if (user.shared[j].entryID === entry.entryID) {
+            user.shared.splice(j, 1);
+            user.save();
+          }
+        }
+      });
+    }
   }
 }
 
@@ -253,7 +255,7 @@ app.post("/submit-entry", (req, res) => {
               if (results.entries[i].private === true)
                 results.privatePosts = results.privatePosts - 1;
               else results.publicPosts = results.publicPosts - 1;
-              deleteEntry(results.entries[i]);
+              deleteEntry(results.entries[i], false);
               results.entries.splice(i, 1);
               newEntry = reduceEntry(req.body.entry);
               // if (req.body.user === req.body.entry.owner) {
@@ -295,7 +297,7 @@ app.post("/removeEntry", (req, res) => {
           if (results.entries[i].private === true)
             results.privatePosts = results.privatePosts - 1;
           else results.publicPosts = results.publicPosts - 1;
-          deleteEntry(results.entries[i]);
+          deleteEntry(results.entries[i], true);
           results.entries.splice(i, 1);
           break;
         }
@@ -473,8 +475,8 @@ app.post("/login", (req, res) => {
                         throw err;
                       }
                       foundUser.picture = picture.data;
-                      foundUser.entries = foundUser.entries.sort((a,b) =>{
-                        b.lastModified - a.lastModified
+                      foundUser.entries = foundUser.entries.sort((a, b) => {
+                        b.lastModified - a.lastModified;
                       });
                       //sort foundUser.entries
                       res.send({
@@ -913,12 +915,10 @@ app.post("/getFeed", (req, res) => {
       console.log("in timeout: ");
       setTimeout(() => {
         console.log(feedArr.length + "<-feedArr feedcount -> " + feedCount);
-        if (feedArr.length === feedCount)
-        {
+        if (feedArr.length === feedCount) {
           //sort feedArray
           resolve();
-        } 
-        else timeout(n);
+        } else timeout(n);
       }, n);
     };
     timeout(50);
@@ -1060,11 +1060,10 @@ app.post("/getShared", async (req, res) => {
         if (shared) {
           console.log("checking resolve: ");
           console.log(retArr.length + "<-retArr shared -> " + shared.length);
-          if (retArr.length === shared.length){
+          if (retArr.length === shared.length) {
             //sort retArr
             resolve();
-          } 
-          else timeout(n);
+          } else timeout(n);
         } else timeout(n);
       }, n);
     };
@@ -1117,6 +1116,7 @@ app.post("/postComment", (req, res) => {
       console.log("Error in posting comment");
       throw err;
     }
+    Users.findOne({ username: req.body.commentor });
     data.comments.push({
       commentID: uniqid(),
       commentor: req.body.commentor,

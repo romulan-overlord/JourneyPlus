@@ -1,0 +1,84 @@
+ {
+        media: { image: [ '1o9f5vklg0wq6so' ], video: [], audio: [] },
+        weather: { desc: 'Clouds', icon: '03n' },
+        entryID: '1o9f5vklg0wpn2b',
+        owner: "O'Corner",
+        size: 36545,
+        title: '#BUG-002: Media Upload',
+        content: 'There is a problem with media upload option.\n' +
+          'Unable to select multiple photos simultaneously.\n' +
+          '\n' +
+          '\n' +
+          'And what is that UwU doing there???',
+        backgroundAudio: '',
+        backgroundImage: '2',
+        date: 'Mon Apr 03 2023',
+        private: false,
+        shared: [],
+        lastModifiedBy: "O'Corner",
+        _id: ObjectId("642adddbcbd8a6d47cecfebe")
+      },
+      {
+        media: {
+          image: [ '1o9f5vklg0wqega', '1o9f5vklg0wqegb' ],
+          video: [],
+          audio: []
+        },
+        weather: { desc: 'Clouds', icon: '03d' },
+        entryID: '1o9falklg0jkpt1',
+        owner: "O'Corner",
+        size: 515575,
+        title: '#BUG-001',
+        content: 'Automatically getting logged out when home button is clicked.\n',
+        backgroundAudio: '',
+        backgroundImage: '1',
+        date: 'Mon Apr 03 2023',
+        private: false,
+        shared: [],
+        lastModifiedBy: "O'Corner",
+        _id: ObjectId("642a87aa30956d0bddf72947")
+      },
+      {
+        media: {
+          image: [ '1o9f5vklg0wu0bd', '1o9f5vklg0wu0be' ],
+          video: [],
+          audio: []
+        },
+        weather: { desc: 'Clouds', icon: '03n' },
+        entryID: '1o9f5vklg0wu0b3',
+        owner: "O'Corner",
+        size: 75198,
+        title: '#BUG-003: Title',
+        content: 'Being redirected back to home page when we hit Enter(return) on title text box!',
+        backgroundAudio: '',
+        backgroundImage: '',
+        date: 'Mon Apr 03 2023',
+        private: false,
+        shared: [],
+        lastModifiedBy: "O'Corner",
+        _id: ObjectId("642adea7cbd8a6d47ced1698")
+      },
+      {
+        entryID: '1o9f5vklg0wxdbp',
+        owner: "O'Corner",
+        size: 3125772,
+        title: "#BUG-004: I didn't break it!!",
+        content: 'No Idea what went wrong here...',
+        media: {
+          image: [ '1o9f5vklg0wz8fb', '1o9f5vklg0wz8fc' ],
+          video: [],
+          audio: []
+        },
+        backgroundAudio: '',
+        backgroundImage: '',
+        date: 'Mon Apr 03 2023',
+        weather: { desc: 'Clouds', icon: '03n' },
+        private: false,
+        shared: [],
+        lastModifiedBy: "O'Corner",
+        _id: ObjectId("642adf44cbd8a6d47ced2780")
+      }
+    ],
+    shared: [],
+    __v: 19
+  }
