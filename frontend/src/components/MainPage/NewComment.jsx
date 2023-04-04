@@ -13,6 +13,9 @@ export default function NewComment(props) {
   }
 
   function postComment() {
+    if (comment.length < 1) {
+      return;
+    }
     fetch(expressIP + "/postComment", {
       method: "POST",
       headers: {

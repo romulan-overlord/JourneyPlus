@@ -278,27 +278,27 @@ function Profile(props) {
                   </button>
 
                   <div
-                    class="modal fade"
+                    className="modal fade"
                     id="exampleModal"
-                    tabindex="-1"
+                    tabIndex="-1"
                     aria-labelledby="exampleModalLabel"
                     aria-hidden="true"
                   >
-                    <div class="modal-dialog modal-dialog-centered">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <h1 class="modal-title fs-5" id="exampleModalLabel">
+                    <div className="modal-dialog modal-dialog-centered">
+                      <div className="modal-content">
+                        <div className="modal-header">
+                          <h1 className="modal-title fs-5" id="exampleModalLabel">
                             Kindly Enter Your Password
                           </h1>
                           <button
                             type="button"
-                            class="btn-close"
+                            className="btn-close"
                             data-bs-dismiss="modal"
                             aria-label="Close"
                           ></button>
                         </div>
                         <form onSubmit={handleDeleteClick} method="POST">
-                          <div class="modal-body">
+                          <div className="modal-body">
                             {IsDeletePwd ? (
                               <div className="mb-3">
                                 <input
@@ -330,17 +330,17 @@ function Profile(props) {
                               </div>
                             )}
                           </div>
-                          <div class="modal-footer">
+                          <div className="modal-footer">
                             <button
                               type="button"
-                              class="btn btn-secondary"
+                              className="btn btn-secondary"
                               data-bs-dismiss="modal"
                             >
                               Close
                             </button>
                             <button
                               type="submit"
-                              class="btn btn-danger"
+                              className="btn btn-danger"
                             >
                               Delete
                             </button>
@@ -540,7 +540,7 @@ function Profile(props) {
                       type="email"
                       placeholder="Enter your email address"
                     ></input>
-                    <div class="valid-feedback">Valid Email Address!</div>
+                    <div className="valid-feedback">Valid Email Address!</div>
                   </div>
                 ) : validEmail === "invalid" ? (
                   <div className="mb-3">

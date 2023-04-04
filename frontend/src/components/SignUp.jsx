@@ -243,27 +243,27 @@ function SignUp(props) {
       </div>
       {/* Succesfully Signed in Modal */}
       <div
-        class="modal fade"
+        className="modal fade"
         id="SignedUpModal"
         aria-labelledby="SignedUpModalLabel"
         aria-hidden="true"
       >
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h1 class="modal-title fs-5" id="exampleModalLabel">
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h1 className="modal-title fs-5" id="exampleModalLabel">
                 {/* {isPrivate
                   ? "From Private to Public"
                   : "From Public to Private"} */}
               </h1>
             </div>
-            <div class="modal-body">Successfully Signed Up</div>
-            <div class="modal-footer">
+            <div className="modal-body">Successfully Signed Up</div>
+            <div className="modal-footer">
               <button
                 type="button"
                 onClick={props.invertIsSignedUp}
                 data-bs-dismiss="modal"
-                class="btn btn-primary"
+                className="btn btn-primary"
               >
                 Continue
               </button>

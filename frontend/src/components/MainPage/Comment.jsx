@@ -3,6 +3,7 @@ import Avatar from "@mui/material/Avatar";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
+import ReplyOutlinedIcon from "@mui/icons-material/ReplyOutlined";
 import { expressIP } from "../../settings";
 
 function Comment(props) {
@@ -114,6 +115,7 @@ function Comment(props) {
               <p className="small mb-0 ms-2">{props.comment.commentor}</p>
             </div>
             <div className="d-flex flex-row align-items-center">
+              <ReplyOutlinedIcon className="me-1" fontSize="small" />
               {liked ? (
                 <FavoriteOutlinedIcon
                   fontSize="small"

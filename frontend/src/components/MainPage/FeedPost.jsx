@@ -5,7 +5,6 @@ import Stack from "@mui/material/Stack";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
 import MapsUgcOutlinedIcon from "@mui/icons-material/MapsUgcOutlined";
-import ReplyOutlinedIcon from "@mui/icons-material/ReplyOutlined";
 import Card from "./Card";
 import { expressIP } from "../../settings";
 import Comment from "./Comment";
@@ -24,7 +23,7 @@ function FeedPost(props) {
       if (!props.feed.entry.private) fetchDetails();
       if(likes.likes) setReady(false);
     }
-  });
+  }, []);
 
   function updateComments(update) {
     setLikes(update);
@@ -44,7 +43,7 @@ function FeedPost(props) {
     })
       .then((response) => response.json())
       .then((data) => {
-        // console.log(data);
+        console.log(data);
         setLikes(data);
         setLiked(data.likedBy.includes(props.currentUser.username));
       })
@@ -212,7 +211,7 @@ function FeedPost(props) {
                           <FavoriteBorderIcon onClick={handleLike} />
                         )}
                         <MapsUgcOutlinedIcon onClick={toggleComments} />
-                        <ReplyOutlinedIcon />
+                        {/* <ReplyOutlinedIcon /> */}
                         <p
                           onClick={() => {
                             fetchLikers(likes.likedBy);

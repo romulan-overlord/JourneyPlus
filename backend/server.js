@@ -41,7 +41,6 @@ const MediaWarehouse = mongoose.model("mediaWarehouse", mediaWarehouseSchema);
 const commentSchema = {
   commentID: String,
   commentor: String,
-  commentorPic: String,
   comment: String,
   likes: Number,
   likedBy: [String],
@@ -477,10 +476,10 @@ app.post("/login", (req, res) => {
                         );
                         throw err;
                       }
-                      console.log(foundUser); 
+                      console.log(foundUser);
                       foundUser.picture = picture.data;
-                      foundUser.entries.sort((a,b) =>{
-                        return (b.lastModified - a.lastModified);
+                      foundUser.entries.sort((a, b) => {
+                        return b.lastModified - a.lastModified;
                       });
                       //sort foundUser.entries
                       res.send({
@@ -866,7 +865,7 @@ app.post("/unfollow", (req, res) => {
 });
 
 app.post("/getFeed", (req, res) => {
-  // console.log(req.body);
+  console.log("getting feed from: " + req.body);
   const feedArr = [];
   let feedCount = 0;
   for (let i = 0; i < req.body.following.length; i++) {
@@ -919,9 +918,8 @@ app.post("/getFeed", (req, res) => {
       console.log("in timeout: ");
       setTimeout(() => {
         console.log(feedArr.length + "<-feedArr feedcount -> " + feedCount);
-        if (feedArr.length === feedCount)
-        {
-          feedArr.sort((a,b) =>{
+        if (feedArr.length === feedCount) {
+          feedArr.sort((a, b) => {
             return b.entry.lastModified - a.entry.lastModified;
           });
           //sort feedArray
@@ -1082,12 +1080,64 @@ app.post("/getShared", async (req, res) => {
   });
 });
 
+function getUserPicture(comment) {
+  return new Promise((resolve, reject) => {
+    Users.findOne({ username: comment.commentor }, async (err, user) => {
+      if (err) throw err;
+      console.log("commentor found: ");
+      console.log(comment);
+      MediaWarehouse.findOne({ id: user.picture }, (err, result) => {
+        if (err) {
+          throw err;
+        }
+        resolve({
+          commentID: comment.commentID,
+          commentor: comment.commentor,
+          commentorPic: result.data,
+          comment: comment.comment,
+          likes: comment.likes,
+          likedBy: comment.likedBy,
+        });
+      });
+    });
+  });
+}
+
+async function buildComments(comments) {
+  let i = 0;
+  const arr = [];
+  while (i < comments.length) {
+    console.log("inside while : " + comments.length);
+    arr.push(await getUserPicture(comments[i]));
+    i++;
+  }
+
+  return new Promise((resolve, reject) => {
+    timeout = (n) => {
+      setTimeout(() => {
+        console.log(i + "<<loop   length>>" + comments.length);
+        if (i >= comments.length) resolve(arr);
+        else timeout(n);
+      }, n);
+    };
+    timeout(50);
+  });
+}
+
 app.post("/getLikes", (req, res) => {
-  // console.log(req.body);
-  FeedNetwork.findOne({ entryID: req.body.entryID }, (err, data) => {
+  console.log(req.body);
+  FeedNetwork.findOne({ entryID: req.body.entryID }, async (err, data) => {
     if (err) throw err;
     if (data) {
-      res.send(data);
+      console.log("building comments: ");
+      let temp = await buildComments(data.comments);
+      console.log("comments built in getLikes");
+      res.send({
+        entryID: data.entryID,
+        likes: data.likes,
+        likedBy: data.likedBy,
+        comments: temp,
+      });
     }
   });
   // res.send({ hey: "bro" });
@@ -1119,20 +1169,19 @@ app.post("/unlike", (req, res) => {
 });
 
 app.post("/postComment", (req, res) => {
-  FeedNetwork.findOne({ entryID: req.body.post }, (err, data) => {
+  FeedNetwork.findOne({ entryID: req.body.post }, async (err, data) => {
     if (err) {
       console.log("Error in posting comment");
       throw err;
     }
-    Users.findOne({ username: req.body.commentor });
     data.comments.push({
       commentID: uniqid(),
       commentor: req.body.commentor,
-      commentorPic: req.body.commentorPic,
       comment: req.body.comment,
       likes: 0,
     });
     data.save();
+    data.comments = await buildComments(data.comments);
     res.send({ update: data });
   });
 });
@@ -1308,6 +1357,19 @@ function uploadToWarehouse(data) {
   return newMedia.id;
 }
 
+function fetchFromWarehouse(id) {
+  console.log("fetching from warehouse");
+  return new Promise((resolve, reject) => {
+    MediaWarehouse.findOne({ id: id }, (err, result) => {
+      if (err) {
+        throw err;
+      }
+      if (result) resolve(result.data);
+      resolve();
+    });
+  });
+}
+
 function deleteFromWarehouse(id) {
   // takes id, query waehouse, delete.
   // return success or failure bool
@@ -1452,7 +1514,7 @@ app.post("/deleteUser", (req, res) => {
 });
 
 app.listen(8000, () => {
-  //cleanup();
+  // cleanup();
   console.log(`Server is running on port 8000.`);
 });
 
