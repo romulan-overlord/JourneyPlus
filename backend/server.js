@@ -275,6 +275,7 @@ app.post("/submit-entry", (req, res) => {
           }
           if (req.body.entry.owner === req.body.user) update = true;
         }
+        console.log(newEntry);
 
         results.save();
         console.log("user saved");
@@ -472,6 +473,10 @@ app.post("/login", (req, res) => {
                         throw err;
                       }
                       foundUser.picture = picture.data;
+                      foundUser.entries = foundUser.entries.sort((a,b) =>{
+                        b.lastModified - a.lastModified
+                      });
+                      //sort foundUser.entries
                       res.send({
                         success: "802", //The user is redirected to the main page
                         user: foundUser,
@@ -908,7 +913,11 @@ app.post("/getFeed", (req, res) => {
       console.log("in timeout: ");
       setTimeout(() => {
         console.log(feedArr.length + "<-feedArr feedcount -> " + feedCount);
-        if (feedArr.length === feedCount) resolve();
+        if (feedArr.length === feedCount)
+        {
+          //sort feedArray
+          resolve();
+        } 
         else timeout(n);
       }, n);
     };
@@ -1051,7 +1060,10 @@ app.post("/getShared", async (req, res) => {
         if (shared) {
           console.log("checking resolve: ");
           console.log(retArr.length + "<-retArr shared -> " + shared.length);
-          if (retArr.length === shared.length) resolve();
+          if (retArr.length === shared.length){
+            //sort retArr
+            resolve();
+          } 
           else timeout(n);
         } else timeout(n);
       }, n);
@@ -1455,40 +1467,40 @@ function cleanup() {
   Users.deleteMany({})
     .then(() => {
       console.log("users deleted");
-      // Users.create({
-      //   firstName: "Ritu Raj",
-      //   lastName: "Pradhan",
-      //   password:
-      //     "$2b$10$LYvW.Zfy1uroKYWtkqBeUOFUQTX5xmDO1vkDZh0pparhkWrh5rEoC",
-      //   username: "romulan",
-      //   email: "riturajpradhan911@gmail.com",
-      //   picture: "",
-      //   cookieID: "lfqxj199",
-      //   following: ["sham"],
-      //   followers: ["sham"],
-      //   privatePosts: 0,
-      //   publicPosts: 0,
-      //   entries: [],
-      //   shared: [],
-      //   __v: 3,
-      // });
-      // Users.create({
-      //   firstName: "Vignesh",
-      //   lastName: "Overlord",
-      //   password:
-      //     "$2b$10$YlPJx3j4yC8.RsW7v0Sq1u3JE37oF04iABgv8g6ahKqF7tbLWRl.S",
-      //   username: "sham",
-      //   email: "vig@123.com",
-      //   picture: "",
-      //   cookieID: "lfqxm1jy",
-      //   following: ["romulan"],
-      //   followers: ["romulan"],
-      //   privatePosts: 0,
-      //   publicPosts: 0,
-      //   entries: [],
-      //   shared: [],
-      //   __v: 3,
-      // });
+      Users.create({
+        firstName: "Ritu Raj",
+        lastName: "Pradhan",
+        password:
+          "$2b$10$LYvW.Zfy1uroKYWtkqBeUOFUQTX5xmDO1vkDZh0pparhkWrh5rEoC",
+        username: "romulan",
+        email: "riturajpradhan911@gmail.com",
+        picture: "",
+        cookieID: "lfqxj199",
+        following: ["sham"],
+        followers: ["sham"],
+        privatePosts: 0,
+        publicPosts: 0,
+        entries: [],
+        shared: [],
+        __v: 3,
+      });
+      Users.create({
+        firstName: "Vignesh",
+        lastName: "Overlord",
+        password:
+          "$2b$10$YlPJx3j4yC8.RsW7v0Sq1u3JE37oF04iABgv8g6ahKqF7tbLWRl.S",
+        username: "sham",
+        email: "vig@123.com",
+        picture: "",
+        cookieID: "lfqxm1jy",
+        following: ["romulan"],
+        followers: ["romulan"],
+        privatePosts: 0,
+        publicPosts: 0,
+        entries: [],
+        shared: [],
+        __v: 3,
+      });
     })
     .catch(function (error) {
       console.log(error); // Failure

@@ -190,13 +190,14 @@ function App() {
   }
 
   function updateEntries(newEntry) {
-    const newEntryArr = currentUser.entries;
+    let newEntryArr = currentUser.entries;
     for (let i = 0; i < newEntryArr.length; i++) {
       if (newEntryArr[i].entryID === newEntry.entryID) {
         newEntryArr.splice(i, 1);
       }
     }
-    newEntryArr.push(newEntry);
+    newEntryArr = [newEntry, ...newEntryArr];
+    // newEntryArr.push(newEntry);
     setCurrentUser((prev) => {
       return {
         ...prev,

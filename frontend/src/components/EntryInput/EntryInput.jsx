@@ -85,6 +85,8 @@ function EntryInput(props) {
   function handleSubmit(event) {
     event.preventDefault();
     entryData.lastModifiedBy = props.currentUser.username;
+    console.log(Date.now());
+    // entryData.lastModified = event.timeStamp;
     fetch(expressIP + "/submit-entry", {
       method: "POST", // or 'PUT'
       headers: {
