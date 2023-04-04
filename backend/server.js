@@ -437,6 +437,7 @@ app.post("/signUp", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
+  console.log("Inside login");
   Users.findOne(
     {
       username: req.body.username,
@@ -456,7 +457,9 @@ app.post("/login", (req, res) => {
                 foundUser.cookieID = req.body.cookieID; //The user is assigned a cookie
                 foundUser.save();
                 if (foundUser.picture.length < 2) {
-                  // console.log("no picture");
+                  foundUser.entries.sort((a, b) => {
+                    return b.lastModified - a.lastModified;
+                  });
                   res.send({
                     success: "802", //The user is redirected to the main page
                     user: foundUser,
@@ -472,9 +475,10 @@ app.post("/login", (req, res) => {
                         );
                         throw err;
                       }
+                      console.log(foundUser); 
                       foundUser.picture = picture.data;
-                      foundUser.entries = foundUser.entries.sort((a,b) =>{
-                        b.lastModified - a.lastModified
+                      foundUser.entries.sort((a,b) =>{
+                        return (b.lastModified - a.lastModified);
                       });
                       //sort foundUser.entries
                       res.send({
@@ -915,6 +919,9 @@ app.post("/getFeed", (req, res) => {
         console.log(feedArr.length + "<-feedArr feedcount -> " + feedCount);
         if (feedArr.length === feedCount)
         {
+          feedArr.sort((a,b) =>{
+            return b.entry.lastModified - a.entry.lastModified;
+          });
           //sort feedArray
           resolve();
         } 
