@@ -1336,8 +1336,8 @@ function deleteFromComment(id) {
 }
 
 app.post("/deleteUser", (req, res) => {
-  console.log("Inside deleteUser");
-  console.log(req.body);
+  // console.log("Inside deleteUser");
+  // console.log(req.body);
   Users.findOne({ username: req.body.username }, (err, user) => {
     if (err) throw err;
     if (user) {
@@ -1423,15 +1423,34 @@ app.post("/deleteUser", (req, res) => {
                     }
                     if (user.entries[i].backgroundAudio.length > 0)
                       deleteFromWarehouse(user.backgroundAudio);
-
-                    console.log("Account succesfully deleted");
-                    res.send({
-                      success: "sucess",
-                    });
+                    
+                    for(let s = 0; s < user.entries[i].shared.length; s++){
+                      console.log("Inside shared");
+                      Users.findOne({username: user.entries[i].shared[s]}, (err, sharedUser) => {
+                        if(err) throw err;
+                        for(let t = 0; t < sharedUser.shared.length; t++){
+                          console.log(
+                            "shared: " + sharedUser.shared[t].username
+                          );
+                          console.log(
+                            user.username
+                          );
+                          if(sharedUser.shared[t].username === user.username){
+                            sharedUser.shared.splice(t, 1);
+                          }
+                        }
+                        sharedUser.save();
+                      });
+                    }
+                    
+                    // console.log("Account succesfully deleted");
+                    // res.send({
+                    //   success: "sucess",
+                    // });
                     // deleteEntry(user.entries[i]);
                     // user.entries.splice(i, 1);
                   }
-                  console.log("Account succesfully deleted");
+                    console.log("Account succesfully deleted");
                   res.send({
                     success: "success",
                   });

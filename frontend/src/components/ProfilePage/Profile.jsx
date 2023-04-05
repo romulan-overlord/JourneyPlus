@@ -48,7 +48,7 @@ function Profile(props) {
   function invertModal() {
     setDeleteModal((prev) => {
       return !prev;
-    })
+    });
   }
 
   function handleSubmit(event) {
@@ -80,6 +80,7 @@ function Profile(props) {
   }
 
   function fetchUsers() {
+    console.log("inside fetch");
     fetch(expressIP + "/fetchUsersForProfile", {
       method: "POST",
       headers: {
@@ -92,7 +93,7 @@ function Profile(props) {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
+        //console.log(data);
         setAllUsers(data.users);
       });
   }
@@ -116,26 +117,36 @@ function Profile(props) {
 
   function ValidateEmail(inputText) {
     var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-    if (inputText.match(mailformat)) {
+    if (String(inputText).match(mailformat)) {
       return true;
     } else {
       return false;
     }
   }
+  console.log(allUsers);
   // event.target.value === allUsers[i].email &&
   function handleEmailChange(event) {
-    for (let i = 0; i < allUsers.length; i++) {
+    if (allUsers.length === 0) {
       if (ValidateEmail(event.target.value) === true) {
-        if (event.target.value === allUsers[i].email) {
-          setValidEmail("taken");
-        } else {
-          setValidEmail("valid");
-        }
+        setValidEmail("valid");
+      } else if (event.target.value === "") {
+        setValidEmail("");
       } else {
-        if (event.target.value === "") {
-          setValidEmail("");
+        setValidEmail("invalid");
+      }
+    } else {
+      setValidEmail("valid");
+      for (let i = 0; i < allUsers.length; i++) {
+        if (ValidateEmail(event.target.value) === true) {
+          if (event.target.value === allUsers[i].email) {
+            setValidEmail("taken");
+          }
         } else {
-          setValidEmail("invalid");
+          if (event.target.value === "") {
+            setValidEmail("");
+          } else {
+            setValidEmail("invalid");
+          }
         }
       }
     }
@@ -180,16 +191,15 @@ function Profile(props) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(
-        requestData),
+      body: JSON.stringify(requestData),
     })
       .then((response) => response.json())
       .then((data) => {
-        if(data.success === "failure"){
+        if (data.success === "failure") {
           invertPwd();
-        }else if(data.success === "success"){
+        } else if (data.success === "success") {
           console.log("data sent to frontend");
-          window.$('#exampleModal').modal("hide");
+          window.$("#exampleModal").modal("hide");
           props.invertLoggedIn();
           props.invertProfilePage();
         }
@@ -338,10 +348,7 @@ function Profile(props) {
                             >
                               Close
                             </button>
-                            <button
-                              type="submit"
-                              class="btn btn-danger"
-                            >
+                            <button type="submit" class="btn btn-danger">
                               Delete
                             </button>
                           </div>
