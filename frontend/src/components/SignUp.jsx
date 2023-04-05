@@ -12,6 +12,7 @@ function SignUp(props) {
   const [isUID, setUid] = useState(true);
   const [isEmail, setEmail] = useState(true);
   const [Pwd, setPwd] = useState("");
+  const [pwdStrength, setpwdStrength] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -215,16 +216,33 @@ function SignUp(props) {
                     </div>
                     <PasswordStrengthBar
                       password={Pwd}
-                      // scoreWordStyle={color: }
+                      onChangeScore={(score, feedback) => {
+                        setpwdStrength(score);
+                      }}
+                      scoreWordStyle={{color: "black"}}
                     />
-                    <div className="text-center">
-                      <button
-                        className="button-text btn btn-block btn-outline-dark set-signup-button-colour"
-                        type="submit"
-                      >
-                        Sign Up
-                      </button>
-                    </div>
+                    {pwdStrength === 2 ||
+                    pwdStrength === 3 ||
+                    pwdStrength === 4 ? (
+                      <div className="text-center">
+                        <button
+                          className="button-text btn btn-block btn-outline-dark set-signup-button-colour"
+                          type="submit"
+                        >
+                          Sign Up
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="text-center">
+                        <button
+                          className="button-text btn btn-block btn-outline-dark set-signup-button-colour"
+                          type="submit"
+                          disabled
+                        >
+                          Sign Up
+                        </button>
+                      </div>
+                    )}
                   </form>
 
                   <div className="text-center">

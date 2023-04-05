@@ -10,7 +10,9 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 function Login(props) {
   const [IslogUid, setLogUid] = useState(true);
   const [IsPwd, setPwd] = useState(true);
-  const [showPassword, setShowPassword] = useState(false);
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [toggleRememberMe, setRememberMe] = useState(false);
   const [email, setEmail] = useState("");
   const [isValidEmail, setisValidEmail] = useState(true);
@@ -20,8 +22,13 @@ function Login(props) {
   const [isNewPassword, setNewPassword] = useState("");
   const [isConfirmationPwd, setConfirmationPwd] = useState("");
   const [validConfirmationPwd, setValidConfimationPwd] = useState("");
+  const [pwdStrength, setpwdStrength] = useState(0);
 
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
+  const handleClickShowLoginPassword = () =>
+    setShowLoginPassword((show) => !show);
+  const handleClickShowNewPassword = () => setShowNewPassword((show) => !show);
+  const handleClickShowConfirmPassword = () =>
+    setShowConfirmPassword((show) => !show);
 
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
@@ -73,17 +80,15 @@ function Login(props) {
   }
 
   function handleNewPasswordChange(event) {
-    if(isConfirmationPwd === "")
+    if (isConfirmationPwd === "") setNewPassword(event.target.value);
+    else {
       setNewPassword(event.target.value);
-    else{
-      setNewPassword(event.target.value);
-      if(isConfirmationPwd !== event.target.value){
+      if (isConfirmationPwd !== event.target.value) {
         setValidConfimationPwd("invalid");
-      }else{
+      } else {
         setValidConfimationPwd("valid");
       }
     }
-    
   }
 
   function handleConfirmPasswordChange(event) {
@@ -264,7 +269,7 @@ function Login(props) {
                       )}
                       <div className="input-group flex-nowrap set-colour outline-dark margin-between-input">
                         <input
-                          type={showPassword ? "text" : "password"}
+                          type={showLoginPassword ? "text" : "password"}
                           name="password"
                           className={
                             IsPwd ? "form-control" : "form-control is-invalid"
@@ -282,11 +287,11 @@ function Login(props) {
                           >
                             <IconButton
                               aria-label="toggle password visibility"
-                              onClick={handleClickShowPassword}
+                              onClick={handleClickShowLoginPassword}
                               onMouseDown={handleMouseDownPassword}
                               edge="end"
                             >
-                              {showPassword ? (
+                              {showLoginPassword ? (
                                 <VisibilityOffIcon />
                               ) : (
                                 <VisibilityIcon />
@@ -295,6 +300,9 @@ function Login(props) {
                           </InputAdornment>
                         </div>
                       </div>
+                      {IsPwd ? null : (
+                        <div className="invalidPwd">Invalid Password</div>
+                      )}
                       {/* <div className="margin-between-input">
                           <input
                               onChange={invertPwd}
@@ -515,47 +523,92 @@ function Login(props) {
                           </div>
                           <div className="modal-body px-5">
                             <div className="form-outline">
-                              <input
-                                type="password"
-                                placeholder="Enter New Password"
-                                onChange={handleNewPasswordChange}
-                                name="newPassword"
-                                className="form-control my-3"
-                              ></input>
-                              <PasswordStrengthBar password={isNewPassword} />
-                              <input
-                                type="password"
-                                placeholder="Confirm Password"
-                                onChange={handleConfirmPasswordChange}
-                                name="newPassword"
-                                className={
-                                  validConfirmationPwd === ""
-                                    ? "form-control my-3"
-                                    : validConfirmationPwd === "valid"
-                                    ? "form-control is-valid"
-                                    : validConfirmationPwd === "invalid"
-                                    ? "form-control is-invalid"
-                                    : null
-                                }
-                              ></input>
-                              {validConfirmationPwd === "valid" ? (
-                                <div className="valid-feedback">
-                                  Password Match.
+                              <div className="input-group flex-nowrap outline-dark margin-between-input">
+                                <input
+                                  type={showNewPassword ? "text" : "password"}
+                                  className="form-control"
+                                  onChange={handleNewPasswordChange}
+                                  placeholder="Enter New Password"
+                                  aria-label="Password"
+                                  aria-describedby="addon-wrapping"
+                                ></input>
+                                <div className="input-group-text">
+                                  <InputAdornment
+                                    className="visibility-icon"
+                                    position="start"
+                                  >
+                                    <IconButton
+                                      aria-label="toggle password visibility"
+                                      onClick={handleClickShowNewPassword}
+                                      onMouseDown={handleMouseDownPassword}
+                                      edge="end"
+                                    >
+                                      {showNewPassword ? (
+                                        <VisibilityOffIcon />
+                                      ) : (
+                                        <VisibilityIcon />
+                                      )}
+                                    </IconButton>
+                                  </InputAdornment>
                                 </div>
+                              </div>
+
+                              <PasswordStrengthBar
+                                password={isNewPassword}
+                                onChangeScore={(score, feedback) => {
+                                  setpwdStrength(score);
+                                }}
+                              />
+                              <div className="input-group flex-nowrap outline-dark margin-between-input">
+                                <input
+                                  type={
+                                    showConfirmPassword ? "text" : "password"
+                                  }
+                                  placeholder="Confirm Password"
+                                  onChange={handleConfirmPasswordChange}
+                                  className={
+                                    validConfirmationPwd === ""
+                                      ? "form-control"
+                                      : validConfirmationPwd === "valid"
+                                      ? "form-control is-valid"
+                                      : validConfirmationPwd === "invalid"
+                                      ? "form-control is-invalid"
+                                      : null
+                                  }
+                                ></input>
+                                <div className="input-group-text">
+                                  <InputAdornment
+                                    className="visibility-icon"
+                                    position="start"
+                                  >
+                                    <IconButton
+                                      aria-label="toggle password visibility"
+                                      onClick={handleClickShowConfirmPassword}
+                                      onMouseDown={handleMouseDownPassword}
+                                      edge="end"
+                                    >
+                                      {showConfirmPassword ? (
+                                        <VisibilityOffIcon />
+                                      ) : (
+                                        <VisibilityIcon />
+                                      )}
+                                    </IconButton>
+                                  </InputAdornment>
+                                </div>
+                              </div>
+                              {validConfirmationPwd === "valid" ? (
+                                <div className="validPwd">Password Match.</div>
                               ) : validConfirmationPwd === "invalid" ? (
-                                <div className="invalid-feedback">
+                                <div className="invalidPwd">
                                   Password Mismatch.
                                 </div>
                               ) : null}
-                              {/* {isValidEmail ? null : (
-                                <div className="invalid-feedback">
-                                  Invalid Email.
-                                </div>
-                              )} */}
                             </div>
 
                             {validConfirmationPwd === "" ||
-                            validConfirmationPwd === "invalid" ? (
+                            validConfirmationPwd === "invalid" ||
+                            pwdStrength === 0 ||
+                            pwdStrength === 1 ? (
                               <button
                                 type="button"
                                 disabled
