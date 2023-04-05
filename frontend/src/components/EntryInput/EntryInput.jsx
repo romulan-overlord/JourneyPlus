@@ -6,6 +6,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import $ from "jquery";
 import MediaTray from "./MediaTray";
 import Footer from "../Footer";
+import Shared from "./Shared";
 
 function EntryInput(props) {
   // console.log(props.passedEntry);
@@ -241,13 +242,21 @@ function EntryInput(props) {
                 className="container-fluid px-0 entry-content-container"
                 id="content-div"
               >
-                <textarea
-                  className="entry-content height-100"
-                  placeholder="Write your thoughts away..."
-                  onChange={handleTextChange}
-                  name="content"
-                  value={entryData.content}
-                ></textarea>
+                {props.display === "Shared" ||
+                props.passedEntry.shared.length > 0 ? (
+                  <Shared
+                    content={entryData.content}
+                    entryID={entryData.entryID}
+                  />
+                ) : (
+                  <textarea
+                    className="entry-content height-100"
+                    placeholder="Write your thoughts away..."
+                    onChange={handleTextChange}
+                    name="content"
+                    value={entryData.content}
+                  ></textarea>
+                )}
               </div>
             </div>
             {/* column for media attachments */}
