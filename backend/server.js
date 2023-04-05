@@ -38,12 +38,21 @@ const mediaWarehouseSchema = {
 
 const MediaWarehouse = mongoose.model("mediaWarehouse", mediaWarehouseSchema);
 
+const replySchema = {
+  commentID: String,
+  commentor: String,
+  comment: String,
+  likes: Number,
+  likedBy: [String],
+};
+
 const commentSchema = {
   commentID: String,
   commentor: String,
   comment: String,
   likes: Number,
   likedBy: [String],
+  replies: [replySchema],
 };
 
 const Comment = mongoose.model("comment", commentSchema);
@@ -1086,18 +1095,14 @@ function getUserPicture(comment) {
       if (err) throw err;
       console.log("commentor found: ");
       console.log(comment);
-      MediaWarehouse.findOne({ id: user.picture }, (err, result) => {
-        if (err) {
-          throw err;
-        }
-        resolve({
-          commentID: comment.commentID,
-          commentor: comment.commentor,
-          commentorPic: result.data,
-          comment: comment.comment,
-          likes: comment.likes,
-          likedBy: comment.likedBy,
-        });
+      resolve({
+        commentID: comment.commentID,
+        commentor: comment.commentor,
+        commentorPic: await fetchFromWarehouse(user.picture),
+        comment: comment.comment,
+        likes: comment.likes,
+        likedBy: comment.likedBy,
+        replies: comment.replies,
       });
     });
   });
@@ -1106,9 +1111,15 @@ function getUserPicture(comment) {
 async function buildComments(comments) {
   let i = 0;
   const arr = [];
+  let temp = null;
   while (i < comments.length) {
     console.log("inside while : " + comments.length);
-    arr.push(await getUserPicture(comments[i]));
+    temp = await getUserPicture(comments[i]);
+    if (comments[i].replies) {
+      temp.replies = await buildComments(comments[i].replies);
+    }
+    arr.push(temp);
+
     i++;
   }
 
@@ -1140,7 +1151,6 @@ app.post("/getLikes", (req, res) => {
       });
     }
   });
-  // res.send({ hey: "bro" });
 });
 
 app.post("/like", (req, res) => {
@@ -1179,16 +1189,24 @@ app.post("/postComment", (req, res) => {
       commentor: req.body.commentor,
       comment: req.body.comment,
       likes: 0,
+      replies: [],
     });
     data.save();
-    data.comments = await buildComments(data.comments);
-    res.send({ update: data });
+    const temp = await buildComments(data.comments);
+    res.send({
+      update: {
+        entryID: data.entryID,
+        likes: data.likes,
+        likedBy: data.likedBy,
+        comments: temp,
+      },
+    });
   });
 });
 
 app.post("/deleteComment", (req, res) => {
   console.log("deleting comment");
-  FeedNetwork.findOne({ entryID: req.body.entryID }, (err, data) => {
+  FeedNetwork.findOne({ entryID: req.body.entryID }, async (err, data) => {
     if (err) {
       console.log("Error in deleting comment");
       throw err;
@@ -1203,12 +1221,89 @@ app.post("/deleteComment", (req, res) => {
     if (index === -1) res.send({ data: "error" });
     data.comments.splice(index, 1);
     data.save();
-    res.send({ data: data });
+    const temp = await buildComments(data.comments);
+    res.send({
+      data: {
+        entryID: data.entryID,
+        likes: data.likes,
+        likedBy: data.likedBy,
+        comments: temp,
+      },
+    });
+    // res.send({ data: data });
+  });
+});
+
+app.post("/deleteReply", (req, res) => {
+  console.log("deleting reply");
+  FeedNetwork.findOne({ entryID: req.body.entryID }, async (err, data) => {
+    if (err) {
+      console.log("Error in deleting reply");
+      throw err;
+    }
+    let index = -1;
+    for (let i = 0; i < data.comments.length; i++) {
+      if (data.comments[i].commentID === req.body.parentID) {
+        index = i;
+        break;
+      }
+    }
+    if (index === -1) res.send({ data: "error" });
+    for (let j = 0; j < data.comments[index].replies.length; j++) {
+      console.log("in 2nd loop");
+      if (data.comments[index].replies[j].commentID === req.body.commentID) {
+        console.log("reply found");
+        data.comments[index].replies.splice(j, 1);
+        data.save();
+        const temp = await buildComments(data.comments);
+        res.send({
+          data: {
+            entryID: data.entryID,
+            likes: data.likes,
+            likedBy: data.likedBy,
+            comments: temp,
+          },
+        });
+      }
+    }
+    // data.comments.splice(index, 1);
+
+    // res.send({ data: data });
+  });
+});
+
+app.post("/postReply", (req, res) => {
+  FeedNetwork.findOne({ entryID: req.body.post }, async (err, data) => {
+    if (err) {
+      console.log("Error in posting comment");
+      throw err;
+    }
+    for (let i = 0; i < data.comments.length; i++) {
+      if (data.comments[i].commentID === req.body.commentID) {
+        data.comments[i].replies.push({
+          commentID: uniqid(),
+          commentor: req.body.commentor,
+          comment: req.body.comment,
+          likes: 0,
+          likedBy: [],
+        });
+      }
+    }
+    data.save();
+    const temp = await buildComments(data.comments);
+    res.send({
+      update: {
+        entryID: data.entryID,
+        likes: data.likes,
+        likedBy: data.likedBy,
+        comments: temp,
+      },
+    });
   });
 });
 
 app.post("/likeComment", (req, res) => {
-  FeedNetwork.findOne({ entryID: req.body.entryID }, (err, data) => {
+  FeedNetwork.findOne({ entryID: req.body.entryID }, async (err, data) => {
     if (err) {
       console.log("error liking comment");
       throw err;
@@ -1221,12 +1316,50 @@ app.post("/likeComment", (req, res) => {
         break;
       }
     }
-    res.send({ data: data });
+    const temp = await buildComments(data.comments);
+    res.send({
+      data: {
+        entryID: data.entryID,
+        likes: data.likes,
+        likedBy: data.likedBy,
+        comments: temp,
+      },
+    });
+    // res.send({ data: data });
+  });
+});
+
+app.post("/likeReply", (req, res) => {
+  FeedNetwork.findOne({ entryID: req.body.entryID }, async (err, data) => {
+    if (err) {
+      console.log("error liking comment");
+      throw err;
+    }
+    for (let i = 0; i < data.comments.length; i++) {
+      if (data.comments[i].commentID === req.body.parentID) {
+        for (let j = 0; j < data.comments[i].replies.length; j++) {
+          if (data.comments[i].replies[j].commentID === req.body.commentID) {
+            data.comments[i].replies[j].likes += 1;
+            data.comments[i].replies[j].likedBy.push(req.body.likedBy);
+            data.save();
+            const temp = await buildComments(data.comments);
+            res.send({
+              data: {
+                entryID: data.entryID,
+                likes: data.likes,
+                likedBy: data.likedBy,
+                comments: temp,
+              },
+            });
+          }
+        }
+      }
+    }
   });
 });
 
 app.post("/unlikeComment", (req, res) => {
-  FeedNetwork.findOne({ entryID: req.body.entryID }, (err, data) => {
+  FeedNetwork.findOne({ entryID: req.body.entryID }, async (err, data) => {
     if (err) {
       console.log("error unliking comment");
       throw err;
@@ -1242,7 +1375,47 @@ app.post("/unlikeComment", (req, res) => {
         break;
       }
     }
-    res.send({ data: data });
+    const temp = await buildComments(data.comments);
+    res.send({
+      data: {
+        entryID: data.entryID,
+        likes: data.likes,
+        likedBy: data.likedBy,
+        comments: temp,
+      },
+    });
+  });
+});
+
+app.post("/unlikeReply", (req, res) => {
+  FeedNetwork.findOne({ entryID: req.body.entryID }, async (err, data) => {
+    if (err) {
+      console.log("error unliking comment");
+      throw err;
+    }
+    for (let i = 0; i < data.comments.length; i++) {
+      if (data.comments[i].commentID === req.body.parentID) {
+        for (let j = 0; j < data.comments[i].replies.length; j++) {
+          if (data.comments[i].replies[j].commentID === req.body.commentID) {
+            data.comments[i].replies[j].likes -= 1;
+            data.comments[i].replies[j].likedBy.splice(
+              data.comments[i].replies[j].likedBy.indexOf(req.body.unlikedBy),
+              1
+            );
+            data.save();
+            const temp = await buildComments(data.comments);
+            res.send({
+              data: {
+                entryID: data.entryID,
+                likes: data.likes,
+                likedBy: data.likedBy,
+                comments: temp,
+              },
+            });
+          }
+        }
+      }
+    }
   });
 });
 

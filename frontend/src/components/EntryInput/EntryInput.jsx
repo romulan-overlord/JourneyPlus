@@ -286,36 +286,36 @@ function EntryInput(props) {
         </form>
       </div>
       <div
-        class="modal fade"
+        className="modal fade"
         id="exampleModal"
-        tabindex="-1"
+        tabIndex="-1"
         aria-labelledby="exampleModalLabel"
         aria-hidden="true"
       >
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h1 class="modal-title fs-5" id="exampleModalLabel">
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h1 className="modal-title fs-5" id="exampleModalLabel">
                 {isPrivate
                   ? "From Private to Public"
                   : "From Public to Private"}
               </h1>
               <button
                 type="button"
-                class="btn-close"
+                className="btn-close"
                 data-bs-dismiss="modal"
                 aria-label="Close"
               ></button>
             </div>
-            <div class="modal-body">
+            <div className="modal-body">
               {isPrivate
                 ? "Do you want to make your post public?"
                 : "Do you want to make your post private?"}
             </div>
-            <div class="modal-footer">
+            <div className="modal-footer">
               <button
                 type="button"
-                class="btn btn-secondary"
+                className="btn btn-secondary"
                 data-bs-dismiss="modal"
               >
                 No
@@ -324,7 +324,7 @@ function EntryInput(props) {
                 type="button"
                 onClick={toggleVisibility}
                 data-bs-dismiss="modal"
-                class="btn btn-primary"
+                className="btn btn-primary"
               >
                 Yes
               </button>

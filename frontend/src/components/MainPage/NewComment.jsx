@@ -41,17 +41,47 @@ export default function NewComment(props) {
       });
   }
 
+  function postReply() {
+    if (comment.length < 1) {
+      return;
+    }
+    fetch(expressIP + "/postReply", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        comment: comment,
+        commentor: props.currentUser.username,
+        commentorPic: props.currentUser.picture,
+        post: props.post,
+        commentID: props.commentID,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        props.updateComments(data.update);
+        setComment("");
+        // setLikes(data);
+        // setLiked(data.likedBy.includes(props.currentUser.username));
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }
+
   return (
     <div className="container-fluid">
       <div className="d-flex flex-start w-100">
-        <Avatar src={props.currentUser.picture} className="me-2" />
+        {/* <Avatar src={props.currentUser.picture} className="me-2" /> */}
         <div className="form-outline w-100">
           <textarea
             className="form-control"
             id="textAreaExample"
             rows={2}
             style={{ background: "#fff" }}
-            placeholder="your message"
+            placeholder={props.reply ? "your reply" : "your message"}
             onChange={handleComment}
             value={comment}
           />
@@ -59,9 +89,9 @@ export default function NewComment(props) {
             <button
               type="button"
               className="btn btn-primary btn-sm"
-              onClick={postComment}
+              onClick={props.reply ? postReply : postComment}
             >
-              Post comment
+              {props.reply ? "Post reply" : "Post comment"}
             </button>
           </div>
         </div>

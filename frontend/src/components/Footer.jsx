@@ -145,7 +145,7 @@ export default function Footer(props) {
 
   return (
     <>
-      <div class="modal fade" id="shareList" tabindex="-1">
+      <div className="modal fade" id="shareList" tabIndex="-1">
         <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
           <div className="modal-content">
             <div className="modal-header">

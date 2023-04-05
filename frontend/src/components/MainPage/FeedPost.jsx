@@ -248,10 +248,11 @@ function FeedPost(props) {
                           }
                           comment={comment}
                           post={props.feed.entry.entryID}
-                          currentUser={props.currentUser.username}
+                          currentUser={props.currentUser}
                           updateComments={updateComments}
                           fetchLikers={fetchLikers}
                           key={index}
+                          isComment={true}
                         />
                       );
                     })}
