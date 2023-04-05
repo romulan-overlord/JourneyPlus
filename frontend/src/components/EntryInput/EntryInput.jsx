@@ -9,6 +9,7 @@ import MediaTray from "./MediaTray";
 import Footer from "../Footer";
 import Help from "./Help";
 import Test from "./Test";
+import CollaborativeEditor from "./CollaborativeEditor";
 
 function EntryInput(props) {
   const [entryData, setEntryData] = useState(props.passedEntry);
@@ -240,7 +241,7 @@ function EntryInput(props) {
                 className="container-fluid px-0 entry-content-container"
                 id="content-div"
               >
-                {props.sync ? (
+                {/* {props.sync ? (
                   <Test
                     content={entryData.content}
                     entryID={entryData.entryID}
@@ -258,7 +259,12 @@ function EntryInput(props) {
                     name="content"
                     value={entryData.content}
                   ></textarea>
-                )}
+                )} */}
+
+                <CollaborativeEditor
+                  entryID={"12345"}
+                  content={entryData.content}
+                />
 
                 {/* <Help className="entry-content height-100"/> */}
               </div>
