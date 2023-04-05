@@ -4,3 +4,5 @@
 2.  Automatically getting logged out when home button is clicked.
 
 3.  Being redirected back to home page when we hit Enter(return) on title text box!
+
+4.  Edit button is visible if display mode is private, public in entryInput
