@@ -15,11 +15,11 @@ What expansive journalling entails:
 
 ### Built With
 
-* [![React][React.js]][React-url]
+* [React.js]
 * [![Bootstrap][Bootstrap.com]][Bootstrap-url]
 * [![JQuery][JQuery.com]][JQuery-url]
 * [![MongoDB][MongoDB.com]]
-* [![Express][Express.js]]
+* [Express.js]
 * [![MUI][Material.ui]]
 * [![Node][Node.js]]
 * [![NPM][NPM.com]]
