@@ -20,7 +20,7 @@ What expansive journalling entails:
 * [![JQuery][JQuery.com]][JQuery-url]
 * [![MongoDB][MongoDB.com]]
 * [Express.js]
-* [![MUI][Material.ui]]
+* [MUI][Material.ui]
 * [![Node][Node.js]]
 * [![NPM][NPM.com]]
 * [![Socket][Socket.io]]
