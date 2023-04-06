@@ -59,11 +59,18 @@ Install the following prerequisites:
    ```sh
    npm run dev
    ```
-4. Start up the frontend server
+4. Install NPM packages in frontend
+   ```sh
+   cd ./frontend
+   npm install
+   ```
+5. Start up the frontend server
    ```sh
    npm start
    ```
 Access the website on http://localhost:3000
+Note: Change the url of the ExpressIP constant in `settings.js` in frontend to your backend server's url.
+      Default: http://localhost:8000
 
 
 
