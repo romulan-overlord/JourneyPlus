@@ -15,15 +15,15 @@ What expansive journalling entails:
 
 ### Built With
 
-* [React.js]
+* [![React][React.js]][React-url]
 * [![Bootstrap][Bootstrap.com]][Bootstrap-url]
 * [![JQuery][JQuery.com]][JQuery-url]
-* [![MongoDB][MongoDB.com]]
-* [Express.js]
-* [MUI][Material.ui]
-* [![Node][Node.js]]
-* [![NPM][NPM.com]]
-* [![Socket][Socket.io]]
+* [![MongoDB][MongoDB.com]][Mongo-url]
+* [![Express][Express.js]][Express-url]
+* [![MUI][Material.ui]][MUI-url]
+* [![Node][Node.js]][Node-url]
+* [![NPM][NPM.com]][NPM-url]
+* [![Socket][Socket.io]][Socket-url]
 
 
 
@@ -35,11 +35,17 @@ What expansive journalling entails:
 [JQuery.com]: https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white
 [JQuery-url]: https://jquery.com 
 [MongoDB.com]: https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white
+[Mongo-url]: https://www.mongodb.com/
 [Express.js]: https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white
+[Express-url]: https://expressjs.com/
 [Material.ui]: https://img.shields.io/badge/Material%20UI-007FFF?style=for-the-badge&logo=mui&logoColor=white
+[MUI-url]: https://mui.com/
 [Node.js]: https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white
+[Node-url]: https://nodejs.org/
 [NPM.com]: https://img.shields.io/badge/npm-CB3837?style=for-the-badge&logo=npm&logoColor=white
+[NPM-url]: https://www.npmjs.com/
 [Socket.io]: https://img.shields.io/badge/Socket.io-010101?&style=for-the-badge&logo=Socket.io&logoColor=white
+[Socket-url]: https://socket.io/
 [Yarn.com]: https://img.shields.io/badge/Yarn-2C8EBB?style=for-the-badge&logo=yarn&logoColor=white
 
 [CSS.3]: https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white
