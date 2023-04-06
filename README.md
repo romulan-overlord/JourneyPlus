@@ -17,13 +17,13 @@ What expansive journalling entails:
 
 ### Built With
 
-* [![React][React.js]][React-url]
-* [![Bootstrap][Bootstrap.com]][Bootstrap-url]
-* [![JQuery][JQuery.com]][JQuery-url]
 * [![MongoDB][MongoDB.com]][Mongo-url]
 * [![Express][Express.js]][Express-url]
-* [![MUI][Material.ui]][MUI-url]
+* [![React][React.js]][React-url]
 * [![Node][Node.js]][Node-url]
+* [![Bootstrap][Bootstrap.com]][Bootstrap-url]
+* [![MUI][Material.ui]][MUI-url]
+* [![JQuery][JQuery.com]][JQuery-url]
 * [![NPM][NPM.com]][NPM-url]
 * [![Socket][Socket.io]][Socket-url]
 
