@@ -13,6 +13,8 @@ What expansive journalling entails:
 
 
 
+
+
 ### Built With
 
 * [![React][React.js]][React-url]
@@ -24,6 +26,44 @@ What expansive journalling entails:
 * [![Node][Node.js]][Node-url]
 * [![NPM][NPM.com]][NPM-url]
 * [![Socket][Socket.io]][Socket-url]
+
+
+
+
+
+
+<!-- GETTING STARTED -->
+## Getting Started
+
+Follow these steps to have the application running on your own device
+
+### Prerequisites
+
+Install the following prerequisites:
+* nodeJS
+* mongoDB
+
+
+### Installation
+
+1. Clone the repo
+   ```sh
+   git clone https://github.com/romulan-overlord/Project-1.git
+   ```
+2. Install NPM packages in backend
+   ```sh
+   cd ./backend
+   npm install
+   ```
+3. Start up the backend server
+   ```sh
+   npm run dev
+   ```
+4. Start up the frontend server
+   ```sh
+   npm start
+   ```
+Access the website on http://localhost:3000
 
 
 
