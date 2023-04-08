@@ -43,6 +43,9 @@ Install the following prerequisites:
 * nodeJS
 * mongoDB
 
+Setup your mongoDB database by running mongod.
+The project will create a database named projectDB.
+
 
 ### Installation
 
@@ -59,16 +62,20 @@ Install the following prerequisites:
    ```sh
    npm run dev
    ```
-4. Install NPM packages in frontend
+4. 3. Start up the socket server to allow synchronised editing:
+   ```sh
+   npm run sync
+   ```
+5. Install NPM packages in frontend
    ```sh
    cd ./frontend
    npm install
    ```
-5. Start up the frontend server
+6. Start up the frontend server
    ```sh
    npm start
    ```
-Access the website on http://localhost:3000
+Access the website on `http://localhost:3000`
 
 Note: Change the url of the ExpressIP constant in `settings.js` in frontend to your backend server's url.
 
