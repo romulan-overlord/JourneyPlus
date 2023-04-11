@@ -242,9 +242,8 @@ function EntryInput(props) {
                       name="title"
                       value={entryData.title}
                       onKeyDown={(event) => {
-                        console.log(event.keyCode);
-                        if(event.keyCode === 13)
-                          event.preventDefault();
+                        // console.log(event.keyCode);
+                        if (event.keyCode === 13) event.preventDefault();
                       }}
                     ></input>
                   </div>
@@ -384,6 +383,7 @@ function EntryInput(props) {
           setShared: (shared) => {
             entryData.shared = shared;
           },
+          weather: entryData.weather,
         }}
       />
       {setDimensions()}
