@@ -62,7 +62,7 @@ The project will create a database named projectDB.
    ```sh
    npm run dev
    ```
-4. 3. Start up the socket server to allow synchronised editing:
+4. Start up the socket server to allow synchronised editing:
    ```sh
    npm run sync
    ```

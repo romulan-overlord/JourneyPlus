@@ -26,6 +26,7 @@ export default function NewComment(props) {
         commentor: props.currentUser.username,
         commentorPic: props.currentUser.picture,
         post: props.post,
+        timePosted: Date.now()
       }),
     })
       .then((response) => response.json())
@@ -56,6 +57,7 @@ export default function NewComment(props) {
         commentorPic: props.currentUser.picture,
         post: props.post,
         commentID: props.commentID,
+        timePosted: Date.now(),
       }),
     })
       .then((response) => response.json())
