@@ -6,6 +6,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import $ from "jquery";
 import MediaTray from "./MediaTray";
 import Footer from "../Footer";
+import Shared from "./Shared";
 
 function EntryInput(props) {
   // console.log(props.passedEntry);
@@ -13,6 +14,15 @@ function EntryInput(props) {
   const [isMedia, setMedia] = useState(!props.createMode); //tracks if entry has media attachments (conditional rendering of MediaTray)
   const [ready, setReady] = useState(true); //tracks whether mediaTray is ready to be rendered or not
   const [isPrivate, setPrivate] = useState(entryData.private);
+  const [editable, setEditable] = useState(() => {
+    if (
+      entryData.owner === props.currentUser.username ||
+      entryData.owner === ""
+    )
+      return true;
+    if (entryData.shared.includes(props.currentUser.username)) return true;
+    return false;
+  });
 
   useEffect(setDimensions);
   useEffect(() => {
@@ -117,8 +127,9 @@ function EntryInput(props) {
 
   function getFiles(event) {
     const files = event.target.files;
-    var reader = new FileReader();
+    console.log(event.target.files);
     for (let i = 0; i < files.length; i++) {
+      let reader = new FileReader();
       reader.readAsDataURL(event.target.files[i]);
       const type = event.target.files[i].type;
       const fileType = type.split("/")[0];
@@ -197,6 +208,15 @@ function EntryInput(props) {
     });
   }
 
+  function updateContent(content) {
+    setEntryData((prev) => {
+      return {
+        ...prev,
+        content: content,
+      };
+    });
+  }
+
   return (
     <div>
       <div
@@ -221,10 +241,15 @@ function EntryInput(props) {
                       onChange={handleTextChange}
                       name="title"
                       value={entryData.title}
+                      onKeyDown={(event) => {
+                        console.log(event.keyCode);
+                        if(event.keyCode === 13)
+                          event.preventDefault();
+                      }}
                     ></input>
                   </div>
                   <div className="container-fluid col-sm-1 mx-auto">
-                    {props.display !== "Feed" ? (
+                    {editable ? (
                       <IconButton className="mx-auto" type="submit">
                         {props.createMode && props.display !== "Feed" ? (
                           <DoneIcon fontSize="large" sx={{ color: "white" }} />
@@ -241,13 +266,22 @@ function EntryInput(props) {
                 className="container-fluid px-0 entry-content-container"
                 id="content-div"
               >
-                <textarea
-                  className="entry-content height-100"
-                  placeholder="Write your thoughts away..."
-                  onChange={handleTextChange}
-                  name="content"
-                  value={entryData.content}
-                ></textarea>
+                {props.display === "Shared" ||
+                props.passedEntry.shared.length > 0 ? (
+                  <Shared
+                    content={entryData.content}
+                    entryID={entryData.entryID}
+                    updateContent={updateContent}
+                  />
+                ) : (
+                  <textarea
+                    className="entry-content height-100"
+                    placeholder="Write your thoughts away..."
+                    onChange={handleTextChange}
+                    name="content"
+                    value={entryData.content}
+                  ></textarea>
+                )}
               </div>
             </div>
             {/* column for media attachments */}
