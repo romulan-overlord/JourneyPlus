@@ -1,4 +1,4 @@
-import { teal } from "@mui/material/colors";
+import { green, teal } from "@mui/material/colors";
 import { textAlign } from "@mui/system";
 import React, { useState } from "react";
 import Link from "@mui/material/Link";
@@ -7,6 +7,7 @@ import { expressIP } from "../settings";
 import { InputAdornment, IconButton } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import TaskAltIcon from "@mui/icons-material/TaskAlt";
 
 function SignUp(props) {
   const [isUID, setUid] = useState(true);
@@ -219,7 +220,7 @@ function SignUp(props) {
                       onChangeScore={(score, feedback) => {
                         setpwdStrength(score);
                       }}
-                      scoreWordStyle={{color: "black"}}
+                      scoreWordStyle={{ color: "black" }}
                     />
                     {pwdStrength === 2 ||
                     pwdStrength === 3 ||
@@ -265,8 +266,10 @@ function SignUp(props) {
         id="SignedUpModal"
         aria-labelledby="SignedUpModalLabel"
         aria-hidden="true"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
       >
-        <div className="modal-dialog modal-dialog-centered">
+        <div className="modal-dialog">
           <div className="modal-content">
             <div className="modal-header">
               <h1 className="modal-title fs-5" id="exampleModalLabel">
@@ -275,7 +278,10 @@ function SignUp(props) {
                   : "From Public to Private"} */}
               </h1>
             </div>
-            <div className="modal-body">Successfully Signed Up</div>
+            <div className="modal-body">
+              <TaskAltIcon sx={{ color: "green", fontSize: "40px" }} />
+              Successfully Signed Up
+            </div>
             <div className="modal-footer">
               <button
                 type="button"

@@ -44,6 +44,7 @@ const replySchema = {
   comment: String,
   likes: Number,
   likedBy: [String],
+  timePosted: Number,
 };
 
 const commentSchema = {
@@ -53,6 +54,7 @@ const commentSchema = {
   likes: Number,
   likedBy: [String],
   replies: [replySchema],
+  timePosted: Number,
 };
 
 const Comment = mongoose.model("comment", commentSchema);
@@ -1122,7 +1124,6 @@ async function buildComments(comments) {
 
     i++;
   }
-
   return new Promise((resolve, reject) => {
     timeout = (n) => {
       setTimeout(() => {
@@ -1135,6 +1136,35 @@ async function buildComments(comments) {
   });
 }
 
+// function sortCommentsAndReplies(comments) {
+//   let i = 0;
+//   let max = 0;
+
+//   comments.sort((a, b) => {
+//     return b.timePosted - a.timePosted;
+//   });
+
+//   for (i = 0; i < comments.length; i++) {
+//     if (comments[i].replies.length > max) max = comments[i].replies.length;
+//     for (let j = 0; j < comments[i].replies.length; j++) {
+//       comments[i].replies.sort((a, b) => {
+//         return b.timePosted - a.timePosted;
+//       });
+//     }
+//   }
+
+//   return new Promise((resolve, reject) => {
+//     timeout = (n) => {
+//       setTimeout(() => {
+//         // console.log(i + "<<loop   length>>" + comments.length);
+//         if (i >= comments.length) resolve(comments);
+//         else timeout(n);
+//       }, n);
+//     };
+//     timeout(50);
+//   });
+// }
+
 app.post("/getLikes", (req, res) => {
   console.log(req.body);
   FeedNetwork.findOne({ entryID: req.body.entryID }, async (err, data) => {
@@ -1142,7 +1172,9 @@ app.post("/getLikes", (req, res) => {
     if (data) {
       console.log("building comments: ");
       let temp = await buildComments(data.comments);
+      //temp = await sortCommentsAndReplies(temp);
       console.log("comments built in getLikes");
+
       res.send({
         entryID: data.entryID,
         likes: data.likes,
@@ -1190,9 +1222,11 @@ app.post("/postComment", (req, res) => {
       comment: req.body.comment,
       likes: 0,
       replies: [],
+      timePosted: req.body.timePosted,
     });
     data.save();
-    const temp = await buildComments(data.comments);
+    let temp = await buildComments(data.comments);
+    //temp = await sortCommentsAndReplies(temp);
     res.send({
       update: {
         entryID: data.entryID,
@@ -1221,7 +1255,8 @@ app.post("/deleteComment", (req, res) => {
     if (index === -1) res.send({ data: "error" });
     data.comments.splice(index, 1);
     data.save();
-    const temp = await buildComments(data.comments);
+    let temp = await buildComments(data.comments);
+    //temp = await sortCommentsAndReplies(temp);
     res.send({
       data: {
         entryID: data.entryID,
@@ -1255,7 +1290,8 @@ app.post("/deleteReply", (req, res) => {
         console.log("reply found");
         data.comments[index].replies.splice(j, 1);
         data.save();
-        const temp = await buildComments(data.comments);
+        let temp = await buildComments(data.comments);
+        //temp = await sortCommentsAndReplies(temp);
         res.send({
           data: {
             entryID: data.entryID,
@@ -1286,11 +1322,13 @@ app.post("/postReply", (req, res) => {
           comment: req.body.comment,
           likes: 0,
           likedBy: [],
+          timePosted: req.body.timePosted,
         });
       }
     }
     data.save();
-    const temp = await buildComments(data.comments);
+    let temp = await buildComments(data.comments);
+    //temp = await sortCommentsAndReplies(temp);
     res.send({
       update: {
         entryID: data.entryID,
@@ -1316,7 +1354,8 @@ app.post("/likeComment", (req, res) => {
         break;
       }
     }
-    const temp = await buildComments(data.comments);
+    let temp = await buildComments(data.comments);
+    //temp = await sortCommentsAndReplies(temp);
     res.send({
       data: {
         entryID: data.entryID,
@@ -1342,7 +1381,8 @@ app.post("/likeReply", (req, res) => {
             data.comments[i].replies[j].likes += 1;
             data.comments[i].replies[j].likedBy.push(req.body.likedBy);
             data.save();
-            const temp = await buildComments(data.comments);
+            let temp = await buildComments(data.comments);
+            //temp = await sortCommentsAndReplies(temp);
             res.send({
               data: {
                 entryID: data.entryID,
@@ -1375,7 +1415,8 @@ app.post("/unlikeComment", (req, res) => {
         break;
       }
     }
-    const temp = await buildComments(data.comments);
+    let temp = await buildComments(data.comments);
+    //temp = await sortCommentsAndReplies(temp);
     res.send({
       data: {
         entryID: data.entryID,
@@ -1403,7 +1444,8 @@ app.post("/unlikeReply", (req, res) => {
               1
             );
             data.save();
-            const temp = await buildComments(data.comments);
+            let temp = await buildComments(data.comments);
+            //temp = await sortCommentsAndReplies(temp);
             res.send({
               data: {
                 entryID: data.entryID,
@@ -1658,26 +1700,29 @@ app.post("/deleteUser", (req, res) => {
                     }
                     if (user.entries[i].backgroundAudio.length > 0)
                       deleteFromWarehouse(user.backgroundAudio);
-                    
-                    for(let s = 0; s < user.entries[i].shared.length; s++){
+
+                    for (let s = 0; s < user.entries[i].shared.length; s++) {
                       console.log("Inside shared");
-                      Users.findOne({username: user.entries[i].shared[s]}, (err, sharedUser) => {
-                        if(err) throw err;
-                        for(let t = 0; t < sharedUser.shared.length; t++){
-                          console.log(
-                            "shared: " + sharedUser.shared[t].username
-                          );
-                          console.log(
-                            user.username
-                          );
-                          if(sharedUser.shared[t].username === user.username){
-                            sharedUser.shared.splice(t, 1);
+                      Users.findOne(
+                        { username: user.entries[i].shared[s] },
+                        (err, sharedUser) => {
+                          if (err) throw err;
+                          for (let t = 0; t < sharedUser.shared.length; t++) {
+                            console.log(
+                              "shared: " + sharedUser.shared[t].username
+                            );
+                            console.log(user.username);
+                            if (
+                              sharedUser.shared[t].username === user.username
+                            ) {
+                              sharedUser.shared.splice(t, 1);
+                            }
                           }
+                          sharedUser.save();
                         }
-                        sharedUser.save();
-                      });
+                      );
                     }
-                    
+
                     // console.log("Account succesfully deleted");
                     // res.send({
                     //   success: "sucess",
@@ -1685,7 +1730,7 @@ app.post("/deleteUser", (req, res) => {
                     // deleteEntry(user.entries[i]);
                     // user.entries.splice(i, 1);
                   }
-                    console.log("Account succesfully deleted");
+                  console.log("Account succesfully deleted");
                   res.send({
                     success: "success",
                   });
@@ -1706,7 +1751,7 @@ app.post("/deleteUser", (req, res) => {
 });
 
 app.listen(8000, () => {
-  // cleanup();
+  //cleanup();
   console.log(`Server is running on port 8000.`);
 });
 

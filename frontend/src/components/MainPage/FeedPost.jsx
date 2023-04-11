@@ -21,9 +21,10 @@ function FeedPost(props) {
   useEffect(() => {
     if (ready) {
       if (!props.feed.entry.private) fetchDetails();
+  
       if(likes.likes) setReady(false);
     }
-  }, []);
+  });
 
   function updateComments(update) {
     setLikes(update);
