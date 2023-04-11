@@ -134,7 +134,21 @@ body {
   margin-right: 10px;
 }
 
+.score-colour{
+  color: black;
+}
+
 /*Login*/
+.invalidPwd{
+  color: #dc3545;
+  font-size: .875em;
+}
+
+.validPwd{
+  color: #198754;
+  font-size: .875em;
+}
+
 .forgot-password{
   float: right;
   cursor: pointer;
