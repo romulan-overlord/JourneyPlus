@@ -11,3 +11,6 @@
 
     (fixed)
 4.  Edit button is visible if display mode is private, public in entryInput
+
+    (fixed)
+5.  Feednetworks not adding post turned public from private

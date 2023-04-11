@@ -20,9 +20,9 @@ export default function Footer(props) {
   const [muteAudio, setMuteAudio] = useState(false);
   const [reRender, setRender] = useState(false);
   const [isWeather, setWeather] = useState(() => {
-    if(props.entry.weather.desc)
-      return true;
-    return false;
+    if(props.entry.weather.desc.length > 0)
+      return false;
+    return true;
   });
   const [shareList, setShareList] = useState([]);
   const [shared, setShared] = useState(props.entry.shared);
