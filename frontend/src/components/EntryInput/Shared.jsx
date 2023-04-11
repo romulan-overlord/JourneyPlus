@@ -1,11 +1,13 @@
 import io from "socket.io-client";
 import React, { useState, useEffect } from "react";
+import debounce from 'lodash/debounce';
 
 const syncIP = "http://192.168.34.130:8888";
 
 export default function Shared(props) {
   const [socket, setSocket] = useState(null);
   const [content, setContent] = useState("");
+  const [control, setControl] = useState(true);
 
   useEffect(() => {
     const temp = io(syncIP);
@@ -23,6 +25,18 @@ export default function Shared(props) {
     }
   }, [socket]);
 
+  useEffect(() => {
+    if(socket !== null){
+      socket.on(props.entryID, debounce((data) => {
+        // console.log('Received update:', data);
+        setContent(data);
+      }, 1));
+      return () => {
+        socket.off(props.entryID);
+      };
+    }
+  }, [props.entryID, socket]);
+
   function createNewSocket(documentId) {
     const newSocket = io(syncIP, { query: { documentId } }); // pass documentId as a query parameter
     return newSocket;
@@ -30,17 +44,22 @@ export default function Shared(props) {
 
   // Listen for incoming messages from the server
   if (socket !== null) {
-
-    socket.on(props.entryID, (data) => {
-      // console.log("received message of update:", data);
-      setContent(data);
-    });
+    // socket.on(props.entryID, (data) => {
+    //   if (control) {
+    //     console.log("received message of update:", data);
+    //     setControl(false);
+    //     setContent(data);
+    //   }
+    // });
 
     function handleChange(event) {
+      // console.log("handling change");
+      setControl(true);
       socket.emit(props.entryID, {
         entryID: props.entryID,
         content: event.target.value,
       });
+      props.updateContent(content);
     }
 
     return (

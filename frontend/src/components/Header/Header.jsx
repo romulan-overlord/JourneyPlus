@@ -17,7 +17,7 @@ function Header(props) {
   return (
     <nav className="navbar navbar-expand-md navbar-dark" id="header">
       <div className="container-fluid navbar-container mx-lg-5 mx-md-3 py-md-2 py-2 mx-2">
-        <a className="navbar-brand" href="">
+        <a className="navbar-brand" href="#">
           Journey
         </a>
         <button

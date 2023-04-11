@@ -42,13 +42,14 @@ io.on("connection", (socket) => {
 
   // Handle incoming messages from the client
   socket.on(documentId, (data) => {
-    console.log("received entryID:", data);
+    // console.log("received entryID:", data);
     TextModel.findOne({ entryID: documentId }, (err, result) => {
       if (err) throw err;
       if (result) {
         result.content = data.content;
         result.save();
       }
+      // console.log("emitting: " + result.content);
       io.emit(documentId, result.content);
     });
   });
