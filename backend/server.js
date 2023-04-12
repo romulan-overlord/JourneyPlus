@@ -178,13 +178,7 @@ function reduceEntry(entry) {
 
 function deleteEntry(mainEntry, permanent) {
   const entry = mainEntry;
-  FeedNetwork.deleteOne({ entryID: entry.entryID })
-    .then(function () {
-      console.log("Data deleted"); // Success
-    })
-    .catch(function (error) {
-      console.log(error); // Failure
-    });
+
   MediaWarehouse.deleteOne({ id: entry.backgroundAudio })
     .then(function () {
       console.log("Data deleted"); // Success
@@ -208,6 +202,13 @@ function deleteEntry(mainEntry, permanent) {
     MediaWarehouse.deleteOne({ id: entry.media.audio[i] });
   }
   if (permanent) {
+    FeedNetwork.deleteOne({ entryID: entry.entryID })
+      .then(function () {
+        console.log("Data deleted"); // Success
+      })
+      .catch(function (error) {
+        console.log(error); // Failure
+      });
     for (let i = 0; i < entry.shared.length; i++) {
       Users.findOne({ username: entry.shared[i] }, (err, user) => {
         if (err) {
@@ -273,13 +274,22 @@ app.post("/submit-entry", (req, res) => {
                 results.privatePosts = results.privatePosts + 1;
               else {
                 results.publicPosts = results.publicPosts + 1;
-                const feed = new FeedNetwork({
-                  entryID: newEntry.entryID,
-                  likes: 0,
-                  likedBy: [],
-                  comments: [],
-                });
-                feed.save();
+                console.log("creating new feedNet for: " + newEntry.entryID);
+                FeedNetwork.findOne(
+                  { entryID: newEntry.entryID },
+                  (err, result) => {
+                    if (err) throw err;
+                    if (result) return;
+                    const feed = new FeedNetwork({
+                      entryID: newEntry.entryID,
+                      likes: 0,
+                      likedBy: [],
+                      comments: [],
+                    });
+                    feed.save();
+                    return;
+                  }
+                );
               }
               // }
               results.entries.push(newEntry);
@@ -492,6 +502,7 @@ app.post("/login", (req, res) => {
                       foundUser.entries.sort((a, b) => {
                         return b.lastModified - a.lastModified;
                       });
+                      // console.log("sorted user entries: " + foundUser.entries);
                       //sort foundUser.entries
                       res.send({
                         success: "802", //The user is redirected to the main page
@@ -529,6 +540,9 @@ app.post("/auto-login", (req, res) => {
           if (foundUser.cookieID === req.body.cookieID) {
             if (foundUser.picture.length < 2) {
               // console.log("no picture");
+              foundUser.entries.sort((a, b) => {
+                return b.lastModified - a.lastModified;
+              });
               res.send({
                 success: "802", //The user is redirected to the main page
                 user: foundUser,
@@ -543,6 +557,10 @@ app.post("/auto-login", (req, res) => {
                     throw err;
                   }
                   foundUser.picture = picture.data;
+                  foundUser.entries.sort((a, b) => {
+                    return b.lastModified - a.lastModified;
+                  });
+                  // console.log("sorted user entries: " + foundUser.entries);
                   res.send({
                     success: "802", //The user is redirected to the main page
                     user: foundUser,

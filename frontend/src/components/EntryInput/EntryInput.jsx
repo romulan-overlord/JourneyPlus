@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { expressIP } from "../../settings";
+import { expressIP, loadControl } from "../../settings";
 import IconButton from "@mui/material/IconButton";
 import DoneIcon from "@mui/icons-material/Done";
 import EditIcon from "@mui/icons-material/Edit";
@@ -44,6 +44,7 @@ function EntryInput(props) {
       // console.log($("video#m" + i));
       $("audio#m" + i)[0].load();
     }
+    $("#backgroundPlayer")[0].load();
   }
 
   function changeReady() {
@@ -94,6 +95,7 @@ function EntryInput(props) {
 
   function handleSubmit(event) {
     event.preventDefault();
+    loadControl.setMouseLoading();
     entryData.lastModifiedBy = props.currentUser.username;
     // console.log(Date.now());
     entryData.lastModified = Date.now();
@@ -111,6 +113,7 @@ function EntryInput(props) {
       .then((data) => {
         console.log("Success:", data);
         if (data.update) props.updateEntries(data.savedEntry);
+        loadControl.setMouseNormal();
         props.exitEntry();
       })
       .catch((error) => {
@@ -242,9 +245,8 @@ function EntryInput(props) {
                       name="title"
                       value={entryData.title}
                       onKeyDown={(event) => {
-                        console.log(event.keyCode);
-                        if(event.keyCode === 13)
-                          event.preventDefault();
+                        // console.log(event.keyCode);
+                        if (event.keyCode === 13) event.preventDefault();
                       }}
                     ></input>
                   </div>
@@ -384,6 +386,7 @@ function EntryInput(props) {
           setShared: (shared) => {
             entryData.shared = shared;
           },
+          weather: entryData.weather,
         }}
       />
       {setDimensions()}

@@ -348,7 +348,7 @@ function Profile(props) {
                             >
                               Close
                             </button>
-                            <button type="submit" class="btn btn-danger">
+                            <button type="submit" className="btn btn-danger">
                               Delete
                             </button>
                           </div>

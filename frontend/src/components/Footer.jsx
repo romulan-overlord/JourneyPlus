@@ -15,11 +15,15 @@ import backgrounds from "../settings";
 import { expressIP } from "../settings";
 
 export default function Footer(props) {
-  const [isAudio, setAudio] = useState(!props.createMode);
+  const [isAudio, setAudio] = useState(true);
   // const [audioSrc, setAudioSrc] = useState("");
   const [muteAudio, setMuteAudio] = useState(false);
   const [reRender, setRender] = useState(false);
-  const [isWeather, setWeather] = useState(props.createMode);
+  const [isWeather, setWeather] = useState(() => {
+    if(props.entry.weather.desc.length > 0)
+      return false;
+    return true;
+  });
   const [shareList, setShareList] = useState([]);
   const [shared, setShared] = useState(props.entry.shared);
 
@@ -258,7 +262,7 @@ export default function Footer(props) {
             ) : null}
 
             {isAudio && !muteAudio ? (
-              <audio className="noDisplay" autoPlay loop>
+              <audio className="noDisplay audioControl" id="backgroundPlayer" autoPlay loop>
                 <source
                   src={props.entryData.backgroundAudio}
                   type="audio/mpeg"

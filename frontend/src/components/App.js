@@ -31,6 +31,10 @@ function App() {
     "password",
   ]);
 
+  useEffect(() => {
+    $("#noneShallPass").css("display", "none");
+  }, []);
+
   function invertProfilePage(event) {
     setProfilePage((prev) => {
       return !prev;
@@ -253,6 +257,7 @@ function App() {
 
   return (
     <div className="App height-100">
+      <div className="container-fluid full-view-container" id="noneShallPass"></div>
       {!compose ? (
         <Header
           isLoggedIn={isLoggedIn}
