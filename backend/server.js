@@ -933,7 +933,6 @@ app.post("/getFeed", (req, res) => {
           feedArr.sort((a, b) => {
             return b.entry.lastModified - a.entry.lastModified;
           });
-          //sort feedArray
           resolve();
         } else timeout(n);
       }, n);
@@ -1105,17 +1104,19 @@ function getUserPicture(comment) {
         likes: comment.likes,
         likedBy: comment.likedBy,
         replies: comment.replies,
+        timePosted: comment.timePosted,
       });
     });
   });
 }
 
 async function buildComments(comments) {
+  // if(comments.length > 0) console.log("sketchy stuff: " + comments[0]);
   let i = 0;
   const arr = [];
   let temp = null;
   while (i < comments.length) {
-    console.log("inside while : " + comments.length);
+    // console.log("inside while : " + comments.length);
     temp = await getUserPicture(comments[i]);
     if (comments[i].replies) {
       temp.replies = await buildComments(comments[i].replies);
@@ -1127,7 +1128,7 @@ async function buildComments(comments) {
   return new Promise((resolve, reject) => {
     timeout = (n) => {
       setTimeout(() => {
-        console.log(i + "<<loop   length>>" + comments.length);
+        // console.log(i + "<<loop   length>>" + comments.length);
         if (i >= comments.length) resolve(arr);
         else timeout(n);
       }, n);
@@ -1136,34 +1137,30 @@ async function buildComments(comments) {
   });
 }
 
-// function sortCommentsAndReplies(comments) {
-//   let i = 0;
-//   let max = 0;
+function sortCommentsAndReplies(comments) {
+  let i = 0;
+  let max = 0;
+  comments.sort((a, b) => {
+    return b.timePosted - a.timePosted;
+  });
 
-//   comments.sort((a, b) => {
-//     return b.timePosted - a.timePosted;
-//   });
+  for (i = 0; i < comments.length; i++) {
+    comments[i].replies.sort((a, b) => {
+      return b.timePosted - a.timePosted;
+    });
+  }
 
-//   for (i = 0; i < comments.length; i++) {
-//     if (comments[i].replies.length > max) max = comments[i].replies.length;
-//     for (let j = 0; j < comments[i].replies.length; j++) {
-//       comments[i].replies.sort((a, b) => {
-//         return b.timePosted - a.timePosted;
-//       });
-//     }
-//   }
-
-//   return new Promise((resolve, reject) => {
-//     timeout = (n) => {
-//       setTimeout(() => {
-//         // console.log(i + "<<loop   length>>" + comments.length);
-//         if (i >= comments.length) resolve(comments);
-//         else timeout(n);
-//       }, n);
-//     };
-//     timeout(50);
-//   });
-// }
+  return new Promise((resolve, reject) => {
+    timeout = (n) => {
+      setTimeout(() => {
+        // console.log(i + "<<loop   length>>" + comments.length);
+        if (i >= comments.length) resolve(comments);
+        else timeout(n);
+      }, n);
+    };
+    timeout(50);
+  });
+}
 
 app.post("/getLikes", (req, res) => {
   console.log(req.body);
@@ -1171,9 +1168,12 @@ app.post("/getLikes", (req, res) => {
     if (err) throw err;
     if (data) {
       console.log("building comments: ");
+      // console.log(data);
       let temp = await buildComments(data.comments);
-      //temp = await sortCommentsAndReplies(temp);
+      // console.log(temp);
+      temp = await sortCommentsAndReplies(temp);
       console.log("comments built in getLikes");
+      // console.log(temp);
 
       res.send({
         entryID: data.entryID,
@@ -1226,7 +1226,7 @@ app.post("/postComment", (req, res) => {
     });
     data.save();
     let temp = await buildComments(data.comments);
-    //temp = await sortCommentsAndReplies(temp);
+    temp = await sortCommentsAndReplies(temp);
     res.send({
       update: {
         entryID: data.entryID,
@@ -1256,7 +1256,7 @@ app.post("/deleteComment", (req, res) => {
     data.comments.splice(index, 1);
     data.save();
     let temp = await buildComments(data.comments);
-    //temp = await sortCommentsAndReplies(temp);
+    temp = await sortCommentsAndReplies(temp);
     res.send({
       data: {
         entryID: data.entryID,
@@ -1291,7 +1291,7 @@ app.post("/deleteReply", (req, res) => {
         data.comments[index].replies.splice(j, 1);
         data.save();
         let temp = await buildComments(data.comments);
-        //temp = await sortCommentsAndReplies(temp);
+        temp = await sortCommentsAndReplies(temp);
         res.send({
           data: {
             entryID: data.entryID,
@@ -1328,7 +1328,7 @@ app.post("/postReply", (req, res) => {
     }
     data.save();
     let temp = await buildComments(data.comments);
-    //temp = await sortCommentsAndReplies(temp);
+    temp = await sortCommentsAndReplies(temp);
     res.send({
       update: {
         entryID: data.entryID,
@@ -1355,7 +1355,7 @@ app.post("/likeComment", (req, res) => {
       }
     }
     let temp = await buildComments(data.comments);
-    //temp = await sortCommentsAndReplies(temp);
+    temp = await sortCommentsAndReplies(temp);
     res.send({
       data: {
         entryID: data.entryID,
@@ -1382,7 +1382,7 @@ app.post("/likeReply", (req, res) => {
             data.comments[i].replies[j].likedBy.push(req.body.likedBy);
             data.save();
             let temp = await buildComments(data.comments);
-            //temp = await sortCommentsAndReplies(temp);
+            temp = await sortCommentsAndReplies(temp);
             res.send({
               data: {
                 entryID: data.entryID,
@@ -1416,7 +1416,7 @@ app.post("/unlikeComment", (req, res) => {
       }
     }
     let temp = await buildComments(data.comments);
-    //temp = await sortCommentsAndReplies(temp);
+    temp = await sortCommentsAndReplies(temp);
     res.send({
       data: {
         entryID: data.entryID,
@@ -1445,7 +1445,7 @@ app.post("/unlikeReply", (req, res) => {
             );
             data.save();
             let temp = await buildComments(data.comments);
-            //temp = await sortCommentsAndReplies(temp);
+            temp = await sortCommentsAndReplies(temp);
             res.send({
               data: {
                 entryID: data.entryID,

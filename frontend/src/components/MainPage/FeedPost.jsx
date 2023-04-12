@@ -22,7 +22,7 @@ function FeedPost(props) {
     if (ready) {
       if (!props.feed.entry.private) fetchDetails();
   
-      if(likes.likes) setReady(false);
+      if(likes.likes === undefined) setReady(false);
     }
   });
 
