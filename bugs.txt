@@ -14,3 +14,9 @@
 
     (fixed)
 5.  Feednetworks not adding post turned public from private
+
+    (fixed)
+6.  Disable clickability when site is waiting for response from server
+
+    (fixed)
+7.  User entries not getting sorted on auto-login

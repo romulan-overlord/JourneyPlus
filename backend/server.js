@@ -502,6 +502,7 @@ app.post("/login", (req, res) => {
                       foundUser.entries.sort((a, b) => {
                         return b.lastModified - a.lastModified;
                       });
+                      // console.log("sorted user entries: " + foundUser.entries);
                       //sort foundUser.entries
                       res.send({
                         success: "802", //The user is redirected to the main page
@@ -539,6 +540,9 @@ app.post("/auto-login", (req, res) => {
           if (foundUser.cookieID === req.body.cookieID) {
             if (foundUser.picture.length < 2) {
               // console.log("no picture");
+              foundUser.entries.sort((a, b) => {
+                return b.lastModified - a.lastModified;
+              });
               res.send({
                 success: "802", //The user is redirected to the main page
                 user: foundUser,
@@ -553,6 +557,10 @@ app.post("/auto-login", (req, res) => {
                     throw err;
                   }
                   foundUser.picture = picture.data;
+                  foundUser.entries.sort((a, b) => {
+                    return b.lastModified - a.lastModified;
+                  });
+                  // console.log("sorted user entries: " + foundUser.entries);
                   res.send({
                     success: "802", //The user is redirected to the main page
                     user: foundUser,
@@ -943,6 +951,7 @@ app.post("/getFeed", (req, res) => {
           feedArr.sort((a, b) => {
             return b.entry.lastModified - a.entry.lastModified;
           });
+          console.log("sorted feed: " + feedArr);
           //sort feedArray
           resolve();
         } else timeout(n);
