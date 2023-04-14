@@ -20,3 +20,15 @@
 
     (fixed)
 7.  User entries not getting sorted on auto-login
+
+8.  User cannot remove profile picture. Mauritian negro will fix it.
+
+9.  Fix error in fetch followers: 
+followerArray = await getUsers(user.followers);
+
+^
+
+TypeError: Cannot read properties of null 
+(reading 'followers')
+
+10. message when no followers/following

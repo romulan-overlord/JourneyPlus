@@ -267,7 +267,7 @@ function Login(props) {
                           </div>
                         </div>
                       )}
-                      <div className="input-group flex-nowrap set-colour outline-dark margin-between-input">
+                      <div className="input-group flex-nowrap outline-dark margin-between-input">
                         <input
                           type={showLoginPassword ? "text" : "password"}
                           name="password"

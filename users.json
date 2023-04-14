@@ -1,0 +1,136 @@
+[{
+  "_id": {
+    "$oid": "6434ec0c89923e1b29f51d17"
+  },
+  "firstName": "Vignesh",
+  "lastName": "Overlord",
+  "password": "$2b$10$YlPJx3j4yC8.RsW7v0Sq1u3JE37oF04iABgv8g6ahKqF7tbLWRl.S",
+  "username": "sham",
+  "email": "vig@123.com",
+  "picture": "",
+  "cookieID": "lfqxm1jy",
+  "entries": [],
+  "shared": [],
+  "following": [
+    "romulan"
+  ],
+  "followers": [
+    "romulan"
+  ],
+  "privatePosts": 0,
+  "publicPosts": 0,
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6434ec0c89923e1b29f51d16"
+  },
+  "firstName": "Ritu Raj",
+  "lastName": "Pradhan",
+  "password": "$2b$10$LYvW.Zfy1uroKYWtkqBeUOFUQTX5xmDO1vkDZh0pparhkWrh5rEoC",
+  "username": "romulan",
+  "email": "riturajpradhan911@gmail.com",
+  "picture": "",
+  "cookieID": "lgbt2s20",
+  "entries": [
+    {
+      "media": {
+        "image": [],
+        "video": [],
+        "audio": []
+      },
+      "weather": {
+        "desc": "",
+        "icon": ""
+      },
+      "entryID": "1o9f6kglgbtvpxb",
+      "owner": "romulan",
+      "size": 330,
+      "title": "help",
+      "content": "",
+      "backgroundAudio": "",
+      "backgroundImage": "",
+      "date": "",
+      "private": false,
+      "shared": [],
+      "lastModifiedBy": "romulan",
+      "lastModified": {
+        "$numberLong": "1681191495321"
+      },
+      "_id": {
+        "$oid": "6434f170a34029f3e78de746"
+      }
+    },
+    {
+      "media": {
+        "image": [
+          "1o9f2xclgd5iuua"
+        ],
+        "video": [],
+        "audio": [
+          "1o9f2xclgd5iuub"
+        ]
+      },
+      "weather": {
+        "desc": "Clear",
+        "icon": "01d"
+      },
+      "entryID": "1o9f2xclgd5i05t",
+      "owner": "romulan",
+      "size": 9066636,
+      "title": "aaaaaaaaaaaaaaaaaaaaa",
+      "content": "\n\n\nbrooooooooooooooooooooooooooooooooo",
+      "backgroundAudio": "",
+      "backgroundImage": "",
+      "date": "Wed Apr 12 2023",
+      "private": true,
+      "shared": [],
+      "lastModifiedBy": "romulan",
+      "lastModified": {
+        "$numberLong": "1681271298373"
+      },
+      "_id": {
+        "$oid": "643629df35e25a77314818c6"
+      }
+    },
+    {
+      "entryID": "1o9fb5olgbu1sgg",
+      "owner": "romulan",
+      "size": 21126411,
+      "title": "ayyyyyyyyyyyyyyyyyyyyyy mod",
+      "content": "life is beaultiful\n\nbubuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuulmao",
+      "media": {
+        "image": [],
+        "video": [],
+        "audio": [
+          "1o9f2xclgd87stj"
+        ]
+      },
+      "backgroundAudio": "1o9f2xclgd87sth",
+      "backgroundImage": "",
+      "date": "Tue Apr 11 2023",
+      "weather": {
+        "desc": "Clouds",
+        "icon": "04d"
+      },
+      "private": false,
+      "shared": [],
+      "lastModifiedBy": "romulan",
+      "lastModified": {
+        "$numberLong": "1681275820349"
+      },
+      "_id": {
+        "$oid": "6434f28baf0f690463b1a7c6"
+      }
+    }
+  ],
+  "shared": [],
+  "following": [
+    "sham"
+  ],
+  "followers": [
+    "sham"
+  ],
+  "privatePosts": 1,
+  "publicPosts": 2,
+  "__v": 27
+}]

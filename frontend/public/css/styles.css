@@ -87,7 +87,8 @@ body {
 }
 
 .set-colour {
-  background-color: #6784b6;
+  background-color: rgba(103, 132, 182, 0.5);
+  border: none;
 }
 
 .set-signup-button-colour {
@@ -373,10 +374,6 @@ body {
   /* background: none; */
   background-color: rgba(18, 18, 18, 0.3);
   border-top: solid rgb(200, 200, 200) 1px;
-}
-
-.audioControl{
-  volume: 0.5;
 }
 
 .my-dropdown {
