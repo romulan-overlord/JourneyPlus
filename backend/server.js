@@ -1535,6 +1535,24 @@ app.post("/updatePicture", (req, res) => {
   });
 });
 
+app.post("/removePicture", (req, res) =>{
+  Users.findOne({username: req.body.username}, (err, user) =>{
+    if(err) console.log(err);
+    if(user){
+      MediaWarehouse.deleteOne({id: user.picture})
+      .then(() =>{
+        console.log("picture deleted");
+      })
+      .catch((err) =>{
+        console.log(err);
+      })
+      user.picture = '';
+      user.save();
+      res.send({message: "success"});
+    }
+  })
+});
+
 app.post("/editProfile", (req, res) => {
   // console.log(req.body);
   // console.log(typeof req.body.newFirstName);
@@ -1578,6 +1596,42 @@ app.post("/editProfile", (req, res) => {
       res.send({ update: returnObj });
     }
   });
+});
+
+app.post("/checkPasswordForChange", (req, res) =>{
+  Users.findOne({username: req.body.username}, async(err, user) =>{
+    if(err){
+      console.log(err);
+    }
+    if(user){
+      bcrypt.compare(req.body.password, user.password, (err, result) =>{
+        if(result === true){
+          res.send({success:"success"})
+        }else{
+          res.send({success: "failure"})
+        }
+      })
+
+    }
+  })
+});
+
+app.post("/modifyPassword", async (req, res) => {
+  const hashedPassword = await bcrypt.hash(req.body.modifiedPwd, 10);
+  Users.updateOne(
+    { username: req.body.username },
+    { password: hashedPassword },
+    (err, result) => {
+      if (err) throw err;
+      else {
+        if (result) {
+          res.send({ success: "modificationSuccess" });
+        } else {
+          res.send({ success: "modificationFail" });
+        }
+      }
+    }
+  );
 });
 
 function uploadToWarehouse(data) {

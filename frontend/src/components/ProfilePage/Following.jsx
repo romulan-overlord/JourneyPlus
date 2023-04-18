@@ -74,7 +74,7 @@ function Following(props) {
         <div className="card-header-profile d-flex">
           <div className="w-100">
             Following
-            <span id="search-icon"onClick={handleSearchBar}>
+            <span id="search-icon" onClick={handleSearchBar}>
               <IconButton>
                 <SearchIcon />
               </IconButton>
@@ -102,8 +102,9 @@ function Following(props) {
         ) : null}
 
         <div className="card-body">
-          {followingList.length !== 0
-            ? filteredList.map((follower, index) => {
+          {followingList.length !== 0 ? (
+            filteredList.length !== 0 ? (
+              filteredList.map((follower, index) => {
                 return (
                   <SingleUser
                     user={follower}
@@ -115,7 +116,14 @@ function Following(props) {
                   />
                 );
               })
-            : null}
+            ) : (
+              <p className="no-followers-container">No results found</p>
+            )
+          ) : (
+            <p className="no-followers-container">
+              You're not following anyone.
+            </p>
+          )}
         </div>
       </div>
     </div>

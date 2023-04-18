@@ -53,7 +53,7 @@ function Followers(props) {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
+        // console.log(data);
         setFollowerList(data.followers);
         setFilteredList(data.followers);
       });
@@ -87,9 +87,14 @@ function Followers(props) {
           </div>
         ) : null}
 
-        <div className="card-body">
-          {followerList.length !== 0
-            ? filteredList.map((follower, index) => {
+        <div
+          className={
+            followerList.length !== 0 ? "card-body" : "card-body-colour"
+          }
+        >
+          {followerList.length !== 0 ? (
+            filteredList.length !== 0 ? (
+              filteredList.map((follower, index) => {
                 return (
                   <SingleUser
                     user={follower}
@@ -102,7 +107,12 @@ function Followers(props) {
                   />
                 );
               })
-            : null}
+            ) : (
+              <p className="no-followers-container">No Results Found.</p>
+            )
+          ) : (
+            <p className="no-followers-container">No Followers Found.</p>
+          )}
         </div>
       </div>
     </div>

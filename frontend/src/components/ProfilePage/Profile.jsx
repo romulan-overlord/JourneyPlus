@@ -5,6 +5,10 @@ import PeopleIcon from "@mui/icons-material/People";
 import People from "@mui/icons-material/People";
 import { Avatar } from "@mui/material";
 import $ from "jquery";
+import { InputAdornment, IconButton } from "@mui/material";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import PasswordStrengthBar from "react-password-strength-bar";
 
 function Profile(props) {
   const [isEdited, setIsEdited] = useState(true);
@@ -15,6 +19,15 @@ function Profile(props) {
   const [file, setFile] = useState(props.currentUser.picture);
   const [IsDeletePwd, setDeletePwd] = useState(true);
   const [deleteModal, setDeleteModal] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [isValidCurrentPwd, setValidCurrentPwd] = useState(true);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+   const [isNewPassword, setNewPassword] = useState("");
+  const [isConfirmationPwd, setConfirmationPwd] = useState("");
+  const [validConfirmationPwd, setValidConfimationPwd] = useState("");
+  const [pwdStrength, setpwdStrength] = useState(0);
+  const [showImage, setImage] = useState(true);
 
   const ColoredLine = ({ color }) => (
     <hr
@@ -33,6 +46,13 @@ function Profile(props) {
     }
   });
 
+   const handleClickShowNewPassword = () => setShowNewPassword((show) => !show);
+   const handleMouseDownPassword = (event) => {
+     event.preventDefault();
+   };
+  const handleClickShowConfirmPassword = () =>
+    setShowConfirmPassword((show) => !show);
+
   function invertIsEdited(event) {
     setIsEdited((prev) => {
       return !prev;
@@ -45,10 +65,48 @@ function Profile(props) {
     });
   }
 
+  function invertCurrentPwd(){
+    setValidCurrentPwd((prev) =>{
+      return !prev;
+    })
+  }
+
   function invertModal() {
     setDeleteModal((prev) => {
       return !prev;
     });
+  }
+
+  function invertImage(){
+    setImage((prev) =>{
+      return !prev;
+    })
+  }
+
+  function handlePasswordChange(event){
+    setCurrentPassword(event.target.value);
+  }
+
+  function handleNewPasswordChange(event) {
+    if (isConfirmationPwd === "") setNewPassword(event.target.value);
+    else {
+      setNewPassword(event.target.value);
+      if (isConfirmationPwd !== event.target.value) {
+        setValidConfimationPwd("invalid");
+      } else {
+        setValidConfimationPwd("valid");
+      }
+    }
+  }
+
+  function handleConfirmPasswordChange(event) {
+    setConfirmationPwd(event.target.value);
+    if (event.target.value === "") setValidConfimationPwd("");
+    else if (event.target.value === isNewPassword) {
+      setValidConfimationPwd("valid");
+    } else {
+      setValidConfimationPwd("invalid");
+    }
   }
 
   function handleSubmit(event) {
@@ -154,7 +212,7 @@ function Profile(props) {
 
   function handlePictureChange(event) {
     console.log(event.target.files);
-    const pic = event.target.files;
+    //const pic = event.target.files;
     var reader = new FileReader();
     reader.readAsDataURL(event.target.files[0]);
     reader.onload = function () {
@@ -171,12 +229,39 @@ function Profile(props) {
       })
         .then((response) => response.json())
         .then((data) => {
+          if(showImage === false)
+            invertImage();
           console.log("Success:", data);
         })
         .catch((error) => {
           console.error("Error:", error);
         });
     };
+  }
+
+  function handleRemoveImage(event){
+
+    event.preventDefault();
+    fetch(expressIP + "/removePicture", {
+        method: "POST", // or 'PUT'
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: props.currentUser.username
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if(data.message === "success"){
+            console.log("picture deleted");
+            invertImage();
+            props.currentUser.picture='';
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
   }
 
   function handleDeleteClick(event) {
@@ -206,10 +291,64 @@ function Profile(props) {
       });
   }
 
+  function handlePasswordSubmit(event){
+    console.log("inside submit");
+    event.preventDefault();
+    const requestData = {
+      username: props.currentUser.username,
+      password: currentPassword
+    };
+    fetch(expressIP + "/checkPasswordForChange", {
+       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestData),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success === "failure") {
+          console.log("failure");
+          invertCurrentPwd();
+        } else if (data.success === "success") {
+          console.log("success");
+          window.$("#ChangePasswordModal").modal("hide");
+          window.$("#ModifyPasswordModal").modal("show");
+        }
+      });
+  }
+
+  function handleModifyPassword(event){
+    event.preventDefault();
+    const requestData = {
+      username: props.currentUser.username,
+      modifiedPwd: isNewPassword,
+    };
+    fetch(expressIP + "/modifyPassword", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestData),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success === "modificationSuccess") {
+          console.log("reset Success");
+          window.$("#ModifyPasswordModal").modal("hide");
+        } else if (data.success === "modificationFail") {
+          console.log("modification fail");
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }
+
   $("#myModal").on("shown.bs.modal", function () {
     $("#myInput").trigger("focus");
   });
-
+  console.log(showImage);
   return (
     <div className="row details-container">
       <div className="col-xl-4">
@@ -221,7 +360,7 @@ function Profile(props) {
             <div>
               <span className="mx-auto profile-picture">
                 <Avatar
-                  src={props.currentUser.picture}
+                  src={showImage ? props.currentUser.picture: ''}
                   alt="Picture"
                   sx={{ width: 140, height: 140 }}
                 ></Avatar>
@@ -245,6 +384,12 @@ function Profile(props) {
                 </label>
               </span>
             ) : null}
+            {(props.currentUser.picture.length !== 0 && showImage)? (
+              <button onClick={handleRemoveImage} type="button" className="btn btn-primary remove-image-btn">
+                Remove Image
+              </button>
+            ) : null}
+
             {/* <h5 className="my-3">
                   {props.currentUser.firstName} {props.currentUser.lastName}
                 </h5>
@@ -297,7 +442,10 @@ function Profile(props) {
                     <div className="modal-dialog modal-dialog-centered">
                       <div className="modal-content">
                         <div className="modal-header">
-                          <h1 className="modal-title fs-5" id="exampleModalLabel">
+                          <h1
+                            className="modal-title fs-5"
+                            id="exampleModalLabel"
+                          >
                             Kindly Enter Your Password
                           </h1>
                           <button
@@ -422,6 +570,183 @@ function Profile(props) {
                     </button>
                   )
                 ) : null}
+
+                <button
+                  data-bs-toggle="modal"
+                  data-bs-target="#ChangePasswordModal"
+                  type="button"
+                  className="btn btn-primary change-password-button"
+                >
+                  Change Password
+                </button>
+                <div
+                  className="modal fade"
+                  id="ChangePasswordModal"
+                  aria-labelledby="OTPModalLabel"
+                  aria-hidden="true"
+                >
+                  <div className="modal-dialog modal-dialog-centered reset-password-modal">
+                    <div className="modal-content text-center">
+                      <div className="modal-header h5 text-white bg-primary justify-content-center">
+                        Change Password
+                      </div>
+                      <div className="modal-body px-5">
+                        <p className="py-2">Enter your current password</p>
+                        {isValidCurrentPwd ? (
+                          <div>
+                            <input
+                              type="password"
+                              onChange={handlePasswordChange}
+                              placeholder="Enter password"
+                              name="password"
+                              className="form-control my-3"
+                            ></input>
+                          </div>
+                        ) : (
+                          <div>
+                            <input
+                              type="password"
+                              onChange={invertCurrentPwd}
+                              placeholder="Enter password"
+                              name="password"
+                              aria-describedby="validationServer03Feedback"
+                              className="form-control my-3 is-invalid"
+                            ></input>
+                            <div className="invalid-feedback">
+                              Invalid Password
+                            </div>
+                          </div>
+                        )}
+
+                        <button
+                          type="button"
+                          onClick={handlePasswordSubmit}
+                          className="btn btn-primary w-100"
+                        >
+                          Submit
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  className="modal fade"
+                  id="ModifyPasswordModal"
+                  // tabindex="-1"
+                  aria-labelledby="ResetModalLabel"
+                  aria-hidden="true"
+                >
+                  <div className="modal-dialog modal-dialog-centered reset-password-modal">
+                    <div className="modal-content text-center">
+                      <div className="modal-header h5 text-white bg-primary justify-content-center">
+                        Change Password
+                      </div>
+                      <div className="modal-body px-5">
+                        <div className="form-outline">
+                          <div className="input-group flex-nowrap outline-dark margin-between-input">
+                            <input
+                              type={showNewPassword ? "text" : "password"}
+                              className="form-control"
+                              onChange={handleNewPasswordChange}
+                              placeholder="Enter New Password"
+                              aria-label="Password"
+                              aria-describedby="addon-wrapping"
+                            ></input>
+                            <div className="input-group-text">
+                              <InputAdornment
+                                className="visibility-icon"
+                                position="start"
+                              >
+                                <IconButton
+                                  aria-label="toggle password visibility"
+                                  onClick={handleClickShowNewPassword}
+                                  onMouseDown={handleMouseDownPassword}
+                                  edge="end"
+                                >
+                                  {showNewPassword ? (
+                                    <VisibilityOffIcon />
+                                  ) : (
+                                    <VisibilityIcon />
+                                  )}
+                                </IconButton>
+                              </InputAdornment>
+                            </div>
+                          </div>
+
+                          <PasswordStrengthBar
+                            password={isNewPassword}
+                            onChangeScore={(score, feedback) => {
+                              setpwdStrength(score);
+                            }}
+                          />
+                          <div className="input-group flex-nowrap outline-dark margin-between-input">
+                            <input
+                              type={showConfirmPassword ? "text" : "password"}
+                              placeholder="Confirm Password"
+                              onChange={handleConfirmPasswordChange}
+                              className={
+                                validConfirmationPwd === ""
+                                  ? "form-control"
+                                  : validConfirmationPwd === "valid"
+                                  ? "form-control is-valid"
+                                  : validConfirmationPwd === "invalid"
+                                  ? "form-control is-invalid"
+                                  : null
+                              }
+                            ></input>
+                            <div className="input-group-text">
+                              <InputAdornment
+                                className="visibility-icon"
+                                position="start"
+                              >
+                                <IconButton
+                                  aria-label="toggle password visibility"
+                                  onClick={handleClickShowConfirmPassword}
+                                  onMouseDown={handleMouseDownPassword}
+                                  edge="end"
+                                >
+                                  {showConfirmPassword ? (
+                                    <VisibilityOffIcon />
+                                  ) : (
+                                    <VisibilityIcon />
+                                  )}
+                                </IconButton>
+                              </InputAdornment>
+                            </div>
+                          </div>
+                          {validConfirmationPwd === "valid" ? (
+                            <div className="validPwd">Password Match.</div>
+                          ) : validConfirmationPwd === "invalid" ? (
+                            <div className="invalidPwd">Password Mismatch.</div>
+                          ) : null}
+                        </div>
+
+                        {validConfirmationPwd === "" ||
+                        validConfirmationPwd === "invalid" ||
+                        pwdStrength === 0 ||
+                        pwdStrength === 1 ? (
+                          <button
+                            type="button"
+                            disabled
+                            className="btn btn-primary w-100"
+                          >
+                            Reset Password
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={handleModifyPassword}
+                            // onClick={handleResetPassword}
+                            className="btn btn-primary w-100"
+                          >
+                            Reset Password
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             ) : (
               <form onSubmit={handleSubmit} method="POST">
@@ -444,52 +769,6 @@ function Profile(props) {
                     // value={props.currentUser.username}
                   ></input>
                 </div>
-                {/* {validUsername === "" ? (
-                  
-                // ) : validUsername === "valid" ? (
-                //   <div className="mb-3">
-                //     <label className="small mb-1">
-                //       <h6>
-                //         Username (how your name will appear to other users on
-                //         the site)
-                //       </h6>
-                //     </label>
-                //     <input
-                //       onChange={handleUsernameChange}
-                //       name="username"
-                //       className="form-control is-valid"
-                //       id="inputUsername"
-                //       type="text"
-                //       placeholder="Enter your username"
-                //       // value={props.currentUser.username}
-                //       //   value="username"
-                //     ></input>
-                //     <div className="valid-feedback">Valid Username!</div>
-                //   </div>
-                // ) : validUsername === "invalid" ? (
-                //   <div className="mb-3">
-                //     <label className="small mb-1">
-                //       <h6>
-                //         Username (how your name will appear to other users on
-                //         the site)
-                //       </h6>
-                //     </label>
-                //     <input
-                //       onChange={handleUsernameChange}
-                //       name="username"
-                //       className="form-control is-invalid"
-                //       id="inputUsername"
-                //       type="text"
-                //       placeholder="Enter your username"
-                //       // value={props.currentUser.username}
-                //       //   value="username"
-                //     ></input>
-                //     <div className="invalid-feedback">
-                //       Username already exists!
-                //     </div>
-                //   </div>
-                // ) : null} */}
-
                 {/* <!-- Form Row--> */}
                 <div className="row gx-3 mb-3">
                   {/* <!-- Form Group (first name)--> */}
@@ -616,7 +895,6 @@ function Profile(props) {
                   </div>
                 )}
               </form>
-              // {followers ? () : ()}
             )}
           </div>
         </div>
