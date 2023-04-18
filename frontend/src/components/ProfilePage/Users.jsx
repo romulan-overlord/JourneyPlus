@@ -91,7 +91,7 @@ function Users(props) {
         
         <div className="card-body">
           {userList.length !== 0
-            ? filteredList.map((user, index) => {
+            ? filteredList.length !== 0 ? (filteredList.map((user, index) => {
                 return (
                   <SingleUser
                     user={user}
@@ -102,9 +102,8 @@ function Users(props) {
                     getForeignUser={props.getForeignUser}
                   />
                 );
-              })
+              })) : (<p>No results found</p>)
             : null}
-          {/* <SingleUser /> */}
         </div>
       </div>
     </div>

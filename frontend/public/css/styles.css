@@ -465,6 +465,24 @@ body {
   background-color: rgba(33, 40, 50, 0.03);
   border-bottom: 1px solid rgba(33, 40, 50, 0.125);
 }
+.card-body-colour{
+  background-color: rgba(33, 40, 50, 0.03);
+}
+
+.change-password-button{
+  float: right;
+}
+
+.remove-image-btn{
+  margin-left: 2%;
+}
+
+.no-followers-container{
+  margin-top: 1%;
+  text-align: center;
+  font-size: 20px;
+  font-family: "Montserrat";
+}
 .form-control,
 .dataTable-input {
   display: block;
@@ -527,12 +545,12 @@ body {
 .uploadImage{
     display: inline-block;
     line-height: 2.2em;
-    padding: 0.25em 0.62em;
+    padding: 0.085em 0.62em;
     border-radius: 0.30em;
     background-color: #0d6efd;
     border-color: #0d6efd;
     font-family: "Montserrat";
-    font-size: 0.9em;
+    font-size: 16px;
     color: white;
     transition: 0.2s;
  }
