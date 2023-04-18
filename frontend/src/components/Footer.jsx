@@ -20,8 +20,7 @@ export default function Footer(props) {
   const [muteAudio, setMuteAudio] = useState(false);
   const [reRender, setRender] = useState(false);
   const [isWeather, setWeather] = useState(() => {
-    if(props.entry.weather.desc.length > 0)
-      return false;
+    if (props.entry.weather.desc.length > 0) return false;
     return true;
   });
   const [shareList, setShareList] = useState([]);
@@ -262,7 +261,12 @@ export default function Footer(props) {
             ) : null}
 
             {isAudio && !muteAudio ? (
-              <audio className="noDisplay audioControl" id="backgroundPlayer" autoPlay loop>
+              <audio
+                className="noDisplay audioControl"
+                id="backgroundPlayer"
+                autoPlay
+                loop
+              >
                 <source
                   src={props.entryData.backgroundAudio}
                   type="audio/mpeg"
@@ -345,20 +349,22 @@ export default function Footer(props) {
                   </>
                 ) : null}
                 {props.entryData.owner.length > 0 ? (
-                  <>
-                    <span className="date-p mx-2">|</span>
-                    <span
-                      className="date-p"
-                      data-toggle="tooltip"
-                      data-placement="top"
-                      data-bs-toggle="modal"
-                      data-bs-target="#shareList"
-                      title="Share"
-                      onClick={fetchUsers}
-                    >
-                      <ShareIcon fontSize="small" />
-                    </span>{" "}
-                  </>
+                  props.currentUser.username === props.entry.owner ? (
+                    <>
+                      <span className="date-p mx-2">|</span>
+                      <span
+                        className="date-p"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        data-bs-toggle="modal"
+                        data-bs-target="#shareList"
+                        title="Share"
+                        onClick={fetchUsers}
+                      >
+                        <ShareIcon fontSize="small" />
+                      </span>{" "}
+                    </>
+                  ) : null
                 ) : null}
               </div>
             ) : null}
