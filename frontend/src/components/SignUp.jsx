@@ -90,7 +90,7 @@ function SignUp(props) {
         <div className="col-md-6">
           <div className="align-card signup-column col-lg-10 px-md-6">
             <div className="container-fluid px-0 landing-page-title">
-              <div className="card set-colour card-border-radius">
+              <div className="card set-colour">
                 <div className="mx-auto signup-text">
                   <h3 className="card-title signup-text">Sign Up</h3>
                 </div>
@@ -183,7 +183,7 @@ function SignUp(props) {
                           </div>
                         </div>
                       )}
-                      <div className="input-group flex-nowrap set-colour outline-dark margin-between-input">
+                      <div className="input-group flex-nowrap outline-dark margin-between-input">
                         <input
                           onChange={handleChange}
                           type={showPassword ? "text" : "password"}
@@ -220,7 +220,7 @@ function SignUp(props) {
                       onChangeScore={(score, feedback) => {
                         setpwdStrength(score);
                       }}
-                      scoreWordStyle={{ color: "black" }}
+                      scoreWordStyle={{ color: "white" }}
                     />
                     {pwdStrength === 2 ||
                     pwdStrength === 3 ||
