@@ -97,10 +97,9 @@ function EntryInput(props) {
     event.preventDefault();
     loadControl.setMouseLoading();
     entryData.lastModifiedBy = props.currentUser.username;
-    // console.log(Date.now());
     entryData.lastModified = Date.now();
     fetch(expressIP + "/submit-entry", {
-      method: "POST", // or 'PUT'
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
@@ -137,7 +136,6 @@ function EntryInput(props) {
       const type = event.target.files[i].type;
       const fileType = type.split("/")[0];
       reader.onload = function () {
-        console.log("help pls: " + fileType);
         setEntryData((prev) => {
           let newMedia = prev.media;
           const keyList = Object.keys(newMedia);
@@ -184,9 +182,7 @@ function EntryInput(props) {
   }
 
   function setDimensions() {
-    // $("#textInput").addClass("pt-4");
     let windowHeight = window.innerHeight;
-    // let headerHeight = $("#header").outerHeight();
     let footerHeight = $("#footer").outerHeight();
     let titleHeight = $("#title-div").outerHeight();
     $("#textInput").outerHeight(windowHeight - footerHeight - 25);

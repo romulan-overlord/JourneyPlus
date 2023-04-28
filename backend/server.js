@@ -228,7 +228,6 @@ function deleteEntry(mainEntry, permanent) {
 
 app.post("/submit-entry", (req, res) => {
   console.log("post received");
-  // console.log("size of post: " + sizeof(req.body));
   Users.findOne(
     {
       username:
@@ -269,7 +268,6 @@ app.post("/submit-entry", (req, res) => {
               deleteEntry(results.entries[i], false);
               results.entries.splice(i, 1);
               newEntry = reduceEntry(req.body.entry);
-              // if (req.body.user === req.body.entry.owner) {
               if (newEntry.private === true)
                 results.privatePosts = results.privatePosts + 1;
               else {
@@ -291,14 +289,11 @@ app.post("/submit-entry", (req, res) => {
                   }
                 );
               }
-              // }
               results.entries.push(newEntry);
             }
           }
           if (req.body.entry.owner === req.body.user) update = true;
         }
-        console.log(newEntry);
-
         results.save();
         console.log("user saved");
         res.send({ mesage: "success", savedEntry: newEntry, update: update });
@@ -437,15 +432,15 @@ app.post("/signUp", (req, res) => {
                   data.save();
                 });
                 console.log("User Created");
-                // send(
-                //   req.body.email,
-                //   "SignUp Confirmation",
-                //   "Congratulations on successfully signing up on this Journey with us."
-                // )
-                //   .then((messageId) =>
-                //     console.log("Message sent successfully:", messageId)
-                //   )
-                //   .catch((err) => console.error(err));
+                send(
+                  req.body.email,
+                  "SignUp Confirmation",
+                  "Congratulations on successfully signing up on this Journey with us."
+                )
+                  .then((messageId) =>
+                    console.log("Message sent successfully:", messageId)
+                  )
+                  .catch((err) => console.error(err));
                 res.send({
                   success: "999", //The user has been successfully signed up and saved in the database
                 });
@@ -665,9 +660,7 @@ app.post("/resetPassword", async (req, res) => {
 app.post("/getFullData", (req, res) => {
   async function getData() {
     let entry = req.body;
-    // console.log("before fetch: \n" + entry.backgroundAudio);
     if (entry.backgroundAudio.length > 0) {
-      // console.log("aud exists");
       MediaWarehouse.findOne(
         { id: entry.backgroundAudio },
         async (err, foundMedia) => {
@@ -678,7 +671,6 @@ app.post("/getFullData", (req, res) => {
         }
       );
     }
-
     if (entry.media.image.length !== 0) {
       for (let i = 0; i < entry.media.image.length; i++) {
         MediaWarehouse.findOne(
@@ -692,7 +684,6 @@ app.post("/getFullData", (req, res) => {
         );
       }
     }
-
     if (entry.media.video.length !== 0) {
       for (let i = 0; i < entry.media.video.length; i++) {
         MediaWarehouse.findOne(
@@ -706,7 +697,6 @@ app.post("/getFullData", (req, res) => {
         );
       }
     }
-
     if (entry.media.audio.length !== 0) {
       for (let i = 0; i < entry.media.audio.length; i++) {
         MediaWarehouse.findOne(
@@ -720,15 +710,10 @@ app.post("/getFullData", (req, res) => {
         );
       }
     }
-
     let myPromise = new Promise(function (myResolve, myReject) {
-      // console.log("in promise");
-      // console.log(entry);
-      // console.log(sizeof(entry) + "    " + req.body.size);
       let timeout = (n) => {
         setTimeout(() => {
           if (sizeof(entry) >= req.body.size - 1000) myResolve();
-          // else if(count >= 20) myResolve();
           else {
             timeout(n);
           }
@@ -783,8 +768,8 @@ function getUsers(list) {
         userArray.push({
           username: list[i],
           picture: "",
-          firstName: "Deleted",
-          lastName: "Account",
+          firstName: "Deleted Account",
+          lastName: "",
           email: "no@mail.in",
           followers: [],
           following: [],
@@ -867,7 +852,6 @@ app.post("/fetchFollowing", (req, res) => {
 });
 
 app.post("/follow", (req, res) => {
-  // console.log(req.body);
   Users.findOne(
     { username: req.body.username, cookieID: req.body.cookieID },
     (err, user) => {
@@ -1128,8 +1112,6 @@ function getUserPicture(comment) {
   return new Promise((resolve, reject) => {
     Users.findOne({ username: comment.commentor }, async (err, user) => {
       if (err) throw err;
-      // console.log("commentor found: ");
-      // console.log(comment);
       if (user) {
         resolve({
           commentID: comment.commentID,
@@ -1158,12 +1140,10 @@ function getUserPicture(comment) {
 }
 
 async function buildComments(comments) {
-  // if(comments.length > 0) console.log("sketchy stuff: " + comments[0]);
   let i = 0;
   const arr = [];
   let temp = null;
   while (i < comments.length) {
-    // console.log("inside while : " + comments.length);
     temp = await getUserPicture(comments[i]);
     if (comments[i].replies) {
       temp.replies = await buildComments(comments[i].replies);
@@ -1175,7 +1155,6 @@ async function buildComments(comments) {
   return new Promise((resolve, reject) => {
     timeout = (n) => {
       setTimeout(() => {
-        // console.log(i + "<<loop   length>>" + comments.length);
         if (i >= comments.length) resolve(arr);
         else timeout(n);
       }, n);

@@ -9,6 +9,11 @@ export default function Shared(props) {
   const [content, setContent] = useState("");
   const [control, setControl] = useState(true);
 
+  function createNewSocket(documentId) {
+    const newSocket = io(syncIP, { query: { documentId } }); // pass documentId as a query parameter
+    return newSocket;
+  }
+
   useEffect(() => {
     const temp = io(syncIP);
     setSocket(createNewSocket(props.entryID));
@@ -37,10 +42,7 @@ export default function Shared(props) {
     }
   }, [props.entryID, socket]);
 
-  function createNewSocket(documentId) {
-    const newSocket = io(syncIP, { query: { documentId } }); // pass documentId as a query parameter
-    return newSocket;
-  }
+ 
 
   // Listen for incoming messages from the server
   if (socket !== null) {

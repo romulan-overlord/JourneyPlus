@@ -85,18 +85,13 @@ function App() {
       })
         .then((response) => response.json())
         .then((data) => {
-          // console.log(data);
           resolve(data) ;
-          // invertCompose();
-          // setPassedEntry(data);
-          // setCreateMode(bool);
         })
         .catch((error) => {
           console.error("Error:", error);
           reject(defaultEntry);
         });
     })
-    
   }
 
   function deleteEntry(entryID) {

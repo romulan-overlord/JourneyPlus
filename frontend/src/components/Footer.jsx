@@ -16,7 +16,6 @@ import { expressIP } from "../settings";
 
 export default function Footer(props) {
   const [isAudio, setAudio] = useState(true);
-  // const [audioSrc, setAudioSrc] = useState("");
   const [muteAudio, setMuteAudio] = useState(false);
   const [reRender, setRender] = useState(false);
   const [isWeather, setWeather] = useState(() => {
@@ -34,18 +33,13 @@ export default function Footer(props) {
     }
   });
 
-  // useEffect(() => {
-  //   if (renderBkg === true && props.createMode === false) {
-  //     setRenBkg(false);
-  //     setBackground(props.entryData.backgroundImage);
-  //   }
-  // });
   if (!props.createMode) setBackground(props.entryData.backgroundImage);
 
+  const now = new Date().toDateString();
+  const [time, setTime] = useState(now);
+
   useEffect(() => {
-    // console.log("finna get da weather");
     if (isWeather === true) {
-      // console.log("in true");
       var getIP = "http://ip-api.com/json/";
       var openWeatherMap = "http://api.openweathermap.org/data/2.5/weather";
       $.getJSON(getIP).done(function (location) {
@@ -55,11 +49,6 @@ export default function Footer(props) {
           units: "metric",
           appid: "45014d735557d276c6086a85e85ce49b",
         }).done(function (weather) {
-          // console.log(weather);
-          // setUserWeather({
-          //   desc: weather.weather[0].main,
-          //   icon: weather.weather[0].icon,
-          // });
           props.setEnv(time, {
             desc: weather.weather[0].main,
             icon: weather.weather[0].icon,
@@ -130,13 +119,7 @@ export default function Footer(props) {
         console.error("Error:", error);
       });
   }
-
-  const now = new Date().toDateString();
-  const [time, setTime] = useState(now);
-  function updateTime() {
-    setTime(new Date().toDateString());
-  }
-
+  
   let weatherIcon = "";
 
   if (props.entryData.weather.icon !== undefined) {
