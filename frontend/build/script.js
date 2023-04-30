@@ -6,5 +6,5 @@ function setDimensions() {
   $("#textInput").outerHeight(windowHeight - headerHeight - footerHeight);
   let inputHeight = $("#textInput").outerHeight();
   $("#content-div").outerHeight(inputHeight - titleHeight);
-  $("#media-div").outerHeight(windowHeight - headerHeight - footerHeight)
+  $("#media-div").outerHeight(windowHeight - headerHeight - footerHeight);
 }

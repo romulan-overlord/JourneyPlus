@@ -75,11 +75,10 @@ The project will create a database named projectDB.
    ```sh
    npm start
    ```
-Access the website on `http://localhost:3000`
+The website will start up on port `3000`
 
 Note: Change the url of the ExpressIP constant in `settings.js` in frontend to your backend server's url.
 
-      Default: http://localhost:8000
 
 
 

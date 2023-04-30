@@ -108,6 +108,7 @@ const userSchema = new mongoose.Schema({
   privatePosts: 0,
   publicPosts: 0,
   otp: String,
+  logIn: Boolean,
 });
 
 const Users = mongoose.model("user", userSchema);
@@ -228,7 +229,6 @@ function deleteEntry(mainEntry, permanent) {
 
 app.post("/submit-entry", (req, res) => {
   console.log("post received");
-  // console.log("size of post: " + sizeof(req.body));
   Users.findOne(
     {
       username:
@@ -269,7 +269,6 @@ app.post("/submit-entry", (req, res) => {
               deleteEntry(results.entries[i], false);
               results.entries.splice(i, 1);
               newEntry = reduceEntry(req.body.entry);
-              // if (req.body.user === req.body.entry.owner) {
               if (newEntry.private === true)
                 results.privatePosts = results.privatePosts + 1;
               else {
@@ -291,14 +290,11 @@ app.post("/submit-entry", (req, res) => {
                   }
                 );
               }
-              // }
               results.entries.push(newEntry);
             }
           }
           if (req.body.entry.owner === req.body.user) update = true;
         }
-        console.log(newEntry);
-
         results.save();
         console.log("user saved");
         res.send({ mesage: "success", savedEntry: newEntry, update: update });
@@ -470,56 +466,63 @@ app.post("/login", (req, res) => {
       if (err) throw err;
       else {
         if (foundUser) {
-          //Username has been found in the database
-          bcrypt.compare(
-            //this function compares the entered password with the password saved in the database
-            req.body.password,
-            foundUser.password,
-            function (err, result) {
-              if (result === true) {
-                //the typed in password and the password saved in the database matches
-                foundUser.cookieID = req.body.cookieID; //The user is assigned a cookie
-                foundUser.save();
-                if (foundUser.picture.length < 2) {
-                  foundUser.entries.sort((a, b) => {
-                    return b.lastModified - a.lastModified;
-                  });
-                  res.send({
-                    success: "802", //The user is redirected to the main page
-                    user: foundUser,
-                  });
-                } else {
-                  // console.log("fetching picture");
-                  MediaWarehouse.findOne(
-                    { id: foundUser.picture },
-                    (err, picture) => {
-                      if (err) {
-                        console.log(
-                          "error while fetching user profile picture"
-                        );
-                        throw err;
+          if (foundUser.logIn) {
+            res.send({
+              success: "800", //The username has not been found in the database
+            });
+          } else {
+            //Username has been found in the database
+            bcrypt.compare(
+              //this function compares the entered password with the password saved in the database
+              req.body.password,
+              foundUser.password,
+              function (err, result) {
+                if (result === true) {
+                  //the typed in password and the password saved in the database matches
+                  foundUser.logIn = true;
+                  foundUser.cookieID = req.body.cookieID; //The user is assigned a cookie
+                  foundUser.save();
+                  if (foundUser.picture.length < 2) {
+                    foundUser.entries.sort((a, b) => {
+                      return b.lastModified - a.lastModified;
+                    });
+                    res.send({
+                      success: "802", //The user is redirected to the main page
+                      user: foundUser,
+                    });
+                  } else {
+                    // console.log("fetching picture");
+                    MediaWarehouse.findOne(
+                      { id: foundUser.picture },
+                      (err, picture) => {
+                        if (err) {
+                          console.log(
+                            "error while fetching user profile picture"
+                          );
+                          throw err;
+                        }
+                        // console.log(foundUser);
+                        foundUser.picture = picture.data;
+                        foundUser.entries.sort((a, b) => {
+                          return b.lastModified - a.lastModified;
+                        });
+                        // console.log("sorted user entries: " + foundUser.entries);
+                        //sort foundUser.entries
+                        res.send({
+                          success: "802", //The user is redirected to the main page
+                          user: foundUser,
+                        });
                       }
-                      console.log(foundUser);
-                      foundUser.picture = picture.data;
-                      foundUser.entries.sort((a, b) => {
-                        return b.lastModified - a.lastModified;
-                      });
-                      // console.log("sorted user entries: " + foundUser.entries);
-                      //sort foundUser.entries
-                      res.send({
-                        success: "802", //The user is redirected to the main page
-                        user: foundUser,
-                      });
-                    }
-                  );
+                    );
+                  }
+                } else {
+                  res.send({
+                    success: "801", //The entered password is incorrect
+                  });
                 }
-              } else {
-                res.send({
-                  success: "801", //The entered password is incorrect
-                });
               }
-            }
-          );
+            );
+          }
         } else if (!foundUser) {
           res.send({
             success: "800", //The username has not been found in the database
@@ -539,12 +542,20 @@ app.post("/auto-login", (req, res) => {
       if (err) throw err;
       else {
         if (foundUser) {
-          if (foundUser.cookieID === req.body.cookieID) {
+          // console.log("in autoLogin: " + foundUser.logIn);
+          if (foundUser.logIn) {
+            res.send({
+              success: "800", //The username has not been found in the database
+            });
+          } else if (foundUser.cookieID === req.body.cookieID) {
+            foundUser.logIn = true;
+            foundUser.save();
             if (foundUser.picture.length < 2) {
               // console.log("no picture");
               foundUser.entries.sort((a, b) => {
                 return b.lastModified - a.lastModified;
               });
+
               res.send({
                 success: "802", //The user is redirected to the main page
                 user: foundUser,
@@ -577,6 +588,21 @@ app.post("/auto-login", (req, res) => {
       }
     }
   );
+});
+
+app.post("/closeSite", (req, res) => {
+  console.log("server copies: " + req.body.message);
+  console.log("server alse copies: " + req.body.user);
+  if (req.body.user) {
+    Users.findOne({ username: req.body.user }, (err, user) => {
+      if (err) throw err;
+      if (user) {
+        user.logIn = false;
+        user.save();
+        res.send({ message: "success" });
+      }
+    });
+  }
 });
 
 app.post("/getOTP", (req, res) => {
@@ -665,9 +691,7 @@ app.post("/resetPassword", async (req, res) => {
 app.post("/getFullData", (req, res) => {
   async function getData() {
     let entry = req.body;
-    // console.log("before fetch: \n" + entry.backgroundAudio);
     if (entry.backgroundAudio.length > 0) {
-      // console.log("aud exists");
       MediaWarehouse.findOne(
         { id: entry.backgroundAudio },
         async (err, foundMedia) => {
@@ -678,7 +702,6 @@ app.post("/getFullData", (req, res) => {
         }
       );
     }
-
     if (entry.media.image.length !== 0) {
       for (let i = 0; i < entry.media.image.length; i++) {
         MediaWarehouse.findOne(
@@ -692,7 +715,6 @@ app.post("/getFullData", (req, res) => {
         );
       }
     }
-
     if (entry.media.video.length !== 0) {
       for (let i = 0; i < entry.media.video.length; i++) {
         MediaWarehouse.findOne(
@@ -706,7 +728,6 @@ app.post("/getFullData", (req, res) => {
         );
       }
     }
-
     if (entry.media.audio.length !== 0) {
       for (let i = 0; i < entry.media.audio.length; i++) {
         MediaWarehouse.findOne(
@@ -720,15 +741,10 @@ app.post("/getFullData", (req, res) => {
         );
       }
     }
-
     let myPromise = new Promise(function (myResolve, myReject) {
-      // console.log("in promise");
-      // console.log(entry);
-      // console.log(sizeof(entry) + "    " + req.body.size);
       let timeout = (n) => {
         setTimeout(() => {
           if (sizeof(entry) >= req.body.size - 1000) myResolve();
-          // else if(count >= 20) myResolve();
           else {
             timeout(n);
           }
@@ -783,8 +799,8 @@ function getUsers(list) {
         userArray.push({
           username: list[i],
           picture: "",
-          firstName: "Deleted",
-          lastName: "Account",
+          firstName: "Deleted Account",
+          lastName: "",
           email: "no@mail.in",
           followers: [],
           following: [],
@@ -867,7 +883,6 @@ app.post("/fetchFollowing", (req, res) => {
 });
 
 app.post("/follow", (req, res) => {
-  // console.log(req.body);
   Users.findOne(
     { username: req.body.username, cookieID: req.body.cookieID },
     (err, user) => {
@@ -1128,8 +1143,6 @@ function getUserPicture(comment) {
   return new Promise((resolve, reject) => {
     Users.findOne({ username: comment.commentor }, async (err, user) => {
       if (err) throw err;
-      // console.log("commentor found: ");
-      // console.log(comment);
       if (user) {
         resolve({
           commentID: comment.commentID,
@@ -1158,12 +1171,10 @@ function getUserPicture(comment) {
 }
 
 async function buildComments(comments) {
-  // if(comments.length > 0) console.log("sketchy stuff: " + comments[0]);
   let i = 0;
   const arr = [];
   let temp = null;
   while (i < comments.length) {
-    // console.log("inside while : " + comments.length);
     temp = await getUserPicture(comments[i]);
     if (comments[i].replies) {
       temp.replies = await buildComments(comments[i].replies);
@@ -1175,7 +1186,6 @@ async function buildComments(comments) {
   return new Promise((resolve, reject) => {
     timeout = (n) => {
       setTimeout(() => {
-        // console.log(i + "<<loop   length>>" + comments.length);
         if (i >= comments.length) resolve(arr);
         else timeout(n);
       }, n);
@@ -1564,22 +1574,22 @@ app.post("/updatePicture", (req, res) => {
   });
 });
 
-app.post("/removePicture", (req, res) =>{
-  Users.findOne({username: req.body.username}, (err, user) =>{
-    if(err) console.log(err);
-    if(user){
-      MediaWarehouse.deleteOne({id: user.picture})
-      .then(() =>{
-        console.log("picture deleted");
-      })
-      .catch((err) =>{
-        console.log(err);
-      })
-      user.picture = '';
+app.post("/removePicture", (req, res) => {
+  Users.findOne({ username: req.body.username }, (err, user) => {
+    if (err) console.log(err);
+    if (user) {
+      MediaWarehouse.deleteOne({ id: user.picture })
+        .then(() => {
+          console.log("picture deleted");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      user.picture = "";
       user.save();
-      res.send({message: "success"});
+      res.send({ message: "success" });
     }
-  })
+  });
 });
 
 app.post("/editProfile", (req, res) => {
@@ -1627,22 +1637,21 @@ app.post("/editProfile", (req, res) => {
   });
 });
 
-app.post("/checkPasswordForChange", (req, res) =>{
-  Users.findOne({username: req.body.username}, async(err, user) =>{
-    if(err){
+app.post("/checkPasswordForChange", (req, res) => {
+  Users.findOne({ username: req.body.username }, async (err, user) => {
+    if (err) {
       console.log(err);
     }
-    if(user){
-      bcrypt.compare(req.body.password, user.password, (err, result) =>{
-        if(result === true){
-          res.send({success:"success"})
-        }else{
-          res.send({success: "failure"})
+    if (user) {
+      bcrypt.compare(req.body.password, user.password, (err, result) => {
+        if (result === true) {
+          res.send({ success: "success" });
+        } else {
+          res.send({ success: "failure" });
         }
-      })
-
+      });
     }
-  })
+  });
 });
 
 app.post("/modifyPassword", async (req, res) => {
@@ -1713,31 +1722,24 @@ function deleteFromComment(id) {
     });
 }
 
-function deletePro(user){
+function deletePro(user) {
   let looper = 0;
   console.log("in awaiter: " + user + " going till: " + user.shared.length);
   for (looper = 0; looper < user.shared.length; looper++) {
-    Users.findOne(
-      { username: user.shared[looper].username },
-      (err, res) => {
-        if (err) throw err;
-        if (res) {
-          for (let j = 0; j < res.entries.length; j++) {
-            console.log("finna read shared of " + looper);
-            console.log(user.shared[looper]);
-            if (
-              res.entries[j].entryID === user.shared[looper].entryID
-            ) {
-              let index = res.entries[j].shared.indexOf(
-                user.username
-              );
-              res.entries[j].shared.splice(index, 1);
-            }
+    Users.findOne({ username: user.shared[looper].username }, (err, res) => {
+      if (err) throw err;
+      if (res) {
+        for (let j = 0; j < res.entries.length; j++) {
+          console.log("finna read shared of " + looper);
+          console.log(user.shared[looper]);
+          if (res.entries[j].entryID === user.shared[looper].entryID) {
+            let index = res.entries[j].shared.indexOf(user.username);
+            res.entries[j].shared.splice(index, 1);
           }
         }
-        res.save();
       }
-    );
+      res.save();
+    });
   }
   return new Promise((resolve, reject) => {
     timeout = (n) => {
@@ -1860,7 +1862,16 @@ app.post("/deleteUser", (req, res) => {
                         }
                       );
                     }
-                  }  
+
+                    // console.log("Account succesfully deleted");
+                    // res.send({
+                    //   success: "sucess",
+                    // });
+                    // deleteEntry(user.entries[i]);
+                    // user.entries.splice(i, 1);
+                  }
+
+                  
                   console.log("Account succesfully deleted");
                   res.send({
                     success: "success",

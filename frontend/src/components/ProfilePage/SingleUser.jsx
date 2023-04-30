@@ -174,7 +174,7 @@ function SingleUser(props) {
         >
           {isFollow}
         </button>
-      ) : isFollow === "Share" ? (
+      ) : isFollow === "Share" && props.user.email !== "no@mail.in" ? (
         <button
           className="btn btn-primary unfollow-button"
           type="button"
@@ -182,7 +182,7 @@ function SingleUser(props) {
         >
           {isFollow}
         </button>
-      ) : isFollow === "Unshare" ? (
+      ) : isFollow === "Unshare" && props.user.email !== "no@mail.in" ? (
         <button
           className="btn btn-danger unfollow-button"
           type="button"

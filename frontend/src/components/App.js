@@ -29,10 +29,44 @@ function App() {
     "userIsSaved",
     "username",
     "password",
+    "tempUsername",
   ]);
 
   useEffect(() => {
     $("#noneShallPass").css("display", "none");
+  }, []);
+
+  useEffect(() => {
+    const handleTabClose = (event) => {
+      event.preventDefault();
+
+      fetch(expressIP + "/closeSite", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        mode: "cors",
+        body: JSON.stringify({
+          user: cookies.tempUsername, // ? currentUser.username : null,
+          message: "constant string",
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          // setCookies("tempUsername", "");
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+      return (event.returnValue = "Are you sure you want to exit?");
+    };
+
+    window.addEventListener("beforeunload", handleTabClose);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleTabClose);
+    };
   }, []);
 
   function invertProfilePage(event) {
@@ -85,18 +119,13 @@ function App() {
       })
         .then((response) => response.json())
         .then((data) => {
-          // console.log(data);
-          resolve(data) ;
-          // invertCompose();
-          // setPassedEntry(data);
-          // setCreateMode(bool);
+          resolve(data);
         })
         .catch((error) => {
           console.error("Error:", error);
           reject(defaultEntry);
         });
-    })
-    
+    });
   }
 
   function deleteEntry(entryID) {
@@ -151,6 +180,7 @@ function App() {
   function updateCurrentUser(user, remember) {
     let doResolve = false;
     return new Promise((resolve, reject) => {
+      setCookies("tempUsername", user.username);
       if (remember) {
         setCookies("userIsSaved", true);
         setCookies("username", user.username);
@@ -191,6 +221,23 @@ function App() {
     setCookies("password", "");
     invertLoggedIn();
     invertProfilePage();
+    fetch(expressIP + "/closeSite", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      mode: "cors",
+      body: JSON.stringify({
+        user: currentUser,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   }
 
   function updateEntries(newEntry) {
@@ -241,6 +288,7 @@ function App() {
     })
       .then((response) => response.json())
       .then((data) => {
+        console.log(data);
         if (data.success === "802") {
           updateCurrentUser(data.user);
           invertLoggedIn();
@@ -251,13 +299,16 @@ function App() {
       });
   }
 
-  function triggerModal(event){
+  function triggerModal(event) {
     setModal(true);
   }
 
   return (
     <div className="App height-100">
-      <div className="container-fluid full-view-container" id="noneShallPass"></div>
+      <div
+        className="container-fluid full-view-container"
+        id="noneShallPass"
+      ></div>
       {!compose ? (
         <Header
           isLoggedIn={isLoggedIn}
@@ -314,10 +365,7 @@ function App() {
           updateCurrentUser={updateCurrentUser}
         />
       ) : (
-        <SignUp
-          invertIsSignedUp={invertIsSignedUp}
-          switch={invertIsSignedUp}
-        />
+        <SignUp invertIsSignedUp={invertIsSignedUp} switch={invertIsSignedUp} />
       )}
     </div>
   );
