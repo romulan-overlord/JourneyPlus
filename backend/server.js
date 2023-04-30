@@ -108,6 +108,7 @@ const userSchema = new mongoose.Schema({
   privatePosts: 0,
   publicPosts: 0,
   otp: String,
+  logIn: Boolean,
 });
 
 const Users = mongoose.model("user", userSchema);
@@ -463,56 +464,63 @@ app.post("/login", (req, res) => {
       if (err) throw err;
       else {
         if (foundUser) {
-          //Username has been found in the database
-          bcrypt.compare(
-            //this function compares the entered password with the password saved in the database
-            req.body.password,
-            foundUser.password,
-            function (err, result) {
-              if (result === true) {
-                //the typed in password and the password saved in the database matches
-                foundUser.cookieID = req.body.cookieID; //The user is assigned a cookie
-                foundUser.save();
-                if (foundUser.picture.length < 2) {
-                  foundUser.entries.sort((a, b) => {
-                    return b.lastModified - a.lastModified;
-                  });
-                  res.send({
-                    success: "802", //The user is redirected to the main page
-                    user: foundUser,
-                  });
-                } else {
-                  // console.log("fetching picture");
-                  MediaWarehouse.findOne(
-                    { id: foundUser.picture },
-                    (err, picture) => {
-                      if (err) {
-                        console.log(
-                          "error while fetching user profile picture"
-                        );
-                        throw err;
+          if (foundUser.logIn) {
+            res.send({
+              success: "800", //The username has not been found in the database
+            });
+          } else {
+            //Username has been found in the database
+            bcrypt.compare(
+              //this function compares the entered password with the password saved in the database
+              req.body.password,
+              foundUser.password,
+              function (err, result) {
+                if (result === true) {
+                  //the typed in password and the password saved in the database matches
+                  foundUser.logIn = true;
+                  foundUser.cookieID = req.body.cookieID; //The user is assigned a cookie
+                  foundUser.save();
+                  if (foundUser.picture.length < 2) {
+                    foundUser.entries.sort((a, b) => {
+                      return b.lastModified - a.lastModified;
+                    });
+                    res.send({
+                      success: "802", //The user is redirected to the main page
+                      user: foundUser,
+                    });
+                  } else {
+                    // console.log("fetching picture");
+                    MediaWarehouse.findOne(
+                      { id: foundUser.picture },
+                      (err, picture) => {
+                        if (err) {
+                          console.log(
+                            "error while fetching user profile picture"
+                          );
+                          throw err;
+                        }
+                        // console.log(foundUser);
+                        foundUser.picture = picture.data;
+                        foundUser.entries.sort((a, b) => {
+                          return b.lastModified - a.lastModified;
+                        });
+                        // console.log("sorted user entries: " + foundUser.entries);
+                        //sort foundUser.entries
+                        res.send({
+                          success: "802", //The user is redirected to the main page
+                          user: foundUser,
+                        });
                       }
-                      console.log(foundUser);
-                      foundUser.picture = picture.data;
-                      foundUser.entries.sort((a, b) => {
-                        return b.lastModified - a.lastModified;
-                      });
-                      // console.log("sorted user entries: " + foundUser.entries);
-                      //sort foundUser.entries
-                      res.send({
-                        success: "802", //The user is redirected to the main page
-                        user: foundUser,
-                      });
-                    }
-                  );
+                    );
+                  }
+                } else {
+                  res.send({
+                    success: "801", //The entered password is incorrect
+                  });
                 }
-              } else {
-                res.send({
-                  success: "801", //The entered password is incorrect
-                });
               }
-            }
-          );
+            );
+          }
         } else if (!foundUser) {
           res.send({
             success: "800", //The username has not been found in the database
@@ -532,12 +540,20 @@ app.post("/auto-login", (req, res) => {
       if (err) throw err;
       else {
         if (foundUser) {
-          if (foundUser.cookieID === req.body.cookieID) {
+          // console.log("in autoLogin: " + foundUser.logIn);
+          if (foundUser.logIn) {
+            res.send({
+              success: "800", //The username has not been found in the database
+            });
+          } else if (foundUser.cookieID === req.body.cookieID) {
+            foundUser.logIn = true;
+            foundUser.save();
             if (foundUser.picture.length < 2) {
               // console.log("no picture");
               foundUser.entries.sort((a, b) => {
                 return b.lastModified - a.lastModified;
               });
+
               res.send({
                 success: "802", //The user is redirected to the main page
                 user: foundUser,
@@ -572,6 +588,21 @@ app.post("/auto-login", (req, res) => {
       }
     }
   );
+});
+
+app.post("/closeSite", (req, res) => {
+  console.log("server copies: " + req.body.message);
+  console.log("server alse copies: " + req.body.user);
+  if (req.body.user) {
+    Users.findOne({ username: req.body.user }, (err, user) => {
+      if (err) throw err;
+      if (user) {
+        user.logIn = false;
+        user.save();
+        res.send({ message: "success" });
+      }
+    });
+  }
 });
 
 app.post("/getOTP", (req, res) => {
@@ -1543,22 +1574,22 @@ app.post("/updatePicture", (req, res) => {
   });
 });
 
-app.post("/removePicture", (req, res) =>{
-  Users.findOne({username: req.body.username}, (err, user) =>{
-    if(err) console.log(err);
-    if(user){
-      MediaWarehouse.deleteOne({id: user.picture})
-      .then(() =>{
-        console.log("picture deleted");
-      })
-      .catch((err) =>{
-        console.log(err);
-      })
-      user.picture = '';
+app.post("/removePicture", (req, res) => {
+  Users.findOne({ username: req.body.username }, (err, user) => {
+    if (err) console.log(err);
+    if (user) {
+      MediaWarehouse.deleteOne({ id: user.picture })
+        .then(() => {
+          console.log("picture deleted");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      user.picture = "";
       user.save();
-      res.send({message: "success"});
+      res.send({ message: "success" });
     }
-  })
+  });
 });
 
 app.post("/editProfile", (req, res) => {
@@ -1606,22 +1637,21 @@ app.post("/editProfile", (req, res) => {
   });
 });
 
-app.post("/checkPasswordForChange", (req, res) =>{
-  Users.findOne({username: req.body.username}, async(err, user) =>{
-    if(err){
+app.post("/checkPasswordForChange", (req, res) => {
+  Users.findOne({ username: req.body.username }, async (err, user) => {
+    if (err) {
       console.log(err);
     }
-    if(user){
-      bcrypt.compare(req.body.password, user.password, (err, result) =>{
-        if(result === true){
-          res.send({success:"success"})
-        }else{
-          res.send({success: "failure"})
+    if (user) {
+      bcrypt.compare(req.body.password, user.password, (err, result) => {
+        if (result === true) {
+          res.send({ success: "success" });
+        } else {
+          res.send({ success: "failure" });
         }
-      })
-
+      });
     }
-  })
+  });
 });
 
 app.post("/modifyPassword", async (req, res) => {
@@ -1692,31 +1722,24 @@ function deleteFromComment(id) {
     });
 }
 
-function deletePro(user){
+function deletePro(user) {
   let looper = 0;
   console.log("in awaiter: " + user + " going till: " + user.shared.length);
   for (looper = 0; looper < user.shared.length; looper++) {
-    Users.findOne(
-      { username: user.shared[looper].username },
-      (err, res) => {
-        if (err) throw err;
-        if (res) {
-          for (let j = 0; j < res.entries.length; j++) {
-            console.log("finna read shared of " + looper);
-            console.log(user.shared[looper]);
-            if (
-              res.entries[j].entryID === user.shared[looper].entryID
-            ) {
-              let index = res.entries[j].shared.indexOf(
-                user.username
-              );
-              res.entries[j].shared.splice(index, 1);
-            }
+    Users.findOne({ username: user.shared[looper].username }, (err, res) => {
+      if (err) throw err;
+      if (res) {
+        for (let j = 0; j < res.entries.length; j++) {
+          console.log("finna read shared of " + looper);
+          console.log(user.shared[looper]);
+          if (res.entries[j].entryID === user.shared[looper].entryID) {
+            let index = res.entries[j].shared.indexOf(user.username);
+            res.entries[j].shared.splice(index, 1);
           }
         }
-        res.save();
       }
-    );
+      res.save();
+    });
   }
   return new Promise((resolve, reject) => {
     timeout = (n) => {
@@ -1852,7 +1875,6 @@ app.post("/deleteUser", (req, res) => {
                     // user.entries.splice(i, 1);
                   }
 
-                  
                   console.log("Account succesfully deleted");
                   res.send({
                     success: "success",

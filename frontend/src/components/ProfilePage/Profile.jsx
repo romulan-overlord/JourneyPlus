@@ -23,7 +23,7 @@ function Profile(props) {
   const [isValidCurrentPwd, setValidCurrentPwd] = useState(true);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-   const [isNewPassword, setNewPassword] = useState("");
+  const [isNewPassword, setNewPassword] = useState("");
   const [isConfirmationPwd, setConfirmationPwd] = useState("");
   const [validConfirmationPwd, setValidConfimationPwd] = useState("");
   const [pwdStrength, setpwdStrength] = useState(0);
@@ -46,10 +46,10 @@ function Profile(props) {
     }
   });
 
-   const handleClickShowNewPassword = () => setShowNewPassword((show) => !show);
-   const handleMouseDownPassword = (event) => {
-     event.preventDefault();
-   };
+  const handleClickShowNewPassword = () => setShowNewPassword((show) => !show);
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
   const handleClickShowConfirmPassword = () =>
     setShowConfirmPassword((show) => !show);
 
@@ -65,10 +65,10 @@ function Profile(props) {
     });
   }
 
-  function invertCurrentPwd(){
-    setValidCurrentPwd((prev) =>{
+  function invertCurrentPwd() {
+    setValidCurrentPwd((prev) => {
       return !prev;
-    })
+    });
   }
 
   function invertModal() {
@@ -77,13 +77,13 @@ function Profile(props) {
     });
   }
 
-  function invertImage(){
-    setImage((prev) =>{
+  function invertImage() {
+    setImage((prev) => {
       return !prev;
-    })
+    });
   }
 
-  function handlePasswordChange(event){
+  function handlePasswordChange(event) {
     setCurrentPassword(event.target.value);
   }
 
@@ -229,8 +229,7 @@ function Profile(props) {
       })
         .then((response) => response.json())
         .then((data) => {
-          if(showImage === false)
-            invertImage();
+          if (showImage === false) invertImage();
           console.log("Success:", data);
         })
         .catch((error) => {
@@ -239,29 +238,28 @@ function Profile(props) {
     };
   }
 
-  function handleRemoveImage(event){
-
+  function handleRemoveImage(event) {
     event.preventDefault();
     fetch(expressIP + "/removePicture", {
-        method: "POST", // or 'PUT'
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: props.currentUser.username
-        }),
+      method: "POST", // or 'PUT'
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: props.currentUser.username,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.message === "success") {
+          console.log("picture deleted");
+          invertImage();
+          props.currentUser.picture = "";
+        }
       })
-        .then((response) => response.json())
-        .then((data) => {
-          if(data.message === "success"){
-            console.log("picture deleted");
-            invertImage();
-            props.currentUser.picture='';
-          }
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   }
 
   function handleDeleteClick(event) {
@@ -291,15 +289,15 @@ function Profile(props) {
       });
   }
 
-  function handlePasswordSubmit(event){
+  function handlePasswordSubmit(event) {
     console.log("inside submit");
     event.preventDefault();
     const requestData = {
       username: props.currentUser.username,
-      password: currentPassword
+      password: currentPassword,
     };
     fetch(expressIP + "/checkPasswordForChange", {
-       method: "POST",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
@@ -318,7 +316,7 @@ function Profile(props) {
       });
   }
 
-  function handleModifyPassword(event){
+  function handleModifyPassword(event) {
     event.preventDefault();
     const requestData = {
       username: props.currentUser.username,
@@ -360,7 +358,7 @@ function Profile(props) {
             <div>
               <span className="mx-auto profile-picture">
                 <Avatar
-                  src={showImage ? props.currentUser.picture: ''}
+                  src={showImage ? props.currentUser.picture : ""}
                   alt="Picture"
                   sx={{ width: 140, height: 140 }}
                 ></Avatar>
@@ -376,6 +374,7 @@ function Profile(props) {
                   id="uploadPicture"
                   className="noDisplay"
                   type="file"
+                  accept="image/*"
                   onChange={handlePictureChange}
                 />
 
@@ -384,8 +383,12 @@ function Profile(props) {
                 </label>
               </span>
             ) : null}
-            {(props.currentUser.picture.length !== 0 && showImage)? (
-              <button onClick={handleRemoveImage} type="button" className="btn btn-primary remove-image-btn">
+            {props.currentUser.picture.length !== 0 && showImage && props.selfProfile ? (
+              <button
+                onClick={handleRemoveImage}
+                type="button"
+                className="btn btn-primary remove-image-btn"
+              >
                 Remove Image
               </button>
             ) : null}
@@ -571,14 +574,16 @@ function Profile(props) {
                   )
                 ) : null}
 
-                <button
-                  data-bs-toggle="modal"
-                  data-bs-target="#ChangePasswordModal"
-                  type="button"
-                  className="btn btn-primary change-password-button"
-                >
-                  Change Password
-                </button>
+                {props.selfProfile ? (
+                  <button
+                    data-bs-toggle="modal"
+                    data-bs-target="#ChangePasswordModal"
+                    type="button"
+                    className="btn btn-primary change-password-button"
+                  >
+                    Change Password
+                  </button>
+                ) : null}
                 <div
                   className="modal fade"
                   id="ChangePasswordModal"
