@@ -397,23 +397,25 @@ app.post("/signUp", (req, res) => {
       if (err) throw err;
       if (doc) {
         res.send({
-          success: "900", //If both the username and the email is incorrect, it will return an error message
+          success: "900", //If both the username and the email are already taken, it will return an error message,
+                          //by rendering a different input style for the username and the email inputs
         });
       } else if (!doc) {
         Users.findOne({ username: req.body.username }, async (err, doc) => {
           if (err) throw err;
           if (doc) {
             res.send({
-              success: "901", //If the username is already taken, it will return an error message by rendering a different input style for the username
+              success: "901", //If the username is already taken, it will return an error message by rendering
+                              //a different input style for the username input
             });
           }
-          // console.log("Username already taken");
           else if (!doc) {
             Users.findOne({ email: req.body.email }, async (err, doc) => {
               if (err) throw err;
               if (doc)
                 res.send({
-                  success: "902", //If the email is incorrect, it will return an error message by rendering a different input style for the email
+                  success: "902", //If the email is incorrect, it will return an error message by rendering
+                                  //a different input style for the email input
                 });
               else if (!doc) {
                 const hashedPassword = await bcrypt.hash(req.body.password, 10); //the function bcrypt.hash hashes the password entered
@@ -437,15 +439,15 @@ app.post("/signUp", (req, res) => {
                   data.save();
                 });
                 console.log("User Created");
-                // send(
-                //   req.body.email,
-                //   "SignUp Confirmation",
-                //   "Congratulations on successfully signing up on this Journey with us."
-                // )
-                //   .then((messageId) =>
-                //     console.log("Message sent successfully:", messageId)
-                //   )
-                //   .catch((err) => console.error(err));
+                send(
+                  req.body.email,
+                  "SignUp Confirmation",
+                  "Congratulations on successfully signing up on this Journey with us."
+                )
+                  .then((messageId) =>
+                    console.log("Message sent successfully:", messageId)
+                  )
+                  .catch((err) => console.error(err));
                 res.send({
                   success: "999", //The user has been successfully signed up and saved in the database
                 });
@@ -548,7 +550,6 @@ app.post("/auto-login", (req, res) => {
                 user: foundUser,
               });
             } else {
-              // console.log("fetching picture in auto");
               MediaWarehouse.findOne(
                 { id: foundUser.picture },
                 (err, picture) => {
@@ -560,7 +561,6 @@ app.post("/auto-login", (req, res) => {
                   foundUser.entries.sort((a, b) => {
                     return b.lastModified - a.lastModified;
                   });
-                  // console.log("sorted user entries: " + foundUser.entries);
                   res.send({
                     success: "802", //The user is redirected to the main page
                     user: foundUser,
@@ -1752,8 +1752,6 @@ function deletePro(user){
 }
 
 app.post("/deleteUser", (req, res) => {
-  // console.log("Inside deleteUser");
-  // console.log(req.body);
   Users.findOne({ username: req.body.username }, (err, user) => {
     if (err) throw err;
     if (user) {
@@ -1771,8 +1769,6 @@ app.post("/deleteUser", (req, res) => {
                 if (user) {
                   if (user.picture.length > 0)
                     deleteFromWarehouse(user.picture);
-
-                  // await deletePro(user);
 
                   Network.findOne({}, async (err, result) => {
                     console.log("Inside Network");
@@ -1864,16 +1860,7 @@ app.post("/deleteUser", (req, res) => {
                         }
                       );
                     }
-
-                    // console.log("Account succesfully deleted");
-                    // res.send({
-                    //   success: "sucess",
-                    // });
-                    // deleteEntry(user.entries[i]);
-                    // user.entries.splice(i, 1);
-                  }
-
-                  
+                  }  
                   console.log("Account succesfully deleted");
                   res.send({
                     success: "success",
@@ -1895,7 +1882,7 @@ app.post("/deleteUser", (req, res) => {
 });
 
 app.listen(8000, () => {
-  // cleanup();
+  //cleanup();
   console.log(`Server is running on port 8000.`);
 });
 

@@ -131,6 +131,7 @@ function Profile(props) {
         console.log("NewUser: " + data.update);
         props.updateUserDetails(data.update);
         setIsEdited(true);
+        setValidEmail("");
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -155,23 +156,6 @@ function Profile(props) {
         setAllUsers(data.users);
       });
   }
-
-  // function handleUsernameChange(event) {
-  //   // console.log(event.target.value);
-  //   for (let i = 0; i < allUsers.length; i++) {
-  //     // console.log("checking against: " + allUsers[i].username);
-  //     // console.log(event.target.value === allUsers[i].username);
-  //     if (event.target.value === allUsers[i].username) {
-  //       setValidUsername("invalid");
-  //       return;
-  //     } else if (event.target.value !== allUsers[i].username) {
-  //       setValidUsername("valid");
-  //     }
-  //     if (event.target.value === "") {
-  //       setValidUsername("");
-  //     }
-  //   }
-  // }
 
   function ValidateEmail(inputText) {
     var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -212,13 +196,12 @@ function Profile(props) {
 
   function handlePictureChange(event) {
     console.log(event.target.files);
-    //const pic = event.target.files;
     var reader = new FileReader();
     reader.readAsDataURL(event.target.files[0]);
     reader.onload = function () {
       props.updatePicture(reader.result);
       fetch(expressIP + "/updatePicture", {
-        method: "POST", // or 'PUT'
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
@@ -360,7 +343,7 @@ function Profile(props) {
             <div>
               <span className="mx-auto profile-picture">
                 <Avatar
-                  src={showImage ? props.currentUser.picture: ''}
+                  src={showImage ? props.currentUser.picture : ""}
                   alt="Picture"
                   sx={{ width: 140, height: 140 }}
                 ></Avatar>
@@ -384,8 +367,12 @@ function Profile(props) {
                 </label>
               </span>
             ) : null}
-            {(props.currentUser.picture.length !== 0 && showImage)? (
-              <button onClick={handleRemoveImage} type="button" className="btn btn-primary remove-image-btn">
+            {props.currentUser.picture.length !== 0 && showImage ? (
+              <button
+                onClick={handleRemoveImage}
+                type="button"
+                className="btn btn-primary remove-image-btn"
+              >
                 Remove Image
               </button>
             ) : null}
@@ -556,7 +543,7 @@ function Profile(props) {
 
                 {/* <!-- Save changes button--> */}
                 {props.selfProfile ? (
-                  isEdited ? (
+                  <div>
                     <button
                       onClick={invertIsEdited}
                       className="btn btn-primary"
@@ -564,21 +551,17 @@ function Profile(props) {
                     >
                       Edit
                     </button>
-                  ) : (
-                    <button className="btn btn-primary" type="button">
-                      Save changes
+                    <button
+                      data-bs-toggle="modal"
+                      data-bs-target="#ChangePasswordModal"
+                      type="button"
+                      className="btn btn-primary change-password-button"
+                    >
+                      Change Password
                     </button>
-                  )
+                  </div>
                 ) : null}
 
-                <button
-                  data-bs-toggle="modal"
-                  data-bs-target="#ChangePasswordModal"
-                  type="button"
-                  className="btn btn-primary change-password-button"
-                >
-                  Change Password
-                </button>
                 <div
                   className="modal fade"
                   id="ChangePasswordModal"
@@ -644,6 +627,7 @@ function Profile(props) {
                       </div>
                       <div className="modal-body px-5">
                         <div className="form-outline">
+                          <p>New Password:</p>
                           <div className="input-group flex-nowrap outline-dark margin-between-input">
                             <input
                               type={showNewPassword ? "text" : "password"}
@@ -680,6 +664,7 @@ function Profile(props) {
                               setpwdStrength(score);
                             }}
                           />
+                          <p>Confirm Password:</p>
                           <div className="input-group flex-nowrap outline-dark margin-between-input">
                             <input
                               type={showConfirmPassword ? "text" : "password"}
@@ -731,7 +716,7 @@ function Profile(props) {
                             disabled
                             className="btn btn-primary w-100"
                           >
-                            Reset Password
+                            Change Password
                           </button>
                         ) : (
                           <button
@@ -740,7 +725,7 @@ function Profile(props) {
                             // onClick={handleResetPassword}
                             className="btn btn-primary w-100"
                           >
-                            Reset Password
+                            Change Password
                           </button>
                         )}
                       </div>

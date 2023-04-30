@@ -250,6 +250,7 @@ function Login(props) {
                             aria-label="Username"
                             aria-describedby="addon-wrapping"
                             required
+                            spellcheck="false"
                           ></input>
                         </div>
                       ) : (
@@ -261,6 +262,7 @@ function Login(props) {
                             className="form-control is-invalid"
                             aria-describedby="validationServer03Feedback"
                             required
+                            spellcheck="false"
                           ></input>
 
                           <div className="invalid-feedback">
@@ -280,6 +282,7 @@ function Login(props) {
                           aria-label="Password"
                           aria-describedby="addon-wrapping"
                           required
+                          spellcheck="false"
                         ></input>
                         <div className="input-group-text">
                           <InputAdornment
@@ -344,6 +347,7 @@ function Login(props) {
                         type="checkbox"
                         id="inlineFormCheck"
                         onClick={invertRememberMe}
+                        spellcheck="false"
                       ></input>
                       <label
                         className="form-check-label"
@@ -436,6 +440,7 @@ function Login(props) {
                                     name="email"
                                     id="typeEmail"
                                     className="form-control my-3"
+                                    spellcheck="false"
                                   ></input>
                                 </div>
                               ) : (
@@ -447,6 +452,7 @@ function Login(props) {
                                     name="email"
                                     id="typeEmail"
                                     className="form-control is-invalid my-3"
+                                    spellcheck="false"
                                   ></input>
 
                                   <div className="invalid-feedback">
@@ -468,6 +474,7 @@ function Login(props) {
                                         onChange={handleOTPChange}
                                         name="otp"
                                         className="form-control my-3"
+                                        spellcheck="false"
                                       ></input>
                                     </div>
                                   ) : (
@@ -478,6 +485,7 @@ function Login(props) {
                                         onChange={handleOTPInputChange}
                                         name="otp"
                                         className="form-control is-invalid my-3"
+                                        spellcheck="false"
                                       ></input>
 
                                       <div className="invalid-feedback">
@@ -524,6 +532,7 @@ function Login(props) {
                           </div>
                           <div className="modal-body px-5">
                             <div className="form-outline">
+                              <p>New password:</p>
                               <div className="input-group flex-nowrap outline-dark margin-between-input">
                                 <input
                                   type={showNewPassword ? "text" : "password"}
@@ -532,6 +541,7 @@ function Login(props) {
                                   placeholder="Enter New Password"
                                   aria-label="Password"
                                   aria-describedby="addon-wrapping"
+                                  spellcheck="false"
                                 ></input>
                                 <div className="input-group-text">
                                   <InputAdornment
@@ -560,6 +570,7 @@ function Login(props) {
                                   setpwdStrength(score);
                                 }}
                               />
+                              <p>New password:</p>
                               <div className="input-group flex-nowrap outline-dark margin-between-input">
                                 <input
                                   type={
@@ -576,6 +587,7 @@ function Login(props) {
                                       ? "form-control is-invalid"
                                       : null
                                   }
+                                  spellcheck="false"
                                 ></input>
                                 <div className="input-group-text">
                                   <InputAdornment
