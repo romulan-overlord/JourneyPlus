@@ -23,7 +23,7 @@ function Profile(props) {
   const [isValidCurrentPwd, setValidCurrentPwd] = useState(true);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isNewPassword, setNewPassword] = useState("");
+   const [isNewPassword, setNewPassword] = useState("");
   const [isConfirmationPwd, setConfirmationPwd] = useState("");
   const [validConfirmationPwd, setValidConfimationPwd] = useState("");
   const [pwdStrength, setpwdStrength] = useState(0);
@@ -46,10 +46,10 @@ function Profile(props) {
     }
   });
 
-  const handleClickShowNewPassword = () => setShowNewPassword((show) => !show);
-  const handleMouseDownPassword = (event) => {
-    event.preventDefault();
-  };
+   const handleClickShowNewPassword = () => setShowNewPassword((show) => !show);
+   const handleMouseDownPassword = (event) => {
+     event.preventDefault();
+   };
   const handleClickShowConfirmPassword = () =>
     setShowConfirmPassword((show) => !show);
 
@@ -65,10 +65,10 @@ function Profile(props) {
     });
   }
 
-  function invertCurrentPwd() {
-    setValidCurrentPwd((prev) => {
+  function invertCurrentPwd(){
+    setValidCurrentPwd((prev) =>{
       return !prev;
-    });
+    })
   }
 
   function invertModal() {
@@ -77,13 +77,13 @@ function Profile(props) {
     });
   }
 
-  function invertImage() {
-    setImage((prev) => {
+  function invertImage(){
+    setImage((prev) =>{
       return !prev;
-    });
+    })
   }
 
-  function handlePasswordChange(event) {
+  function handlePasswordChange(event){
     setCurrentPassword(event.target.value);
   }
 
@@ -131,6 +131,7 @@ function Profile(props) {
         // console.log("NewUser: " + data.update);
         props.updateUserDetails(data.update);
         setIsEdited(true);
+        setValidEmail("");
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -155,23 +156,6 @@ function Profile(props) {
         setAllUsers(data.users);
       });
   }
-
-  // function handleUsernameChange(event) {
-  //   // console.log(event.target.value);
-  //   for (let i = 0; i < allUsers.length; i++) {
-  //     // console.log("checking against: " + allUsers[i].username);
-  //     // console.log(event.target.value === allUsers[i].username);
-  //     if (event.target.value === allUsers[i].username) {
-  //       setValidUsername("invalid");
-  //       return;
-  //     } else if (event.target.value !== allUsers[i].username) {
-  //       setValidUsername("valid");
-  //     }
-  //     if (event.target.value === "") {
-  //       setValidUsername("");
-  //     }
-  //   }
-  // }
 
   function ValidateEmail(inputText) {
     var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -218,7 +202,7 @@ function Profile(props) {
     reader.onload = function () {
       props.updatePicture(reader.result);
       fetch(expressIP + "/updatePicture", {
-        method: "POST", // or 'PUT'
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
@@ -229,8 +213,9 @@ function Profile(props) {
       })
         .then((response) => response.json())
         .then((data) => {
-          if (showImage === false) invertImage();
-          // console.log("Success:", data);
+          if(showImage === false)
+            invertImage();
+          console.log("Success:", data);
         })
         .catch((error) => {
           console.error("Error:", error);
@@ -238,7 +223,8 @@ function Profile(props) {
     };
   }
 
-  function handleRemoveImage(event) {
+  function handleRemoveImage(event){
+
     event.preventDefault();
     fetch(expressIP + "/removePicture", {
       method: "POST", // or 'PUT'
@@ -294,10 +280,10 @@ function Profile(props) {
     event.preventDefault();
     const requestData = {
       username: props.currentUser.username,
-      password: currentPassword,
+      password: currentPassword
     };
     fetch(expressIP + "/checkPasswordForChange", {
-      method: "POST",
+       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
@@ -316,7 +302,7 @@ function Profile(props) {
       });
   }
 
-  function handleModifyPassword(event) {
+  function handleModifyPassword(event){
     event.preventDefault();
     const requestData = {
       username: props.currentUser.username,
@@ -374,7 +360,6 @@ function Profile(props) {
                   id="uploadPicture"
                   className="noDisplay"
                   type="file"
-                  accept="image/*"
                   onChange={handlePictureChange}
                 />
 
@@ -383,7 +368,7 @@ function Profile(props) {
                 </label>
               </span>
             ) : null}
-            {props.currentUser.picture.length !== 0 && showImage && props.selfProfile ? (
+            {props.currentUser.picture.length !== 0 && showImage ? (
               <button
                 onClick={handleRemoveImage}
                 type="button"
@@ -559,7 +544,7 @@ function Profile(props) {
 
                 {/* <!-- Save changes button--> */}
                 {props.selfProfile ? (
-                  isEdited ? (
+                  <div>
                     <button
                       onClick={invertIsEdited}
                       className="btn btn-primary"
@@ -567,23 +552,17 @@ function Profile(props) {
                     >
                       Edit
                     </button>
-                  ) : (
-                    <button className="btn btn-primary" type="button">
-                      Save changes
+                    <button
+                      data-bs-toggle="modal"
+                      data-bs-target="#ChangePasswordModal"
+                      type="button"
+                      className="btn btn-primary change-password-button"
+                    >
+                      Change Password
                     </button>
-                  )
+                  </div>
                 ) : null}
 
-                {props.selfProfile ? (
-                  <button
-                    data-bs-toggle="modal"
-                    data-bs-target="#ChangePasswordModal"
-                    type="button"
-                    className="btn btn-primary change-password-button"
-                  >
-                    Change Password
-                  </button>
-                ) : null}
                 <div
                   className="modal fade"
                   id="ChangePasswordModal"
@@ -649,6 +628,7 @@ function Profile(props) {
                       </div>
                       <div className="modal-body px-5">
                         <div className="form-outline">
+                          <p>New Password:</p>
                           <div className="input-group flex-nowrap outline-dark margin-between-input">
                             <input
                               type={showNewPassword ? "text" : "password"}
@@ -685,6 +665,7 @@ function Profile(props) {
                               setpwdStrength(score);
                             }}
                           />
+                          <p>Confirm Password:</p>
                           <div className="input-group flex-nowrap outline-dark margin-between-input">
                             <input
                               type={showConfirmPassword ? "text" : "password"}
@@ -736,7 +717,7 @@ function Profile(props) {
                             disabled
                             className="btn btn-primary w-100"
                           >
-                            Reset Password
+                            Change Password
                           </button>
                         ) : (
                           <button
@@ -745,7 +726,7 @@ function Profile(props) {
                             // onClick={handleResetPassword}
                             className="btn btn-primary w-100"
                           >
-                            Reset Password
+                            Change Password
                           </button>
                         )}
                       </div>

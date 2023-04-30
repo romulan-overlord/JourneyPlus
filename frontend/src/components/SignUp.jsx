@@ -108,6 +108,7 @@ function SignUp(props) {
                               aria-label="First Name"
                               aria-describedby="addon-wrapping"
                               required
+                              spellcheck="false"
                             ></input>
                           </div>
                         </div>
@@ -121,6 +122,7 @@ function SignUp(props) {
                               aria-label="Last Name"
                               aria-describedby="addon-wrapping"
                               required
+                              spellcheck="false"
                             ></input>
                           </div>
                         </div>
@@ -137,6 +139,7 @@ function SignUp(props) {
                             aria-label="Username"
                             aria-describedby="addon-wrapping"
                             required
+                            spellcheck="false"
                           ></input>
                         </div>
                       ) : (
@@ -148,6 +151,7 @@ function SignUp(props) {
                             className="form-control is-invalid"
                             aria-describedby="validationServer03Feedback"
                             required
+                            spellcheck="false"
                           ></input>
 
                           <div className="invalid-feedback">
@@ -165,6 +169,7 @@ function SignUp(props) {
                             aria-label="Email"
                             aria-describedby="addon-wrapping"
                             required
+                            spellcheck="false"
                           ></input>
                         </div>
                       ) : (
@@ -176,6 +181,7 @@ function SignUp(props) {
                             className="form-control is-invalid"
                             aria-describedby="validationServer03Feedback"
                             required
+                            spellcheck="false"
                           ></input>
 
                           <div className="invalid-feedback">
@@ -193,6 +199,7 @@ function SignUp(props) {
                           aria-label="Password"
                           aria-describedby="addon-wrapping"
                           required
+                          spellcheck="false"
                         ></input>
                         <div className="input-group-text">
                           <InputAdornment

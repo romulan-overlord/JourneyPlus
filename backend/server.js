@@ -382,21 +382,24 @@ app.post("/signUp", (req, res) => {
       if (err) throw err;
       if (doc) {
         res.send({
-          success: "900", //If both the username and the email is incorrect, it will return an error message
+          success: "900", //If both the username and the email are already taken, it will return an error message,
+                          //by rendering a different input style for the username and the email inputs
         });
       } else if (!doc) {
         Users.findOne({ username: req.body.username }, async (err, doc) => {
           if (err) throw err;
           if (doc) {
             res.send({
-              success: "901", //If the username is already taken, it will return an error message by rendering a different input style for the username
+              success: "901", //If the username is already taken, it will return an error message by rendering
+                              //a different input style for the username input
             });
           } else if (!doc) {
             Users.findOne({ email: req.body.email }, async (err, doc) => {
               if (err) throw err;
               if (doc)
                 res.send({
-                  success: "902", //If the email is incorrect, it will return an error message by rendering a different input style for the email
+                  success: "902", //If the email is incorrect, it will return an error message by rendering
+                                  //a different input style for the email input
                 });
               else if (!doc) {
                 const hashedPassword = await bcrypt.hash(req.body.password, 10); //the function bcrypt.hash hashes the password entered
@@ -1770,6 +1773,7 @@ app.post("/deleteUser", (req, res) => {
                     }
                   }
 
+                  
                   console.log("Account succesfully deleted");
                   res.send({
                     success: "success",
@@ -1791,7 +1795,7 @@ app.post("/deleteUser", (req, res) => {
 });
 
 app.listen(8000, () => {
-  // cleanup();
+  //cleanup();
   console.log(`Server is running on port 8000.`);
 });
 

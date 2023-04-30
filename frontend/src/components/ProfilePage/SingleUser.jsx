@@ -138,11 +138,6 @@ function SingleUser(props) {
   return (
     <div className="d-flex align-items-center pb-1" id="tooltips-container">
       <Avatar src={props.user.picture} />
-      {/* <img
-        src={props.user.picture}
-        className="rounded-circle img-fluid avatar-md img-thumbnail bg-transparent"
-        alt=""
-      ></img> */}
       <div className="w-100 ms-3">
         <h5
           onClick={() => {
