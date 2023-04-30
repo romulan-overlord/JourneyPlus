@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import FeedPost from "./FeedPost";
-import { expressIP } from "../../settings";
+import { expressIP, welcomeEntry } from "../../settings";
 
 export default function Feed(props) {
   const [feedList, setFeedList] = useState([]);
@@ -26,27 +26,41 @@ export default function Feed(props) {
 
   return (
     <div>
-      {feedList
-        ? feedList.map((feed, index) => {
-            return (
-              <FeedPost
-                feed={feed}
-                index={index}
-                currentUser={{
-                  username: props.currentUser.username,
-                  cookieID: props.currentUser.cookieID,
-                  picture: props.currentUser.picture,
-                }}
-                getForeignUser={props.getForeignUser}
-                key={index}
-                openEntry={props.openEntry}
-                deleteEntry={props.deleteEntry}
-                private={props.display === "Private" ? true : false}
-                isFeed={true}
-              />
-            );
-          })
-        : null}
+      {feedList && feedList.length > 0 ? (
+        feedList.map((feed, index) => {
+          return (
+            <FeedPost
+              feed={feed}
+              index={index}
+              currentUser={{
+                username: props.currentUser.username,
+                cookieID: props.currentUser.cookieID,
+                picture: props.currentUser.picture,
+              }}
+              getForeignUser={props.getForeignUser}
+              key={index}
+              openEntry={props.openEntry}
+              deleteEntry={props.deleteEntry}
+              private={props.display === "Private" ? true : false}
+              isFeed={true}
+            />
+          );
+        })
+      ) : (
+        <FeedPost
+          feed={welcomeEntry}
+          currentUser={{
+            username: props.currentUser.username,
+            cookieID: props.currentUser.cookieID,
+            picture: props.currentUser.picture,
+          }}
+          getForeignUser={props.getForeignUser}
+          openEntry={props.openEntry}
+          deleteEntry={props.deleteEntry}
+          private={props.display === "Private" ? true : false}
+          isFeed={true}
+        />
+      )}
     </div>
   );
 }

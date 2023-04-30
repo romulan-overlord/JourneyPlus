@@ -315,6 +315,10 @@ body {
   color: white;
 }
 
+.entry-title::placeholder, .entry-content::placeholder{
+  color: #d2bcbc;
+}
+
 .done-button {
   color: white;
 }
@@ -525,7 +529,7 @@ body {
 .nav-borders .nav-link {
   font-family: "Montserrat";
   font-size: 18px;
-  color: #69707a;
+  color: #ece4e4;
   border-bottom-width: 0.125rem;
   border-bottom-style: solid;
   border-bottom-color: transparent;

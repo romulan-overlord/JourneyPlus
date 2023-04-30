@@ -15,18 +15,30 @@ function EntryInput(props) {
   const [ready, setReady] = useState(true); //tracks whether mediaTray is ready to be rendered or not
   const [isPrivate, setPrivate] = useState(entryData.private);
   const [editable, setEditable] = useState(() => {
-    if (
-      entryData.owner === props.currentUser.username ||
-      entryData.owner === ""
-    )
-      return true;
+    console.log("owner: " + entryData.owner);
+    console.log(entryData.owner.length <= 0);
+    if (entryData.owner === props.currentUser.username) return true;
     if (entryData.shared.includes(props.currentUser.username)) return true;
+    if (entryData.owner.length <= 0) return true;
     return false;
   });
 
   useEffect(setDimensions);
   useEffect(() => {
     if (!props.createMode) fetchFullEntry();
+  }, []);
+
+  useEffect(() => {
+    const handleTabClose = (event) => {
+      event.preventDefault();
+      return (event.returnValue = "Are you sure you want to exit?");
+    };
+
+    window.addEventListener("beforeunload", handleTabClose);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleTabClose);
+    };
   }, []);
 
   if (!props.createMode) {
@@ -249,7 +261,7 @@ function EntryInput(props) {
                   <div className="container-fluid col-sm-1 mx-auto">
                     {editable ? (
                       <IconButton className="mx-auto" type="submit">
-                        {props.createMode && props.display !== "Feed" ? (
+                        {props.createMode ? (
                           <DoneIcon fontSize="large" sx={{ color: "white" }} />
                         ) : (
                           <EditIcon fontSize="large" sx={{ color: "white" }} />

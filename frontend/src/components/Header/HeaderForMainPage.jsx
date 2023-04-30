@@ -7,7 +7,7 @@ export default function HeaderForMainPage(props) {
       <table className="width-100">
         <tbody>
           <tr>
-            {props.display !== "Feed" ? (
+
               <td className="table_data">
                 <button
                   type="button"
@@ -17,7 +17,7 @@ export default function HeaderForMainPage(props) {
                   Compose
                 </button>
               </td>
-            ) : null}
+
             <td className="table_data">
               <li className="nav-item dropdown">
                 <a

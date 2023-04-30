@@ -450,60 +450,53 @@ app.post("/login", (req, res) => {
       if (err) throw err;
       else {
         if (foundUser) {
-          if (foundUser.logIn) {
-            res.send({
-              success: "800", //The username has not been found in the database
-            });
-          } else {
-            //Username has been found in the database
-            bcrypt.compare(
-              //this function compares the entered password with the password saved in the database
-              req.body.password,
-              foundUser.password,
-              function (err, result) {
-                if (result === true) {
-                  //the typed in password and the password saved in the database matches
-                  foundUser.logIn = true;
-                  foundUser.cookieID = req.body.cookieID; //The user is assigned a cookie
-                  foundUser.save();
-                  if (foundUser.picture.length < 2) {
-                    foundUser.entries.sort((a, b) => {
-                      return b.lastModified - a.lastModified;
-                    });
-                    res.send({
-                      success: "802", //The user is redirected to the main page
-                      user: foundUser,
-                    });
-                  } else {
-                    MediaWarehouse.findOne(
-                      { id: foundUser.picture },
-                      (err, picture) => {
-                        if (err) {
-                          console.log(
-                            "error while fetching user profile picture"
-                          );
-                          throw err;
-                        }
-                        foundUser.picture = picture.data;
-                        foundUser.entries.sort((a, b) => {
-                          return b.lastModified - a.lastModified;
-                        });
-                        //sort foundUser.entries
-                        res.send({
-                          success: "802", //The user is redirected to the main page
-                          user: foundUser,
-                        });
-                      }
-                    );
-                  }
-                } else {
-                  res.send({
-                    success: "801", //The entered password is incorrect
+          //Username has been found in the database
+          bcrypt.compare(
+            //this function compares the entered password with the password saved in the database
+            req.body.password,
+            foundUser.password,
+            function (err, result) {
+              if (result === true) {
+                //the typed in password and the password saved in the database matches
+                foundUser.cookieID = req.body.cookieID; //The user is assigned a cookie
+                foundUser.save();
+                if (foundUser.picture.length < 2) {
+                  foundUser.entries.sort((a, b) => {
+                    return b.lastModified - a.lastModified;
                   });
+                  res.send({
+                    success: "802", //The user is redirected to the main page
+                    user: foundUser,
+                  });
+                } else {
+                  MediaWarehouse.findOne(
+                    { id: foundUser.picture },
+                    (err, picture) => {
+                      if (err) {
+                        console.log(
+                          "error while fetching user profile picture"
+                        );
+                        throw err;
+                      }
+                      foundUser.picture = picture.data;
+                      foundUser.entries.sort((a, b) => {
+                        return b.lastModified - a.lastModified;
+                      });
+                      //sort foundUser.entries
+                      res.send({
+                        success: "802", //The user is redirected to the main page
+                        user: foundUser,
+                      });
+                    }
+                  );
                 }
+              } else {
+                res.send({
+                  success: "801", //The entered password is incorrect
+                });
               }
-            );
-          }
+            }
+          );
         } else if (!foundUser) {
           res.send({
             success: "800", //The username has not been found in the database
@@ -523,13 +516,7 @@ app.post("/auto-login", (req, res) => {
       if (err) throw err;
       else {
         if (foundUser) {
-          if (foundUser.logIn) {
-            res.send({
-              success: "800", //The username has not been found in the database
-            });
-          } else if (foundUser.cookieID === req.body.cookieID) {
-            foundUser.logIn = true;
-            foundUser.save();
+          if (foundUser.cookieID === req.body.cookieID) {
             if (foundUser.picture.length < 2) {
               foundUser.entries.sort((a, b) => {
                 return b.lastModified - a.lastModified;
@@ -814,13 +801,15 @@ app.post("/fetchUsers", async (req, res) => {
   let userArray = [];
   Network.findOne({}, async (err, result) => {
     if (err) throw err;
-    userArray = await getUsers(result.users);
-    userArray = userArray.filter((n) => {
-      return (
-        !req.body.following.includes(n.username) &&
-        n.username !== req.body.username
-      );
-    });
+    if (result) {
+      userArray = await getUsers(result.users);
+      userArray = userArray.filter((n) => {
+        return (
+          !req.body.following.includes(n.username) &&
+          n.username !== req.body.username
+        );
+      });
+    }
     res.send({ users: userArray });
   });
 });
@@ -837,7 +826,7 @@ app.post("/fetchFollowers", (req, res) => {
         console.log("error finding main user");
         throw err;
       }
-      followerArray = await getUsers(user.followers);
+      if (user) followerArray = await getUsers(user.followers);
       res.send({ followers: followerArray });
     }
   );
@@ -852,7 +841,9 @@ app.post("/fetchFollowing", (req, res) => {
     },
     async (err, user) => {
       if (err) throw err;
-      followingArray = await getUsers(user.following);
+      if (user) {
+        followingArray = await getUsers(user.following);
+      }
       res.send({ following: followingArray });
     }
   );

@@ -12,12 +12,12 @@ import SharedEntry from "./EntryInput/SharedEntry";
 
 function App() {
   const [isLoggedIn, setLoggedIn] = useState(false);
-  const [isSignedUp, setIsSignedUp] = useState(false);
+  const [isSignedUp, setIsSignedUp] = useState(true);
   const [currentUser, setCurrentUser] = useState();
   const [checkCookies, setCheckCookies] = useState(true);
   const [compose, setCompose] = useState(false);
   const [createMode, setCreateMode] = useState(true);
-  const [display, setDisplay] = useState("Private");
+  const [display, setDisplay] = useState("Feed");
   const [profilePage, setProfilePage] = useState(false);
   //useState to toggle display of another user's profile
   const [selfProfile, setSelfProfile] = useState(true);
@@ -34,39 +34,6 @@ function App() {
 
   useEffect(() => {
     $("#noneShallPass").css("display", "none");
-  }, []);
-
-  useEffect(() => {
-    const handleTabClose = (event) => {
-      event.preventDefault();
-
-      fetch(expressIP + "/closeSite", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        mode: "cors",
-        body: JSON.stringify({
-          user: cookies.tempUsername, // ? currentUser.username : null,
-          message: "constant string",
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log(data);
-          // setCookies("tempUsername", "");
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
-      return (event.returnValue = "Are you sure you want to exit?");
-    };
-
-    window.addEventListener("beforeunload", handleTabClose);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleTabClose);
-    };
   }, []);
 
   function invertProfilePage(event) {
@@ -237,23 +204,6 @@ function App() {
     setCookies("password", "");
     invertLoggedIn();
     invertProfilePage();
-    fetch(expressIP + "/closeSite", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      mode: "cors",
-      body: JSON.stringify({
-        user: currentUser,
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
   }
 
   function updateEntries(newEntry) {
