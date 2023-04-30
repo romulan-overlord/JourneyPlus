@@ -130,7 +130,6 @@ function reduceUser(user) {
 
 function reduceEntry(entry) {
   entry.size = sizeof(entry);
-  // console.log(req.body);
   const newEntry = new Entry(entry);
   let { backgroundAudio: bAud, media: myMedia } = newEntry;
   if (bAud.length > 0) {
@@ -182,19 +181,13 @@ function deleteEntry(mainEntry, permanent) {
 
   MediaWarehouse.deleteOne({ id: entry.backgroundAudio })
     .then(function () {
-      console.log("Data deleted"); // Success
+      console.log("Data deleted: background audio for " + entry.entryID); // Success
     })
     .catch(function (error) {
       console.log(error); // Failure
     });
   for (let i = 0; i < entry.media.image.length; i++) {
-    MediaWarehouse.deleteOne({ id: entry.media.image[i] })
-      .then(function () {
-        console.log("image deleted"); // Success
-      })
-      .catch(function (error) {
-        console.log(error); // Failure
-      });
+    MediaWarehouse.deleteOne({ id: entry.media.image[i] });
   }
   for (let i = 0; i < entry.media.video.length; i++) {
     MediaWarehouse.deleteOne({ id: entry.media.video[i] });
@@ -205,7 +198,7 @@ function deleteEntry(mainEntry, permanent) {
   if (permanent) {
     FeedNetwork.deleteOne({ entryID: entry.entryID })
       .then(function () {
-        console.log("Data deleted"); // Success
+        console.log("Data deleted from feed network for " + entry.entryID); // Success
       })
       .catch(function (error) {
         console.log(error); // Failure
@@ -228,7 +221,7 @@ function deleteEntry(mainEntry, permanent) {
 }
 
 app.post("/submit-entry", (req, res) => {
-  console.log("post received");
+  console.log("entry submit received from " + req.body.user);
   Users.findOne(
     {
       username:
@@ -237,7 +230,6 @@ app.post("/submit-entry", (req, res) => {
           : req.body.entry.owner,
     },
     async function (err, results) {
-      console.log("user found");
       var newEntry = null;
       let update = false;
       if (err) throw err;
@@ -259,7 +251,6 @@ app.post("/submit-entry", (req, res) => {
           }
           results.entries.push(newEntry);
           update = true;
-          console.log("new entry pushed");
         } else {
           for (let i = 0; i < results.entries.length; i++) {
             if (results.entries[i].entryID === req.body.entry.entryID) {
@@ -296,7 +287,6 @@ app.post("/submit-entry", (req, res) => {
           if (req.body.entry.owner === req.body.user) update = true;
         }
         results.save();
-        console.log("user saved");
         res.send({ mesage: "success", savedEntry: newEntry, update: update });
       }
     }
@@ -304,7 +294,6 @@ app.post("/submit-entry", (req, res) => {
 });
 
 app.post("/removeEntry", (req, res) => {
-  // console.log("hellp");
   Users.findOne({ username: req.body.user }, async (err, results) => {
     if (err) throw err;
     if (results) {
@@ -402,9 +391,7 @@ app.post("/signUp", (req, res) => {
             res.send({
               success: "901", //If the username is already taken, it will return an error message by rendering a different input style for the username
             });
-          }
-          // console.log("Username already taken");
-          else if (!doc) {
+          } else if (!doc) {
             Users.findOne({ email: req.body.email }, async (err, doc) => {
               if (err) throw err;
               if (doc)
@@ -432,14 +419,14 @@ app.post("/signUp", (req, res) => {
                   data.userCount = data.userCount + 1;
                   data.save();
                 });
-                console.log("User Created");
+                console.log("User Created: " + req.body.username);
                 send(
                   req.body.email,
                   "SignUp Confirmation",
                   "Congratulations on successfully signing up on this Journey with us."
                 )
                   .then((messageId) =>
-                    console.log("Message sent successfully:", messageId)
+                    console.log("Message sent successfully: ", messageId)
                   )
                   .catch((err) => console.error(err));
                 res.send({
@@ -455,7 +442,6 @@ app.post("/signUp", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  console.log("Inside login");
   Users.findOne(
     {
       username: req.body.username,
@@ -489,7 +475,6 @@ app.post("/login", (req, res) => {
                       user: foundUser,
                     });
                   } else {
-                    // console.log("fetching picture");
                     MediaWarehouse.findOne(
                       { id: foundUser.picture },
                       (err, picture) => {
@@ -499,12 +484,10 @@ app.post("/login", (req, res) => {
                           );
                           throw err;
                         }
-                        // console.log(foundUser);
                         foundUser.picture = picture.data;
                         foundUser.entries.sort((a, b) => {
                           return b.lastModified - a.lastModified;
                         });
-                        // console.log("sorted user entries: " + foundUser.entries);
                         //sort foundUser.entries
                         res.send({
                           success: "802", //The user is redirected to the main page
@@ -540,7 +523,6 @@ app.post("/auto-login", (req, res) => {
       if (err) throw err;
       else {
         if (foundUser) {
-          // console.log("in autoLogin: " + foundUser.logIn);
           if (foundUser.logIn) {
             res.send({
               success: "800", //The username has not been found in the database
@@ -549,7 +531,6 @@ app.post("/auto-login", (req, res) => {
             foundUser.logIn = true;
             foundUser.save();
             if (foundUser.picture.length < 2) {
-              // console.log("no picture");
               foundUser.entries.sort((a, b) => {
                 return b.lastModified - a.lastModified;
               });
@@ -559,7 +540,6 @@ app.post("/auto-login", (req, res) => {
                 user: foundUser,
               });
             } else {
-              // console.log("fetching picture in auto");
               MediaWarehouse.findOne(
                 { id: foundUser.picture },
                 (err, picture) => {
@@ -571,7 +551,6 @@ app.post("/auto-login", (req, res) => {
                   foundUser.entries.sort((a, b) => {
                     return b.lastModified - a.lastModified;
                   });
-                  // console.log("sorted user entries: " + foundUser.entries);
                   res.send({
                     success: "802", //The user is redirected to the main page
                     user: foundUser,
@@ -590,9 +569,18 @@ app.post("/auto-login", (req, res) => {
   );
 });
 
+app.post("/getUser", (req, res) => {
+  Users.findOne({ username: req.body.username }, async (err, user) => {
+    if (err) throw err;
+    if (user) {
+      user.picture = await fetchFromWarehouse(user.picture);
+      res.send({ user: user });
+    }
+  });
+});
+
 app.post("/closeSite", (req, res) => {
-  console.log("server copies: " + req.body.message);
-  console.log("server alse copies: " + req.body.user);
+  console.log("server copies: " + req.body.user);
   if (req.body.user) {
     Users.findOne({ username: req.body.user }, (err, user) => {
       if (err) throw err;
@@ -606,7 +594,6 @@ app.post("/closeSite", (req, res) => {
 });
 
 app.post("/getOTP", (req, res) => {
-  console.log("handling submit");
   Users.findOne({ email: req.body.email }, async (err, foundUser) => {
     if (err) throw err;
     else {
@@ -624,9 +611,6 @@ app.post("/getOTP", (req, res) => {
                   if (err) throw err;
                   else {
                     if (updatedUser) {
-                      console.log(updatedUser);
-                      console.log("OTP: " + updatedUser.otp);
-
                       send(
                         req.body.email,
                         "OTP Code",
@@ -771,7 +755,6 @@ function getUsers(list) {
               console.log("error in getting picture.");
               throw err;
             }
-            // console.log("got user picture");
             let tempPic = "";
             if (data) tempPic = data.data;
             userArray.push({
@@ -823,8 +806,6 @@ function getUsers(list) {
 }
 
 app.post("/fetchLikers", async (req, res) => {
-  console.log("fetching likers");
-  console.log(req.body.list);
   const likedArr = await getUsers(req.body.list);
   res.send({ list: likedArr });
 });
@@ -846,8 +827,6 @@ app.post("/fetchUsers", async (req, res) => {
 
 app.post("/fetchFollowers", (req, res) => {
   let followerArray = [];
-  console.log("fetching followers: ");
-  console.log(req.body);
   Users.findOne(
     {
       username: req.body.username,
@@ -858,7 +837,6 @@ app.post("/fetchFollowers", (req, res) => {
         console.log("error finding main user");
         throw err;
       }
-      console.log("found main user: " + req.body.username);
       followerArray = await getUsers(user.followers);
       res.send({ followers: followerArray });
     }
@@ -866,7 +844,6 @@ app.post("/fetchFollowers", (req, res) => {
 });
 
 app.post("/fetchFollowing", (req, res) => {
-  // console.log("in fetch Following: " + req.body.username);
   let followingArray = [];
   Users.findOne(
     {
@@ -876,7 +853,6 @@ app.post("/fetchFollowing", (req, res) => {
     async (err, user) => {
       if (err) throw err;
       followingArray = await getUsers(user.following);
-      console.log("responding following");
       res.send({ following: followingArray });
     }
   );
@@ -902,7 +878,6 @@ app.post("/follow", (req, res) => {
 });
 
 app.post("/unfollow", (req, res) => {
-  // console.log(req.body);
   Users.findOne({ username: req.body.username }, (err, user) => {
     if (err) throw err;
     let index = user.following.indexOf(req.body.unfollow);
@@ -971,9 +946,7 @@ app.post("/getFeed", (req, res) => {
   }
   let readyPromise = new Promise(function (resolve, reject) {
     let timeout = (n) => {
-      console.log("in timeout: ");
       setTimeout(() => {
-        console.log(feedArr.length + "<-feedArr feedcount -> " + feedCount);
         if (feedArr.length === feedCount) {
           feedArr.sort((a, b) => {
             return b.entry.lastModified - a.entry.lastModified;
@@ -1046,20 +1019,17 @@ app.post("/getShared", async (req, res) => {
   let check = false;
   let shared = null;
   let retArr = [];
-  console.log("before first query");
   Users.findOne({ username: req.body.username }, async (err, user) => {
     if (err) {
       console.log("error finding main user in getShared");
       throw err;
     }
     shared = user.shared;
-    console.log("inside first query" + shared);
     check = true;
   });
   let fetcher = (n) => {
     setTimeout(() => {
       if (shared) {
-        console.log("start building sharedList");
         for (let i = 0; i < shared.length; i++) {
           Users.findOne({ username: shared[i].username }, (err, user) => {
             if (err) {
@@ -1115,14 +1085,10 @@ app.post("/getShared", async (req, res) => {
     }, n);
   };
   fetcher(50);
-  console.log("help: " + shared);
   let readyPromise = new Promise(function (resolve, reject) {
     let timeout = (n) => {
-      console.log("in timeout: ");
       setTimeout(() => {
         if (shared) {
-          console.log("checking resolve: ");
-          console.log(retArr.length + "<-retArr shared -> " + shared.length);
           if (retArr.length === shared.length) {
             retArr.sort((a, b) => {
               return b.entry.lastModified - a.entry.lastModified;
@@ -1210,7 +1176,6 @@ function sortCommentsAndReplies(comments) {
   return new Promise((resolve, reject) => {
     timeout = (n) => {
       setTimeout(() => {
-        // console.log(i + "<<loop   length>>" + comments.length);
         if (i >= comments.length) resolve(comments);
         else timeout(n);
       }, n);
@@ -1220,17 +1185,11 @@ function sortCommentsAndReplies(comments) {
 }
 
 app.post("/getLikes", (req, res) => {
-  console.log(req.body);
   FeedNetwork.findOne({ entryID: req.body.entryID }, async (err, data) => {
     if (err) throw err;
     if (data) {
-      // console.log("building comments: ");
-      // console.log(data);
       let temp = await buildComments(data.comments);
-      // console.log(temp);
       temp = await sortCommentsAndReplies(temp);
-      // console.log("comments built in getLikes");
-      // console.log(temp);
 
       res.send({
         entryID: data.entryID,
@@ -1296,7 +1255,7 @@ app.post("/postComment", (req, res) => {
 });
 
 app.post("/deleteComment", (req, res) => {
-  console.log("deleting comment");
+  console.log("deleting comment: " + req.body.commentID);
   FeedNetwork.findOne({ entryID: req.body.entryID }, async (err, data) => {
     if (err) {
       console.log("Error in deleting comment");
@@ -1327,7 +1286,7 @@ app.post("/deleteComment", (req, res) => {
 });
 
 app.post("/deleteReply", (req, res) => {
-  console.log("deleting reply");
+  console.log("deleting reply: " + req.body.commentID);
   FeedNetwork.findOne({ entryID: req.body.entryID }, async (err, data) => {
     if (err) {
       console.log("Error in deleting reply");
@@ -1342,9 +1301,7 @@ app.post("/deleteReply", (req, res) => {
     }
     if (index === -1) res.send({ data: "error" });
     for (let j = 0; j < data.comments[index].replies.length; j++) {
-      console.log("in 2nd loop");
       if (data.comments[index].replies[j].commentID === req.body.commentID) {
-        console.log("reply found");
         data.comments[index].replies.splice(j, 1);
         data.save();
         let temp = await buildComments(data.comments);
@@ -1428,7 +1385,7 @@ app.post("/likeComment", (req, res) => {
 app.post("/likeReply", (req, res) => {
   FeedNetwork.findOne({ entryID: req.body.entryID }, async (err, data) => {
     if (err) {
-      console.log("error liking comment");
+      console.log("error liking reply");
       throw err;
     }
     for (let i = 0; i < data.comments.length; i++) {
@@ -1488,7 +1445,7 @@ app.post("/unlikeComment", (req, res) => {
 app.post("/unlikeReply", (req, res) => {
   FeedNetwork.findOne({ entryID: req.body.entryID }, async (err, data) => {
     if (err) {
-      console.log("error unliking comment");
+      console.log("error unliking reply");
       throw err;
     }
     for (let i = 0; i < data.comments.length; i++) {
@@ -1519,7 +1476,6 @@ app.post("/unlikeReply", (req, res) => {
 });
 
 app.post("/fetchUsersForProfile", (req, res) => {
-  console.log(req.body);
   let userArray = [];
   Network.findOne({}, async (err, result) => {
     if (err) throw err;
@@ -1537,10 +1493,8 @@ app.post("/fetchUsersForProfile", (req, res) => {
         setTimeout(() => {
           if (userArray.length === result.userCount) {
             userArray = userArray.filter((n) => {
-              // console.log("checking: " + n);
               return !req.body.username.includes(n.username);
             });
-            // console.log(userArray);
             res.send({ users: userArray });
             resolve();
           } else timeout(n);
@@ -1548,9 +1502,7 @@ app.post("/fetchUsersForProfile", (req, res) => {
       };
       timeout(50);
     });
-    readyPromise.then(() => {
-      // console.log("UwU");
-    });
+    readyPromise.then(() => {});
   });
 });
 
@@ -1561,9 +1513,7 @@ app.post("/updatePicture", (req, res) => {
       throw err;
     }
     MediaWarehouse.deleteOne({ id: user.picture })
-      .then(function () {
-        console.log("Data deleted"); // Success
-      })
+      .then(function () {})
       .catch(function (error) {
         console.log(error); // Failure
       });
@@ -1576,11 +1526,11 @@ app.post("/updatePicture", (req, res) => {
 
 app.post("/removePicture", (req, res) => {
   Users.findOne({ username: req.body.username }, (err, user) => {
-    if (err) console.log(err);
+    if (err) throw err;
     if (user) {
       MediaWarehouse.deleteOne({ id: user.picture })
         .then(() => {
-          console.log("picture deleted");
+          console.log("picture deleted: " + user.picture);
         })
         .catch((err) => {
           console.log(err);
@@ -1593,17 +1543,10 @@ app.post("/removePicture", (req, res) => {
 });
 
 app.post("/editProfile", (req, res) => {
-  // console.log(req.body);
-  // console.log(typeof req.body.newFirstName);
   Users.findOne({ username: req.body.oldUsername }, async (err, user) => {
     if (err) throw err;
     if (user) {
       let returnObj = {};
-      // if (req.body.newUsername) {
-      //   returnObj.username = req.body.newUsername;
-      //   user.username = req.body.newUsername;
-      //   console.log("New Username :" + user.username);
-      // }
       if (req.body.newFirstName) {
         returnObj.firstName = req.body.newFirstName;
         user.firstName = req.body.newFirstName;
@@ -1623,15 +1566,6 @@ app.post("/editProfile", (req, res) => {
       }
       console.log(returnObj);
       user.save();
-      // Network.findOne({}, (err, network) => {
-      //   if(err){
-      //     console.log("Couldn't update Username in network");
-      //     throw err;
-      //   }
-      //   let index = network.users.indexOf(req.body.oldUsername);
-      //   network.users[index] = req.body.newUsername;
-      //   network.save();
-      // })
       res.send({ update: returnObj });
     }
   });
@@ -1683,14 +1617,13 @@ function uploadToWarehouse(data) {
 }
 
 function fetchFromWarehouse(id) {
-  console.log("fetching from warehouse");
   return new Promise((resolve, reject) => {
     MediaWarehouse.findOne({ id: id }, (err, result) => {
       if (err) {
         throw err;
       }
       if (result) resolve(result.data);
-      resolve();
+      resolve("");
     });
   });
 }
@@ -1701,19 +1634,6 @@ function deleteFromWarehouse(id) {
 
   MediaWarehouse.deleteOne({ id: id })
     .then(function () {
-      console.log("Successfully deleted media");
-      return true;
-    })
-    .catch(function (error) {
-      console.log(error);
-      return false;
-    });
-}
-
-function deleteFromComment(id) {
-  Comment.deleteOne({ commentID: id })
-    .then(function () {
-      console.log("Successfully deleted comment");
       return true;
     })
     .catch(function (error) {
@@ -1754,8 +1674,6 @@ function deletePro(user) {
 }
 
 app.post("/deleteUser", (req, res) => {
-  // console.log("Inside deleteUser");
-  // console.log(req.body);
   Users.findOne({ username: req.body.username }, (err, user) => {
     if (err) throw err;
     if (user) {
@@ -1768,17 +1686,15 @@ app.post("/deleteUser", (req, res) => {
             Users.findOneAndDelete(
               { username: req.body.username },
               async (err, user) => {
-                console.log("User:" + user);
                 if (err) throw err;
                 if (user) {
+                  console.log("Deleting user:" + user.username);
+
                   if (user.picture.length > 0)
                     deleteFromWarehouse(user.picture);
 
-                  // await deletePro(user);
-
                   Network.findOne({}, async (err, result) => {
                     console.log("Inside Network");
-                    //if (err) throw err;
                     let index = result.users.indexOf(req.body.username);
                     result.users.splice(index, 1);
                     result.userCount--;
@@ -1814,9 +1730,9 @@ app.post("/deleteUser", (req, res) => {
                       (err, feed) => {
                         if (err) throw err;
                         if (feed) {
-                          if (feed.comments.length > 0) {
-                            deleteFromComment(feed.comments[i]);
-                          }
+                          // if (feed.comments.length > 0) {
+                          //   deleteFromComment(feed.comments[i]);
+                          // }
                         }
                       }
                     );
@@ -1846,16 +1762,11 @@ app.post("/deleteUser", (req, res) => {
                       deleteFromWarehouse(user.backgroundAudio);
                     console.log("4");
                     for (let s = 0; s < user.entries[i].shared.length; s++) {
-                      console.log("Inside shared");
                       Users.findOne(
                         { username: user.entries[i].shared[s] },
                         (err, sharedUser) => {
                           if (err) throw err;
                           for (let t = 0; t < sharedUser.shared.length; t++) {
-                            console.log(
-                              "shared: " + sharedUser.shared[t].username
-                            );
-                            console.log(user.username);
                             if (
                               sharedUser.shared[t].username === user.username
                             ) {
@@ -1866,13 +1777,6 @@ app.post("/deleteUser", (req, res) => {
                         }
                       );
                     }
-
-                    // console.log("Account succesfully deleted");
-                    // res.send({
-                    //   success: "sucess",
-                    // });
-                    // deleteEntry(user.entries[i]);
-                    // user.entries.splice(i, 1);
                   }
 
                   console.log("Account succesfully deleted");
@@ -1903,17 +1807,17 @@ app.listen(8000, () => {
 function cleanup() {
   MediaWarehouse.deleteMany({})
     .then(() => {
-      console.log("users deleted");
+      console.log("media deleted");
     })
     .catch(function (error) {
       console.log(error); // Failure
     });
   Network.deleteMany({})
     .then(() => {
-      console.log("users deleted");
+      console.log("network deleted");
       Network.create({
-        users: ["sham", "chiruhas", "lokesh", "sager"],
-        userCount: 2,
+        users: [],
+        userCount: 0,
       });
     })
     .catch(function (error) {
@@ -1922,81 +1826,81 @@ function cleanup() {
   Users.deleteMany({})
     .then(() => {
       console.log("users deleted");
-      Users.create({
-        firstName: "Lokesh",
-        lastName: "Goenka",
-        password:
-          "$2b$10$LYvW.Zfy1uroKYWtkqBeUOFUQTX5xmDO1vkDZh0pparhkWrh5rEoC",
-        username: "lokesh",
-        email: "goenkalokesh@gmail.com",
-        picture: "",
-        cookieID: "lfqxj199",
-        following: [],
-        followers: [],
-        privatePosts: 0,
-        publicPosts: 0,
-        entries: [],
-        shared: [],
-        __v: 3,
-      });
-      Users.create({
-        firstName: "Vidyasager",
-        lastName: "GR",
-        password:
-          "$2b$10$LYvW.Zfy1uroKYWtkqBeUOFUQTX5xmDO1vkDZh0pparhkWrh5rEoC",
-        username: "sager",
-        email: "vidyasager162@gmail.com",
-        picture: "",
-        cookieID: "lfqxj199",
-        following: [],
-        followers: [],
-        privatePosts: 0,
-        publicPosts: 0,
-        entries: [],
-        shared: [],
-        __v: 3,
-      });
-      Users.create({
-        firstName: "Chiruhas",
-        lastName: "Bonam",
-        password:
-          "$2b$10$LYvW.Zfy1uroKYWtkqBeUOFUQTX5xmDO1vkDZh0pparhkWrh5rEoC",
-        username: "chiruhas",
-        email: "chiru@gmail.com",
-        picture: "",
-        cookieID: "lfqxj199",
-        following: [],
-        followers: [],
-        privatePosts: 0,
-        publicPosts: 0,
-        entries: [],
-        shared: [],
-        __v: 3,
-      });
-      Users.create({
-        firstName: "Vignesh",
-        lastName: "Sham",
-        password:
-          "$2b$10$YlPJx3j4yC8.RsW7v0Sq1u3JE37oF04iABgv8g6ahKqF7tbLWRl.S",
-        username: "sham",
-        email: "vig@123.com",
-        picture: "",
-        cookieID: "lfqxm1jy",
-        following: [],
-        followers: [],
-        privatePosts: 0,
-        publicPosts: 0,
-        entries: [],
-        shared: [],
-        __v: 3,
-      });
+      // Users.create({
+      //   firstName: "Lokesh",
+      //   lastName: "Goenka",
+      //   password:
+      //     "$2b$10$LYvW.Zfy1uroKYWtkqBeUOFUQTX5xmDO1vkDZh0pparhkWrh5rEoC",
+      //   username: "lokesh",
+      //   email: "goenkalokesh@gmail.com",
+      //   picture: "",
+      //   cookieID: "lfqxj199",
+      //   following: [],
+      //   followers: [],
+      //   privatePosts: 0,
+      //   publicPosts: 0,
+      //   entries: [],
+      //   shared: [],
+      //   __v: 3,
+      // });
+      // Users.create({
+      //   firstName: "Vidyasager",
+      //   lastName: "GR",
+      //   password:
+      //     "$2b$10$LYvW.Zfy1uroKYWtkqBeUOFUQTX5xmDO1vkDZh0pparhkWrh5rEoC",
+      //   username: "sager",
+      //   email: "vidyasager162@gmail.com",
+      //   picture: "",
+      //   cookieID: "lfqxj199",
+      //   following: [],
+      //   followers: [],
+      //   privatePosts: 0,
+      //   publicPosts: 0,
+      //   entries: [],
+      //   shared: [],
+      //   __v: 3,
+      // });
+      // Users.create({
+      //   firstName: "Chiruhas",
+      //   lastName: "Bonam",
+      //   password:
+      //     "$2b$10$LYvW.Zfy1uroKYWtkqBeUOFUQTX5xmDO1vkDZh0pparhkWrh5rEoC",
+      //   username: "chiruhas",
+      //   email: "chiru@gmail.com",
+      //   picture: "",
+      //   cookieID: "lfqxj199",
+      //   following: [],
+      //   followers: [],
+      //   privatePosts: 0,
+      //   publicPosts: 0,
+      //   entries: [],
+      //   shared: [],
+      //   __v: 3,
+      // });
+      // Users.create({
+      //   firstName: "Vignesh",
+      //   lastName: "Sham",
+      //   password:
+      //     "$2b$10$YlPJx3j4yC8.RsW7v0Sq1u3JE37oF04iABgv8g6ahKqF7tbLWRl.S",
+      //   username: "sham",
+      //   email: "vig@123.com",
+      //   picture: "",
+      //   cookieID: "lfqxm1jy",
+      //   following: [],
+      //   followers: [],
+      //   privatePosts: 0,
+      //   publicPosts: 0,
+      //   entries: [],
+      //   shared: [],
+      //   __v: 3,
+      // });
     })
     .catch(function (error) {
       console.log(error); // Failure
     });
   FeedNetwork.deleteMany({})
     .then(() => {
-      console.log("users deleted");
+      console.log("feed deleted");
     })
     .catch(function (error) {
       console.log(error); // Failure

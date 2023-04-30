@@ -44,7 +44,7 @@ function FeedPost(props) {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
+        // console.log(data);
         setLikes(data);
         setLiked(data.likedBy.includes(props.currentUser.username));
       })

@@ -170,10 +170,10 @@ export default function Footer(props) {
       <div className="footer px-5" id="footer">
         <div className="row mx-0">
           <div className="col-9">
-            <span className="date-p">{time}</span>
+            <span className="date-p">{props.entry.date}</span>
             <span className="date-p mx-2">|</span>
             <span className="date-p me-1">
-              <img className="weatherIcon" src={weatherIcon} alt="UwU" />
+              <img className="weatherIcon" src={weatherIcon} alt="Weather" />
             </span>
             <span className="date-p">{props.entryData.weather.desc}</span>
             <span className="date-p mx-2">|</span>

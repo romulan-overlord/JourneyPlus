@@ -383,6 +383,7 @@ function EntryInput(props) {
             entryData.shared = shared;
           },
           weather: entryData.weather,
+          date: entryData.date,
         }}
       />
       {setDimensions()}

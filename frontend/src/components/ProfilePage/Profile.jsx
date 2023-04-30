@@ -128,7 +128,7 @@ function Profile(props) {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log("NewUser: " + data.update);
+        // console.log("NewUser: " + data.update);
         props.updateUserDetails(data.update);
         setIsEdited(true);
       })
@@ -138,7 +138,7 @@ function Profile(props) {
   }
 
   function fetchUsers() {
-    console.log("inside fetch");
+    // console.log("inside fetch");
     fetch(expressIP + "/fetchUsersForProfile", {
       method: "POST",
       headers: {
@@ -181,7 +181,7 @@ function Profile(props) {
       return false;
     }
   }
-  console.log(allUsers);
+  // console.log(allUsers);
   // event.target.value === allUsers[i].email &&
   function handleEmailChange(event) {
     if (allUsers.length === 0) {
@@ -211,7 +211,7 @@ function Profile(props) {
   }
 
   function handlePictureChange(event) {
-    console.log(event.target.files);
+    // console.log(event.target.files);
     //const pic = event.target.files;
     var reader = new FileReader();
     reader.readAsDataURL(event.target.files[0]);
@@ -230,7 +230,7 @@ function Profile(props) {
         .then((response) => response.json())
         .then((data) => {
           if (showImage === false) invertImage();
-          console.log("Success:", data);
+          // console.log("Success:", data);
         })
         .catch((error) => {
           console.error("Error:", error);
@@ -252,7 +252,7 @@ function Profile(props) {
       .then((response) => response.json())
       .then((data) => {
         if (data.message === "success") {
-          console.log("picture deleted");
+          // console.log("picture deleted");
           invertImage();
           props.currentUser.picture = "";
         }
@@ -281,7 +281,7 @@ function Profile(props) {
         if (data.success === "failure") {
           invertPwd();
         } else if (data.success === "success") {
-          console.log("data sent to frontend");
+          // console.log("data sent to frontend");
           window.$("#exampleModal").modal("hide");
           props.invertLoggedIn();
           props.invertProfilePage();
@@ -290,7 +290,7 @@ function Profile(props) {
   }
 
   function handlePasswordSubmit(event) {
-    console.log("inside submit");
+    // console.log("inside submit");
     event.preventDefault();
     const requestData = {
       username: props.currentUser.username,
@@ -306,10 +306,10 @@ function Profile(props) {
       .then((response) => response.json())
       .then((data) => {
         if (data.success === "failure") {
-          console.log("failure");
+          // console.log("failure");
           invertCurrentPwd();
         } else if (data.success === "success") {
-          console.log("success");
+          // console.log("success");
           window.$("#ChangePasswordModal").modal("hide");
           window.$("#ModifyPasswordModal").modal("show");
         }
@@ -332,10 +332,10 @@ function Profile(props) {
       .then((response) => response.json())
       .then((data) => {
         if (data.success === "modificationSuccess") {
-          console.log("reset Success");
+          // console.log("reset Success");
           window.$("#ModifyPasswordModal").modal("hide");
         } else if (data.success === "modificationFail") {
-          console.log("modification fail");
+          // console.log("modification fail");
         }
       })
       .catch((error) => {
@@ -346,7 +346,7 @@ function Profile(props) {
   $("#myModal").on("shown.bs.modal", function () {
     $("#myInput").trigger("focus");
   });
-  console.log(showImage);
+  // console.log(showImage);
   return (
     <div className="row details-container">
       <div className="col-xl-4">

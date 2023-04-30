@@ -169,6 +169,22 @@ function App() {
     invertCompose();
     setPassedEntry(defaultEntry);
     setCreateMode(true);
+    fetch(expressIP + "/getUser", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      mode: "cors",
+      body: JSON.stringify({username: currentUser.username}),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        setCurrentUser(data.user);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   }
 
   function invertLoggedIn(event) {
@@ -288,7 +304,7 @@ function App() {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
+        // console.log(data);
         if (data.success === "802") {
           updateCurrentUser(data.user);
           invertLoggedIn();
