@@ -1,7 +1,6 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-Undergrad final year project.
 This is an expansive journalling web application with networking possible, allowing users to publish beautifully crafted entries as blogs easily accessible to their network.
 
 What expansive journalling entails:
