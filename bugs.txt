@@ -21,7 +21,8 @@
     (fixed)
 7.  User entries not getting sorted on auto-login
 
-8.  User cannot remove profile picture. Mauritian negro will fix it.
+    (fixed)
+8.  User cannot remove profile picture.
 
 9.  Fix error in fetch followers: 
 followerArray = await getUsers(user.followers);
