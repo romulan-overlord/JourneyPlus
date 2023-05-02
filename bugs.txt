@@ -24,6 +24,7 @@
     (fixed)
 8.  User cannot remove profile picture.
 
+    (fixed)
 9.  Fix error in fetch followers: 
 followerArray = await getUsers(user.followers);
 
@@ -32,11 +33,11 @@ followerArray = await getUsers(user.followers);
 TypeError: Cannot read properties of null 
 (reading 'followers')
 
-(fixed)
+    (fixed)
 10. message when no followers/following
 
-(fixed)
+    (fixed)
 11. if post shared with me, i should not be allowed to share it with others
 
-(fixed)
+    (fixed)
 12. test delete account when shared posts
