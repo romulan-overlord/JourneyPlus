@@ -4,6 +4,7 @@ import { expressIP, welcomeEntry } from "../../settings";
 
 export default function Feed(props) {
   const [feedList, setFeedList] = useState([]);
+  const [ready,setReady] = useState(false);
 
   useEffect(() => {
     fetch(expressIP + "/getFeed", {
@@ -17,7 +18,7 @@ export default function Feed(props) {
       .then((data) => {
         console.log(data);
         setFeedList(data.feed);
-        // setFeedReady(true);
+        setReady(true);
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -46,7 +47,7 @@ export default function Feed(props) {
             />
           );
         })
-      ) : (
+      ) : feedList && ready ? (
         <FeedPost
           feed={welcomeEntry}
           currentUser={{
@@ -60,7 +61,7 @@ export default function Feed(props) {
           private={props.display === "Private" ? true : false}
           isFeed={true}
         />
-      )}
+      ) : null}
     </div>
   );
 }

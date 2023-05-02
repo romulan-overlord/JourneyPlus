@@ -250,7 +250,7 @@ function Login(props) {
                             aria-label="Username"
                             aria-describedby="addon-wrapping"
                             required
-                            spellcheck="false"
+                            spellCheck="false"
                           ></input>
                         </div>
                       ) : (
@@ -262,7 +262,7 @@ function Login(props) {
                             className="form-control is-invalid"
                             aria-describedby="validationServer03Feedback"
                             required
-                            spellcheck="false"
+                            spellCheck="false"
                           ></input>
 
                           <div className="invalid-feedback">
@@ -282,7 +282,7 @@ function Login(props) {
                           aria-label="Password"
                           aria-describedby="addon-wrapping"
                           required
-                          spellcheck="false"
+                          spellCheck="false"
                         ></input>
                         <div className="input-group-text">
                           <InputAdornment
@@ -347,7 +347,7 @@ function Login(props) {
                         type="checkbox"
                         id="inlineFormCheck"
                         onClick={invertRememberMe}
-                        spellcheck="false"
+                        spellCheck="false"
                       ></input>
                       <label
                         className="form-check-label"
@@ -440,7 +440,7 @@ function Login(props) {
                                     name="email"
                                     id="typeEmail"
                                     className="form-control my-3"
-                                    spellcheck="false"
+                                    spellCheck="false"
                                   ></input>
                                 </div>
                               ) : (
@@ -452,7 +452,7 @@ function Login(props) {
                                     name="email"
                                     id="typeEmail"
                                     className="form-control is-invalid my-3"
-                                    spellcheck="false"
+                                    spellCheck="false"
                                   ></input>
 
                                   <div className="invalid-feedback">
@@ -474,7 +474,7 @@ function Login(props) {
                                         onChange={handleOTPChange}
                                         name="otp"
                                         className="form-control my-3"
-                                        spellcheck="false"
+                                        spellCheck="false"
                                       ></input>
                                     </div>
                                   ) : (
@@ -485,7 +485,7 @@ function Login(props) {
                                         onChange={handleOTPInputChange}
                                         name="otp"
                                         className="form-control is-invalid my-3"
-                                        spellcheck="false"
+                                        spellCheck="false"
                                       ></input>
 
                                       <div className="invalid-feedback">
@@ -541,7 +541,7 @@ function Login(props) {
                                   placeholder="Enter New Password"
                                   aria-label="Password"
                                   aria-describedby="addon-wrapping"
-                                  spellcheck="false"
+                                  spellCheck="false"
                                 ></input>
                                 <div className="input-group-text">
                                   <InputAdornment
@@ -587,7 +587,7 @@ function Login(props) {
                                       ? "form-control is-invalid"
                                       : null
                                   }
-                                  spellcheck="false"
+                                  spellCheck="false"
                                 ></input>
                                 <div className="input-group-text">
                                   <InputAdornment
