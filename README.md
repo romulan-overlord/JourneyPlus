@@ -79,6 +79,11 @@ The website will start up on port `3000`
 Note: Change the url of the ExpressIP constant in `settings.js` in frontend to your backend server's url.
 
 
+### System Layout
+
+![System Layout](https://user-images.githubusercontent.com/77074247/235598941-5adca827-c1bb-441a-953b-65ac69b93b99.png)
+
+
 
 
 <!-- MARKDOWN LINKS & IMAGES -->
