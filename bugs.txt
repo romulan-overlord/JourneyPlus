@@ -38,4 +38,5 @@ TypeError: Cannot read properties of null
 (fixed)
 11. if post shared with me, i should not be allowed to share it with others
 
+(fixed)
 12. test delete account when shared posts
