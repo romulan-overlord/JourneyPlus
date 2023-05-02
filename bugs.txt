@@ -41,5 +41,3 @@ TypeError: Cannot read properties of null
 
     (fixed)
 12. test delete account when shared posts
-
-
